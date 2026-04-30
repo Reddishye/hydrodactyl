@@ -97,7 +97,7 @@ Route::group([
 */
 
 Route::group([
-    'prefix' => 'servers/wings/',
+    'prefix' => 'servers/wings',
 ], function () {
     require __DIR__ . '/servers/wings.php';
 });
@@ -112,7 +112,7 @@ Route::group([
 |
 */
 Route::group([
-    'prefix' => 'servers/elytra/',
+    'prefix' => 'servers/elytra',
 ], function () {
     require __DIR__ . '/servers/elytra.php';
 });

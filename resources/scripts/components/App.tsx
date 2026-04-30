@@ -27,7 +27,7 @@ const AuthenticationRouter = lazy(() => import('@/routers/AuthenticationRouter')
 
 interface ExtendedWindow extends Window {
     SiteConfiguration?: SiteSettings;
-    PterodactylUser?: {
+    PyrodactylUser?: {
         uuid: string;
         username: string;
         email: string;
@@ -41,17 +41,17 @@ interface ExtendedWindow extends Window {
 }
 
 const App = () => {
-    const { PterodactylUser, SiteConfiguration } = window as ExtendedWindow;
-    if (PterodactylUser && !store.getState().user.data) {
+    const { PyrodactylUser, SiteConfiguration } = window as ExtendedWindow;
+    if (PyrodactylUser && !store.getState().user.data) {
         store.getActions().user.setUserData({
-            uuid: PterodactylUser.uuid,
-            username: PterodactylUser.username,
-            email: PterodactylUser.email,
-            language: PterodactylUser.language,
-            rootAdmin: PterodactylUser.root_admin,
-            useTotp: PterodactylUser.use_totp,
-            createdAt: new Date(PterodactylUser.created_at),
-            updatedAt: new Date(PterodactylUser.updated_at),
+            uuid: PyrodactylUser.uuid,
+            username: PyrodactylUser.username,
+            email: PyrodactylUser.email,
+            language: PyrodactylUser.language,
+            rootAdmin: PyrodactylUser.root_admin,
+            useTotp: PyrodactylUser.use_totp,
+            createdAt: new Date(PyrodactylUser.created_at),
+            updatedAt: new Date(PyrodactylUser.updated_at),
         });
     }
 

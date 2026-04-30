@@ -1,4 +1,4 @@
-import { File, FolderOpenFill } from '@gravity-ui/icons';
+import { File, FolderOpenFill, FileZipper } from '@gravity-ui/icons';
 import { differenceInHours, format, formatDistanceToNow } from 'date-fns';
 import { join } from 'pathe';
 import { memo, type ReactNode } from 'react';
@@ -35,6 +35,16 @@ function Clickable({ file, children }: { file: FileObject; children: ReactNode }
     );
 }
 
+const icon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+
+    if (['zip'].includes(extension || '')) {
+        return <FileZipper width={22} height={22} />;
+    }
+
+    return <File width={22} height={22} />;
+};
+
 const MemoizedClickable = memo(Clickable, isEqual);
 
 const FileObjectRow = ({ file }: { file: FileObject }) => (
@@ -45,9 +55,7 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
                 <MemoizedClickable file={file}>
                     <div className={`flex-none text-zinc-400 mr-4 text-lg pl-3 mb-0.5`}>
                         {file.isFile ? (
-                            <div>
-                                <File width={22} height={22} />
-                            </div>
+                            <div>{icon(file.name)}</div>
                         ) : (
                             <div>
                                 <FolderOpenFill width={22} height={22} />

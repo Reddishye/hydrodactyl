@@ -5,13 +5,14 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-    'select-none border border-solid border-transparent inline-flex items-center transition justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mocha-200 disabled:pointer-events-none disabled:opacity-50 hover:active:translate-y-0.5 hover:active:scale-[0.98]',
+    'select-none border border-solid border-transparent inline-flex items-center transition justify-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mocha-200 disabled:pointer-events-none disabled:opacity-50 hover:active:translate-y-0.5 hover:active:scale-[0.98] hover:cursor-pointer',
     {
         variants: {
             variant: {
                 default: 'bg-cream-400 text-mocha-500 shadow-sm hover:bg-cream-500/80 hover:active:bg-cream-500/70',
                 destructive: 'bg-red-500 shadow-sm text-white hover:bg-red-500/90',
-                attention: 'bg-brand-400 text-mocha-500 shadow-sm hover:bg-brand-400/80 hover:active:bg-brand-400/70',
+                attention:
+                    'bg-brand-400/60 text-mocha-500 shadow-sm hover:bg-brand-400/80 hover:active:bg-brand-400/70',
                 outline: 'border border-cream-400/80 hover:bg-mocha-300/50 hover:active:bg-mocha-300/20',
                 secondary:
                     'bg-mocha-400 border border-mocha-300 text-cream-400 shadow-sm hover:bg-mocha-300 hover:active:bg-mocha-300/50',
@@ -23,6 +24,7 @@ const buttonVariants = cva(
             size: {
                 default: 'h-10 px-4 py-2',
                 sm: 'h-8 px-2',
+                md: 'h-11 w-11 px-4',
                 lg: 'h-14 text-md rounded-2xl px-6',
                 ember: 'h-14 text-lg rounded-2xl px-6',
                 icon: 'h-8 w-8 rounded-full',
@@ -42,7 +44,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-        VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
     asChild?: boolean;
 }
 

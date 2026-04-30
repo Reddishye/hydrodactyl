@@ -11,12 +11,15 @@ interface FileUploadData {
 interface ServerFileStore {
     directory: string;
     selectedFiles: string[];
+    lastSelectedFile: string | null;
     uploads: Record<string, FileUploadData>;
 
     setDirectory: Action<ServerFileStore, string>;
     setSelectedFiles: Action<ServerFileStore, string[]>;
     appendSelectedFile: Action<ServerFileStore, string>;
     removeSelectedFile: Action<ServerFileStore, string>;
+    selectFileRange: Action<ServerFileStore, { from: string; to: string; files: string[] }>;
+    setLastSelectedFile: Action<ServerFileStore, string>;
 
     pushFileUpload: Action<ServerFileStore, { name: string; data: FileUploadData }>;
     setUploadProgress: Action<ServerFileStore, { name: string; loaded: number }>;
@@ -28,6 +31,7 @@ interface ServerFileStore {
 const files: ServerFileStore = {
     directory: '/',
     selectedFiles: [],
+    lastSelectedFile: null,
     uploads: {},
 
     setDirectory: action((state, payload) => {
@@ -44,6 +48,25 @@ const files: ServerFileStore = {
 
     removeSelectedFile: action((state, payload) => {
         state.selectedFiles = state.selectedFiles.filter((f) => f !== payload);
+    }),
+
+    selectFileRange: action((state, { from, to, files }) => {
+        const fromIndex = files.indexOf(from);
+        const toIndex = files.indexOf(to);
+
+        if (fromIndex === -1 || toIndex === -1) {
+            return;
+        }
+
+        const startIndex = Math.min(fromIndex, toIndex);
+        const endIndex = Math.max(fromIndex, toIndex);
+
+        const range = files.slice(startIndex, endIndex + 1);
+        state.selectedFiles = [...new Set([...state.selectedFiles, ...range])];
+    }),
+
+    setLastSelectedFile: action((state, payload) => {
+        state.lastSelectedFile = payload;
     }),
 
     clearFileUploads: action((state) => {

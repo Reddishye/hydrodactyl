@@ -14,7 +14,7 @@ const ActionButton = forwardRef<HTMLButtonElement, ActionButtonProps>(
         const variantClasses = {
             primary: 'bg-brand text-white hover:bg-brand/80 active:bg-brand/90 border border-brand/20',
             secondary:
-                'bg-[#ffffff11] text-[#ffffff88] hover:bg-[#ffffff23] hover:text-[#ffffff] border border-[#ffffff12]',
+                'bg-mocha-500 text-[#ffffff88] hover:bg-[#ffffff23] hover:text-[#ffffff] border border-[#ffffff12]',
             danger: 'bg-brand/20 text-red-400 hover:bg-brand/30 hover:text-red-300 border border-brand/40 hover:border-brand/60',
         };
 

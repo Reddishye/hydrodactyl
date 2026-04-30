@@ -21,7 +21,7 @@ use Pterodactyl\Http\Middleware\Api\Client\Server\CheckDaemonType;
 */
 
 Route::group([
-    'prefix' => '/{server}',
+    'prefix' => '{server}',
     'middleware' => [
         ServerSubject::class,
         AuthenticateServerAccess::class,
