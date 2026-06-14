@@ -45,7 +45,7 @@ class SoftwareVersionService
      */
     public function getDiscord(): string
     {
-        return Arr::get(self::$result, 'discord') ?? 'https://discord.gg/UhuYKKK2uM';
+        return Arr::get(self::$result, 'discord') ?? 'https://discord.gg/mnTJVSSaKp';
     }
 
     /**

@@ -9,7 +9,7 @@ import LoginFormContainer from '@/components/auth/LoginFormContainer';
 import Button from '@/components/elements/Button';
 import Captcha, { getCaptchaResponse } from '@/components/elements/Captcha';
 import Field from '@/components/elements/Field';
-import Logo from '@/components/elements/PyroLogo';
+import Logo from '@/components/elements/HydroLogo';
 
 import CaptchaManager from '@/lib/captcha';
 

@@ -8,7 +8,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/elements/DropdownMenu';
-import Logo from '@/components/elements/PyroLogo';
+import Logo from '@/components/elements/HydroLogo';
 
 interface MobileTopBarProps {
     onMenuToggle: () => void;

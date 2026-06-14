@@ -21,7 +21,7 @@ import MainWrapper from '@/components/elements/MainWrapper';
 import { ServerMobileMenu } from '@/components/elements/MobileFullScreenMenu';
 import MobileTopBar from '@/components/elements/MobileTopBar';
 import PermissionRoute from '@/components/elements/PermissionRoute';
-import Logo from '@/components/elements/PyroLogo';
+import Logo from '@/components/elements/HydroLogo';
 import { NotFound, ServerError } from '@/components/elements/ScreenBlock';
 import CommandMenu from '@/components/elements/commandk/CmdK';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
@@ -335,7 +335,7 @@ const ServerRouter = () => {
                                         ref={getRefForRoute(route)}
                                         route={route}
                                         serverId={id}
-                                        onClick={() => {}}
+                                        onClick={() => { }}
                                     />
                                 ))}
                             </ul>
@@ -361,7 +361,7 @@ const ServerRouter = () => {
                                 className='relative inset-[1px] w-full h-full overflow-y-auto overflow-x-hidden rounded-md bg-[#08080875]'
                             >
                                 {inConflictState &&
-                                (!rootAdmin || (rootAdmin && !location.pathname.endsWith(`/server/${id}`))) ? (
+                                    (!rootAdmin || (rootAdmin && !location.pathname.endsWith(`/server/${id}`))) ? (
                                     <ConflictStateRenderer />
                                 ) : (
                                     <ErrorBoundary>

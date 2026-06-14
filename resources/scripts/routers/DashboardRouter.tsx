@@ -17,7 +17,7 @@ import MainSidebar from '@/components/elements/MainSidebar';
 import MainWrapper from '@/components/elements/MainWrapper';
 import { DashboardMobileMenu } from '@/components/elements/MobileFullScreenMenu';
 import MobileTopBar from '@/components/elements/MobileTopBar';
-import Logo from '@/components/elements/PyroLogo';
+import Logo from '@/components/elements/HydroLogo';
 import { NotFound } from '@/components/elements/ScreenBlock';
 
 import http from '@/api/http';

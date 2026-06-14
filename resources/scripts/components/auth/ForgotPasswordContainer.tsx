@@ -18,7 +18,7 @@ import http from '@/api/http';
 
 import useFlash from '@/plugins/useFlash';
 
-import Logo from '../elements/PyroLogo';
+import Logo from '../elements/HydroLogo';
 
 interface Values {
     email: string;

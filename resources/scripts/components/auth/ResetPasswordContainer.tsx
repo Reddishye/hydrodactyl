@@ -16,7 +16,7 @@ import performPasswordReset from '@/api/auth/performPasswordReset';
 
 import useFlash from '@/plugins/useFlash';
 
-import Logo from '../elements/PyroLogo';
+import Logo from '../elements/HydroLogo';
 
 interface Values {
     password: string;
