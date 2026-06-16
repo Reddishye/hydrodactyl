@@ -87,7 +87,6 @@ class S3 extends Model
     {
         return $this->hasMany(Node::class, 'bucket');
     }
-
     /**
      * Build a config array compatible with BackupManager::createS3Adapter().
      */

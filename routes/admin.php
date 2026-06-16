@@ -243,3 +243,28 @@ Route::group(['prefix' => 'nests'], function () {
     Route::delete('/egg/{egg:id}', [Admin\Nests\EggController::class, 'destroy']);
     Route::delete('/egg/{egg:id}/variables/{variable:id}', [Admin\Nests\EggVariableController::class, 'destroy']);
 });
+
+/*
+|--------------------------------------------------------------------------
+| S3 Bucket Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /admin/buckets
+|
+*/
+Route::group(['prefix' => 'buckets'], function () {
+    Route::get('/', [Admin\S3Controller::class, 'index'])->name('admin.buckets');
+    Route::get('/new', [Admin\S3Controller::class, 'create'])->name('admin.buckets.new');
+
+    Route::post('/', [Admin\S3Controller::class, 'store']);
+
+    Route::post('/test-connection', [Admin\S3Controller::class, 'testConnection'])->name('admin.buckets.test-connection');
+
+    Route::get('/view/{s3}', [Admin\Buckets\BucketViewController::class, 'index'])->name('admin.buckets.view');
+    Route::get('/view/{s3}/details', [Admin\Buckets\BucketViewController::class, 'details'])->name('admin.buckets.view.details');
+    Route::get('/view/{s3}/servers', [Admin\Buckets\BucketViewController::class, 'servers'])->name('admin.buckets.view.servers');
+    Route::get('/view/{s3}/delete', [Admin\Buckets\BucketViewController::class, 'delete'])->name('admin.buckets.view.delete');
+
+    Route::post('/view/{s3}/details', [Admin\Buckets\BucketViewController::class, 'update']);
+    Route::delete('/view/{s3}/delete', [Admin\S3Controller::class, 'delete']);
+});

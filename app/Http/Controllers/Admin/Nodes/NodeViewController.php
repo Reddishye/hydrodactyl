@@ -18,6 +18,7 @@ use Pterodactyl\Repositories\Eloquent\AllocationRepository;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Enums\Daemon\DaemonType;
 use Pterodactyl\Enums\Daemon\Adapters;
+use Pterodactyl\Models\S3;
 
 class NodeViewController extends Controller
 {
@@ -60,6 +61,7 @@ class NodeViewController extends Controller
             'locations' => $this->locationRepository->all(),
             'daemonTypes' => DaemonType::all(),
             'backupDisks' => Adapters::all_sorted(),
+            's3Buckets' => S3::where('enabled', true)->orderBy('name')->get(['id', 'name', 'bucket_name']),
         ]);
     }
 

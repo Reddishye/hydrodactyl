@@ -26,7 +26,8 @@ class MakeNodeCommand extends Command
                             {--daemonSFTPPort= : Enter the wings SFTP listening port.}
                             {--daemonBase= : Enter the base folder.}
                             {--daemonType= : Enter the daemon Backend.}
-                            {--backupDisk= : Enter the Backup type}';
+                             {--backupDisk= : Enter the Backup type}
+                             {--bucket= : Enter the S3 bucket ID}';
 
     protected $description = 'Creates a new node on the system via the CLI.';
 
@@ -68,6 +69,7 @@ class MakeNodeCommand extends Command
         $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/pterodactyl/volumes');
         $data['daemonType'] = $this->option('daemonType') ?? $this->ask('Enter the daemon backend', 'elytra');
         $data['backupDisk'] = $this->option('backupDisk') ?? $this->ask('Enter the Backup Disk', 'rustic_local');
+        $data['bucket'] = $this->option('bucket') ?: null;
 
         $node = $this->creationService->handle($data);
         $this->line('Successfully created a new node on the location ' . $data['location_id'] . ' with the name ' . $data['name'] . ' and has an id of ' . $node->id . '.');
