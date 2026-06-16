@@ -35,7 +35,8 @@ class StoreNodeRequest extends ApplicationApiRequest
             'daemonSFTP',
             'daemonBase',
             'daemonType',
-            'backupDisk'
+            'backupDisk',
+            'bucket',
         ])->mapWithKeys(function ($value, $key) {
             $key = ($key === 'daemonSFTP') ? 'daemonSftp' : $key;
 
@@ -68,6 +69,7 @@ class StoreNodeRequest extends ApplicationApiRequest
         $response['daemonBase'] = $response['daemon_base'] ?? (new Node())->getAttribute('daemonBase');
         $response['daemonType'] = $response['daemon_type'] ?? (new Node())->getAttribute('daemonType');
         $response['backupDisk'] = $response['backup_disk'] ?? (new Node())->getAttribute('backupDisk');
+        $response['bucket'] = $response['bucket'] ?? null;
 
         unset($response['daemon_base'], $response['daemon_listen'], $response['daemon_sftp'], $response['daemon_type'], $response['backup_disk']);
 

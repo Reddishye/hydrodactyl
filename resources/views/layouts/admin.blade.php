@@ -108,6 +108,11 @@
               <i class="bi bi-database-fill"></i> <span>Databases</span>
             </a>
           </li>
+          <li class="{{ !starts_with(Route::currentRouteName(), 'admin.buckets') ?: 'active' }}">
+            <a href="{{ route('admin.buckets') }}">
+              <i class="bi bi-cloud-fill"></i> <span>S3 Buckets</span>
+            </a>
+          </li>
           <li class="{{ !starts_with(Route::currentRouteName(), 'admin.locations') ?: 'active' }}">
             <a href="{{ route('admin.locations') }}">
               <i class="bi bi-globe-americas"></i> <span>Locations</span>

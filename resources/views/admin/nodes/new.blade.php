@@ -57,6 +57,20 @@
                         </select>
                         </div>
                     </div>
+                    <div class="form-group" id="pS3BucketGroup" style="display: none;">
+                        <label for="pS3Bucket" class="form-label">S3 Bucket</label>
+                        <div>
+                        <select name="bucket" id="pS3Bucket" class="form-control">
+                            <option value="">-- None --</option>
+                            @foreach($s3Buckets as $s3)
+                                <option value="{{ $s3->id }}" {{ old('bucket') == $s3->id ? 'selected' : '' }}>
+                                    {{ $s3->name }} ({{ $s3->bucket_name }})
+                                </option>
+                            @endforeach
+                        </select>
+                        </div>
+                        <p class="text-muted small">Required when using an S3-based backup disk. Select which S3 configuration this node should use for backups.</p>
+                    </div>
 
 
                     <div class="form-group">
@@ -215,6 +229,8 @@
             const daemonSelect = document.getElementById('pDaemonType');
             const backupDiskSelect = document.getElementById('pBackupDisk');
 
+            const s3Types = ['s3', 'rustic_s3'];
+
             // Auto Update backup disks based on the selected daemon type
             function updateBackupDisks() {
                 const daemonValue = daemonSelect.value;
@@ -229,11 +245,21 @@
 
                     backupDiskSelect.appendChild(option);
                 });
+
+                updateS3Visibility();
+            }
+
+            function updateS3Visibility() {
+                const s3Group = document.getElementById('pS3BucketGroup');
+                if (s3Group) {
+                    s3Group.style.display = s3Types.includes(backupDiskSelect.value) ? '' : 'none';
+                }
             }
 
             updateBackupDisks();
 
             daemonSelect.addEventListener('change', updateBackupDisks);
+            backupDiskSelect.addEventListener('change', updateS3Visibility);
 
             $('[data-toggle="popover"]').popover({
                 placement: 'auto'

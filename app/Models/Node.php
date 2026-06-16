@@ -41,6 +41,7 @@ use Pterodactyl\Http\Controllers\Admin\NodeAutoDeployController;
  * @property string $daemonBase
  * @property string $daemonType
  * @property string $backupDisk
+ * @property int|null $bucket
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property Location $location
@@ -88,6 +89,7 @@ class Node extends Model
         'trust_alias' => 'boolean',
         'maintenance_mode' => 'boolean',
         'use_separate_fqdns' => 'boolean',
+        'bucket' => 'integer',
     ];
 
     /**
@@ -117,7 +119,8 @@ class Node extends Model
         'description',
         'maintenance_mode',
         'daemonType',
-        'backupDisk'
+        'backupDisk',
+        'bucket',
     ];
 
     public static array $validationRules = [
@@ -141,7 +144,8 @@ class Node extends Model
         'maintenance_mode' => 'boolean',
         'upload_size' => 'int|between:1,1024',
         'daemonType' => 'nullable|string',
-        'backupDisk' => 'nullable|string'
+        'backupDisk' => 'nullable|string',
+        'bucket' => 'nullable|numeric|exists:s3,id'
     ];
 
     /**
@@ -158,8 +162,8 @@ class Node extends Model
         'daemonListen' => 8080,
         'maintenance_mode' => false,
         'use_separate_fqdns' => false,
-        'daemonType' => 'elytra',
-        'backupDisk' => 'rustic_local',
+        'daemonType' => 'wings',
+        'backupDisk' => 'local',
     ];
 
 
@@ -288,6 +292,11 @@ class Node extends Model
     public function allocations(): HasMany
     {
         return $this->hasMany(Allocation::class);
+    }
+
+    public function s3Bucket(): BelongsTo
+    {
+        return $this->belongsTo(S3::class, 'bucket');
     }
 
     /**

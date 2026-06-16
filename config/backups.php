@@ -56,7 +56,7 @@ return [
             // The location within the S3 bucket where backups will be stored. Backups
             // are stored within a folder using the server's UUID as the name. Each
             // backup for that server lives within that folder.
-            'prefix' => env('AWS_BACKUPS_BUCKET') ?? '',
+            'prefix' => env('AWS_BACKUPS_PREFIX') ?? '',
 
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),

@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Pterodactyl\Enums\Daemon\Adapters;
 use Pterodactyl\Enums\Daemon\DaemonType;
+use Pterodactyl\Models\S3;
 use Illuminate\View\Factory as ViewFactory;
 use Pterodactyl\Http\Controllers\Controller;
 use Pterodactyl\Services\Nodes\NodeUpdateService;
@@ -61,7 +62,12 @@ class NodesController extends Controller
             return redirect()->route('admin.locations');
         }
 
-        return $this->view->make('admin.nodes.new', ['locations' => $locations, 'daemonTypes' => DaemonType::all(), 'backupDisks' => Adapters::all_sorted()]);
+        return $this->view->make('admin.nodes.new', [
+            'locations' => $locations,
+            'daemonTypes' => DaemonType::all(),
+            'backupDisks' => Adapters::all_sorted(),
+            's3Buckets' => S3::where('enabled', true)->orderBy('name')->get(['id', 'name', 'bucket_name']),
+        ]);
     }
 
     /**

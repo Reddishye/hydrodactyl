@@ -49,4 +49,12 @@ enum Adapters: string
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function requiresS3Bucket(string $adapter): bool
+    {
+        return in_array($adapter, [
+            self::ADAPTER_WINGS_S3->value,
+            self::ADAPTER_RUSTIC_S3->value,
+        ]);
+    }
 }

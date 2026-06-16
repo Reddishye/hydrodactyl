@@ -1,0 +1,30 @@
+<?php
+
+namespace Pterodactyl\Http\Requests\Admin;
+
+class NewS3FormRequest extends AdminFormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255|unique:s3,name',
+            'description' => 'nullable|string|max:1000',
+            'access_key' => 'required|string|max:255',
+            'secret_key' => 'required|string|max:255',
+            'endpoint' => 'nullable|url|max:255',
+            'bucket_name' => 'required|string|max:255',
+            'use_path_style_endpoint' => 'boolean',
+            'enabled' => 'boolean',
+        ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        $validated = parent::validated($key, $default);
+
+        $validated['use_path_style_endpoint'] = (bool) ($validated['use_path_style_endpoint'] ?? false);
+        $validated['enabled'] = (bool) ($validated['enabled'] ?? true);
+
+        return $validated;
+    }
+}
