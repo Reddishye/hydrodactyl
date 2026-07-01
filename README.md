@@ -15,7 +15,7 @@
 <h1 align="center">Hydrodactyl</h1>
 
 > [!NOTE]
-> Hydrodactyl does not support blueprint(for now) 
+> Hydrodactyl does not support Blueprint. This project is intended to be an AIO solution.
 
 > [!NOTE]
 > All Issues and PRs should be made in the [BlueprintFramework/hydrodactyl repo](https://github.com/blueprintframework/hydrodactyl).
