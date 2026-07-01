@@ -58,3 +58,4 @@ nix/docker/wings/lib/
 nix/docker/maria/mariadb_data/
 nix/mariadb/
 mariadb_data/
+.env.lerd_override
