@@ -7,7 +7,6 @@ import revertDockerImage from '@/api/server/revertDockerImage';
 import setSelectedDockerImage from '@/api/server/setSelectedDockerImage';
 import updateStartupCommand from '@/api/server/updateStartupCommand';
 import getServerStartup from '@/api/swr/getServerStartup';
-import { Button } from '@/components/ui/button';
 import CopyOnClick from '@/components/elements/CopyOnClick';
 import {
     DropdownMenu,
@@ -26,6 +25,7 @@ import Spinner from '@/components/elements/Spinner';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import ServerHeader from '@/components/server/header/ServerHeader';
 import VariableBox from '@/components/server/startup/VariableBox';
+import { Button } from '@/components/ui/button';
 import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
 import useFlash from '@/plugins/useFlash';
 import { usePermissions } from '@/plugins/usePermissions';
@@ -281,8 +281,6 @@ const StartupContainer = () => {
                                 <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t border-[#ffffff08]'>
                                     <InputSpinner visible={commandLoading}>
                                         <Button
-
-
                                             onClick={updateCommand}
                                             disabled={commandLoading || !commandValue.trim()}
                                             className='w-full sm:w-auto sm:flex-1 lg:flex-none lg:min-w-[140px]'
@@ -293,7 +291,6 @@ const StartupContainer = () => {
                                     </InputSpinner>
                                     <Button
                                         variant='secondary'
-
                                         onClick={loadDefaultCommand}
                                         disabled={commandLoading}
                                         className='w-full sm:w-auto sm:flex-1 lg:flex-none lg:min-w-[140px]'
@@ -302,7 +299,6 @@ const StartupContainer = () => {
                                     </Button>
                                     <Button
                                         variant='secondary'
-
                                         onClick={cancelEditingCommand}
                                         disabled={commandLoading}
                                         className='w-full sm:w-auto sm:flex-1 lg:flex-none lg:min-w-[140px]'

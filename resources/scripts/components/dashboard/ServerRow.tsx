@@ -141,10 +141,10 @@ const ServerRow = ({ server, className }: { server: Server; className?: string }
                                 {server.isTransferring
                                     ? 'Transferring'
                                     : server.status === 'installing'
-                                        ? 'Installing'
-                                        : server.status === 'restoring_backup'
-                                            ? 'Restoring Backup'
-                                            : 'Unavailable'}
+                                      ? 'Installing'
+                                      : server.status === 'restoring_backup'
+                                        ? 'Restoring Backup'
+                                        : 'Unavailable'}
                             </span>
                         </div>
                     ) : (

@@ -16,12 +16,12 @@ import {
     DropdownMenuTrigger,
 } from '@/components/elements/DropdownMenu';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
+import Logo from '@/components/elements/HydroLogo';
 import MainSidebar from '@/components/elements/MainSidebar';
 import MainWrapper from '@/components/elements/MainWrapper';
 import { ServerMobileMenu } from '@/components/elements/MobileFullScreenMenu';
 import MobileTopBar from '@/components/elements/MobileTopBar';
 import PermissionRoute from '@/components/elements/PermissionRoute';
-import Logo from '@/components/elements/HydroLogo';
 import { NotFound, ServerError } from '@/components/elements/ScreenBlock';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
 import StatBlock from '@/components/server/console/StatBlock';
@@ -331,7 +331,7 @@ const ServerRouter = () => {
                                         ref={getRefForRoute(route)}
                                         route={route}
                                         serverId={id}
-                                        onClick={() => { }}
+                                        onClick={() => {}}
                                     />
                                 ))}
                             </ul>

@@ -53,4 +53,4 @@ function toPaginatedSet<T extends TransformerFunc<Model>>(
     };
 }
 
-export { transform, toPaginatedSet };
+export { toPaginatedSet, transform };

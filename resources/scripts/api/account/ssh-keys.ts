@@ -35,4 +35,4 @@ const createSSHKey = async (name: string, publicKey: string): Promise<SSHKey> =>
 const deleteSSHKey = async (fingerprint: string): Promise<void> =>
     await http.post('/api/client/account/ssh-keys/remove', { fingerprint });
 
-export { useSSHKeys, createSSHKey, deleteSSHKey };
+export { createSSHKey, deleteSSHKey, useSSHKeys };

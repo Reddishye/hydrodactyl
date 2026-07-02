@@ -2,9 +2,9 @@ import { type Actions, useStoreActions } from 'easy-peasy';
 import { useEffect, useState } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import reinstallServer from '@/api/server/reinstallServer';
-import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/elements/dialog';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import { Button } from '@/components/ui/button';
 
 import type { ApplicationStore } from '@/state';
 import { ServerContext } from '@/state/server';

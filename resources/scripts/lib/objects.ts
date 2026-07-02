@@ -54,4 +54,4 @@ function formatObjectToIdentString(object: any, indentLevel: number = 0): string
     return `${indent}${String(object)}`;
 }
 
-export { isObject, isEmptyObject, getObjectKeys, formatObjectToIdentString };
+export { formatObjectToIdentString, getObjectKeys, isEmptyObject, isObject };

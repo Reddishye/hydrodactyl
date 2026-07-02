@@ -1,4 +1,4 @@
-@import '../../../assets/tailwind.css';
+@import "../../../assets/tailwind.css";
 
 .dialogContainer {
     @apply flex min-h-full items-center justify-center p-4 text-center;

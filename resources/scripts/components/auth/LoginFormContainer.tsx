@@ -33,5 +33,5 @@ const LoginFormContainer = forwardRef<HTMLFormElement, PropsWithChildren<Props>>
 
 LoginFormContainer.displayName = 'LoginFormContainer';
 
-export { TitleSection, ReturnToLogin };
+export { ReturnToLogin, TitleSection };
 export default LoginFormContainer;

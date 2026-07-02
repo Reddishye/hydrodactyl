@@ -9,45 +9,45 @@ import useFlash from '@/plugins/useFlash';
 import type { ApplicationStore } from '@/state';
 
 const ConfigureTwoFactorForm = () => {
-  const [tokens, setTokens] = useState<string[]>([]);
-  const [visible, setVisible] = useState<'enable' | 'disable' | null>(null);
-  const isEnabled = useStoreState((state: ApplicationStore) => state.user.data!.useTotp);
-  const { clearFlashes } = useFlash();
+    const [tokens, setTokens] = useState<string[]>([]);
+    const [visible, setVisible] = useState<'enable' | 'disable' | null>(null);
+    const isEnabled = useStoreState((state: ApplicationStore) => state.user.data!.useTotp);
+    const { clearFlashes } = useFlash();
 
-  useEffect(() => {
-    return () => {
-      clearFlashes('account:two-step');
+    useEffect(() => {
+        return () => {
+            clearFlashes('account:two-step');
+        };
+    }, [visible]);
+
+    const onTokens = (tokens: string[]) => {
+        setTokens(tokens);
+        setVisible(null);
     };
-  }, [visible]);
 
-  const onTokens = (tokens: string[]) => {
-    setTokens(tokens);
-    setVisible(null);
-  };
-
-  return (
-    <div className='contents'>
-      <SetupTOTPDialog open={visible === 'enable'} onClose={() => setVisible(null)} onTokens={onTokens} />
-      <RecoveryTokensDialog tokens={tokens} open={tokens.length > 0} onClose={() => setTokens([])} />
-      <DisableTOTPDialog open={visible === 'disable'} onClose={() => setVisible(null)} />
-      <p className={`text-sm`}>
-        {isEnabled
-          ? 'Your account is protected by an authenticator app.'
-          : 'You have not configured an authenticator app.'}
-      </p>
-      <div className={`mt-6`}>
-        {isEnabled ? (
-          <Button variant='destructive' onClick={() => setVisible('disable')}>
-            Remove Authenticator App
-          </Button>
-        ) : (
-          <Button variant='secondary' onClick={() => setVisible('enable')}>
-            Enable Authenticator App
-          </Button>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <div className='contents'>
+            <SetupTOTPDialog open={visible === 'enable'} onClose={() => setVisible(null)} onTokens={onTokens} />
+            <RecoveryTokensDialog tokens={tokens} open={tokens.length > 0} onClose={() => setTokens([])} />
+            <DisableTOTPDialog open={visible === 'disable'} onClose={() => setVisible(null)} />
+            <p className={`text-sm`}>
+                {isEnabled
+                    ? 'Your account is protected by an authenticator app.'
+                    : 'You have not configured an authenticator app.'}
+            </p>
+            <div className={`mt-6`}>
+                {isEnabled ? (
+                    <Button variant='destructive' onClick={() => setVisible('disable')}>
+                        Remove Authenticator App
+                    </Button>
+                ) : (
+                    <Button variant='secondary' onClick={() => setVisible('enable')}>
+                        Enable Authenticator App
+                    </Button>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default ConfigureTwoFactorForm;

@@ -1,5 +1,5 @@
-import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import { ChevronDown } from '@gravity-ui/icons';
+import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -50,4 +50,4 @@ const CollapseContent = React.forwardRef<
 ));
 CollapseContent.displayName = CollapsiblePrimitive.Content.displayName;
 
-export { CollapseRoot, CollapseTrigger, CollapseContent };
+export { CollapseContent, CollapseRoot, CollapseTrigger };

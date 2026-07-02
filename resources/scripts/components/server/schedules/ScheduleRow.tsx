@@ -1,109 +1,105 @@
-import { Pencil, TrashBin } from '@gravity-ui/icons';
-import { Calendar } from '@gravity-ui/icons';
+import { Calendar, Pencil, TrashBin } from '@gravity-ui/icons';
 import { format } from 'date-fns';
 import { type Actions, useStoreActions } from 'easy-peasy';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { httpErrorToHuman } from '@/api/http';
-import type { Schedule } from '@/api/server/schedules/getServerSchedules';
 import deleteSchedule from '@/api/server/schedules/deleteSchedule';
-import { Button } from '@/components/ui/button';
+import type { Schedule } from '@/api/server/schedules/getServerSchedules';
 import Can from '@/components/elements/Can';
 import { Dialog } from '@/components/elements/dialog';
 import ScheduleCronRow from '@/components/server/schedules/ScheduleCronRow';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import type { ApplicationStore } from '@/state';
 import { ServerContext } from '@/state/server';
 
 interface Props {
-  schedule: Schedule;
-  onDeleted?: () => void;
+    schedule: Schedule;
+    onDeleted?: () => void;
 }
 
 const ScheduleRow = ({ schedule, onDeleted }: Props) => {
-  const [visible, setVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-  const serverId = ServerContext.useStoreState((state) => state.server.data!.id);
-  const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const [visible, setVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const serverId = ServerContext.useStoreState((state) => state.server.data!.id);
+    const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
-  const onDelete = () => {
-    setIsLoading(true);
-    clearFlashes('schedules');
-    deleteSchedule(uuid, schedule.id)
-      .then(() => {
-        setIsLoading(false);
-        onDeleted?.();
-      })
-      .catch((error) => {
-        console.error(error);
-        addError({ key: 'schedules', message: httpErrorToHuman(error) });
-        setIsLoading(false);
-        setVisible(false);
-      });
-  };
+    const onDelete = () => {
+        setIsLoading(true);
+        clearFlashes('schedules');
+        deleteSchedule(uuid, schedule.id)
+            .then(() => {
+                setIsLoading(false);
+                onDeleted?.();
+            })
+            .catch((error) => {
+                console.error(error);
+                addError({ key: 'schedules', message: httpErrorToHuman(error) });
+                setIsLoading(false);
+                setVisible(false);
+            });
+    };
 
-  return (
-    <>
-      <div className='flex items-center justify-between gap-3 w-full'>
-        <div className='flex flex-row flex-1 align-middle items-center gap-3'>
-          <Calendar width={25} height={25} className='flex-none w-9 h-9' fill='currentColor' />
-          <div>
-            <div className='flex flex-row items-center gap-2 text-lg'>
-              <p>{schedule.name}</p>
+    return (
+        <>
+            <div className='flex items-center justify-between gap-3 w-full'>
+                <div className='flex flex-row flex-1 align-middle items-center gap-3'>
+                    <Calendar width={25} height={25} className='flex-none w-9 h-9' fill='currentColor' />
+                    <div>
+                        <div className='flex flex-row items-center gap-2 text-lg'>
+                            <p>{schedule.name}</p>
+                        </div>
+                        <p className='text-xs text-zinc-400'>
+                            Last run at: {schedule.lastRunAt ? format(schedule.lastRunAt, "MMM do 'at' h:mma") : 'N/A'}
+                        </p>
+                    </div>
+                    <ScheduleCronRow cron={schedule.cron} />
+                    <div className='flex-none w-20 sm:ml-2 flex items-center align-middle justify-center'>
+                        <p className='rounded-full px-2 py-px text-xs uppercase bg-neutral-600 text-white'>
+                            {schedule.isProcessing ? 'Processing' : schedule.isActive ? 'Active' : 'Inactive'}
+                        </p>
+                    </div>
+                </div>
+                <div className='flex-shrink-0 flex items-center gap-2 min-w-[68px] justify-end'>
+                    <Can action={'schedule.update'}>
+                        <Button
+                            variant='secondary'
+                            size='sm'
+                            className={`p-2 border transition-colors`}
+                            title='Edit Schedule'
+                            onClick={() => navigate(`/server/${serverId}/schedules/${schedule.id}`)}
+                        >
+                            <Pencil width={22} height={22} fill='currentColor' />
+                        </Button>
+                    </Can>
+                    <Can action={'schedule.delete'}>
+                        <Button
+                            variant='attention'
+                            size='sm'
+                            className={`p-2 border transition-colors`}
+                            title='Delete Schedule'
+                            onClick={() => setVisible(true)}
+                        >
+                            <TrashBin width={22} height={22} fill='currentColor' />
+                        </Button>
+                    </Can>
+                </div>
             </div>
-            <p className='text-xs text-zinc-400'>
-              Last run at: {schedule.lastRunAt ? format(schedule.lastRunAt, "MMM do 'at' h:mma") : 'N/A'}
-            </p>
-          </div>
-          <ScheduleCronRow cron={schedule.cron} />
-          <div className='flex-none w-20 sm:ml-2 flex items-center align-middle justify-center'>
-            <p className='rounded-full px-2 py-px text-xs uppercase bg-neutral-600 text-white'>
-              {schedule.isProcessing ? 'Processing' : schedule.isActive ? 'Active' : 'Inactive'}
-            </p>
-          </div>
 
-        </div>
-        <div className='flex-shrink-0 flex items-center gap-2 min-w-[68px] justify-end'>
-          <Can action={'schedule.update'}>
-            <Button
-              variant='secondary'
-              size='sm'
-              className={`p-2 border transition-colors`}
-              title='Edit Schedule'
-              onClick={() => navigate(`/server/${serverId}/schedules/${schedule.id}`)}
+            <Dialog.Confirm
+                open={visible}
+                onClose={() => setVisible(false)}
+                title={'Delete Schedule'}
+                confirm={'Delete'}
+                onConfirmed={onDelete}
+                loading={isLoading}
             >
-              <Pencil width={22} height={22} fill='currentColor' />
-            </Button>
-          </Can>
-          <Can action={'schedule.delete'}>
-            <Button
-              variant='attention'
-              size='sm'
-              className={`p-2 border transition-colors`}
-              title='Delete Schedule'
-              onClick={() => setVisible(true)}
-            >
-              <TrashBin width={22} height={22} fill='currentColor' />
-            </Button>
-          </Can>
-        </div>
-
-      </div>
-
-      <Dialog.Confirm
-        open={visible}
-        onClose={() => setVisible(false)}
-        title={'Delete Schedule'}
-        confirm={'Delete'}
-        onConfirmed={onDelete}
-        loading={isLoading}
-      >
-        All tasks will be removed and any running processes will be terminated.
-      </Dialog.Confirm>
-    </>
-  );
-}
+                All tasks will be removed and any running processes will be terminated.
+            </Dialog.Confirm>
+        </>
+    );
+};
 
 export default ScheduleRow;
-

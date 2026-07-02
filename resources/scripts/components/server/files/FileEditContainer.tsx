@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import { httpErrorToHuman } from '@/api/http';
 import getFileContents from '@/api/server/files/getFileContents';
 import saveFileContents from '@/api/server/files/saveFileContents';
-import { Button } from '@/components/ui/button';
 import Can from '@/components/elements/Can';
 import {
     DropdownMenu,
@@ -21,6 +20,7 @@ import PageContentBlock from '@/components/elements/PageContentBlock';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import FileManagerBreadcrumbs from '@/components/server/files/FileManagerBreadcrumbs';
 import FileNameModal from '@/components/server/files/FileNameModal';
+import { Button } from '@/components/ui/button';
 import { encodePathSegments } from '@/helpers';
 import useFlash from '@/plugins/useFlash';
 import { ServerContext } from '@/state/server';
@@ -234,7 +234,6 @@ const FileEditContainer = () => {
                     <Can action={'file.update'}>
                         <div className='flex gap-1 items-center justify-center'>
                             <Button
-
                                 size='lg'
                                 className='rounded-l-full rounded-r-none pl-8 pr-6'
                                 onClick={() => save()}
@@ -246,11 +245,7 @@ const FileEditContainer = () => {
                             </Button>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button
-
-                                        size='lg'
-                                        className='rounded-r-full rounded-l-none px-2'
-                                    >
+                                    <Button size='lg' className='rounded-r-full rounded-l-none px-2'>
                                         <svg
                                             xmlns='http://www.w3.org/2000/svg'
                                             width='13'

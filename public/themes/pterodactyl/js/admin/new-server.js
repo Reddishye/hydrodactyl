@@ -57,10 +57,10 @@ $(document).on('click', (event) => {
     lastActiveBox = $(event.target).closest('.box');
     lastActiveBox.addClass('box-primary');
 });
-$('#pNodeId').on('change', function() {
+$('#pNodeId').on('change', function () {
     currentNode = $(this).val();
 
-    $.each(Hydrodactyl.nodeData, function(i, v) {
+    $.each(Hydrodactyl.nodeData, function (i, v) {
         if (v.id == currentNode) {
             $('#pAllocation').html('').select2({
                 data: v.allocations,
@@ -72,7 +72,7 @@ $('#pNodeId').on('change', function() {
     });
 });
 
-$('#pNestId').on('change', function(event) {
+$('#pNestId').on('change', function (event) {
     const nestId = $(this).val();
     $('#pEggId').html('').select2({
         data: $.map(_.get(Hydrodactyl.nests, $(this).val() + '.eggs', []), function(item) {
@@ -84,7 +84,7 @@ $('#pNestId').on('change', function(event) {
     .change();
 });
 
-$('#pEggId').on('change', function(event) {
+$('#pEggId').on('change', function (event) {
     let parentChain = _.get(Hydrodactyl.nests, $('#pNestId').val(), null);
     let objectChain = _.get(parentChain, 'eggs.' + $(this).val(), null);
 
@@ -170,7 +170,7 @@ function updateAdditionalAllocations() {
     const currentAllocation = $('#pAllocation').val();
     const currentNode = $('#pNodeId').val();
 
-    $.each(Hydrodactyl.nodeData, function(i, v) {
+    $.each(Hydrodactyl.nodeData, function (i, v) {
         if (v.id == currentNode) {
             const allocations = [];
 

@@ -56,5 +56,5 @@ const NotFound = () => {
     );
 };
 
-export { ServerError, NotFound };
+export { NotFound, ServerError };
 export default ScreenBlock;

@@ -2,7 +2,6 @@ import { ArrowDownToLine, ClockArrowRotateLeft, Funnel, Magnifier, Xmark } from 
 import { useEffect, useMemo, useState } from 'react';
 import type { ActivityLogFilters } from '@/api/account/activity';
 import { useActivityLogs } from '@/api/server/activity';
-import { Button } from '@/components/ui/button';
 import ActivityLogEntry from '@/components/elements/activity/ActivityLogEntry';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { Input } from '@/components/elements/inputs';
@@ -13,6 +12,7 @@ import Spinner from '@/components/elements/Spinner';
 import PaginationFooter from '@/components/elements/table/PaginationFooter';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import ServerHeader from '@/components/server/header/ServerHeader';
+import { Button } from '@/components/ui/button';
 
 import { useFlashKey } from '@/plugins/useFlash';
 import useLocationHash from '@/plugins/useLocationHash';

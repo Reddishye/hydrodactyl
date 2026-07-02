@@ -147,4 +147,4 @@ function useChartTickLabel(label: string, max: number, tickLabel: string, roundT
     });
 }
 
-export { useChart, useChartTickLabel, getOptions, getEmptyData };
+export { getEmptyData, getOptions, useChart, useChartTickLabel };

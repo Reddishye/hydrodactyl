@@ -12,7 +12,6 @@ import type { FlashStore } from '@/state/flashes';
 
 import SecondaryLink from '../ui/secondary-link';
 
-
 interface Values {
     code: string;
     recoveryCode: '';

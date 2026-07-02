@@ -216,5 +216,5 @@ const validateEnvironmentVariables = (variables: EggVariable[], pendingVariables
     return errors;
 };
 
-export type { Egg, EggVariable, Nest, FlowStep };
-export { MAX_DESCRIPTION_LENGTH, hidden_nest_prefix, blank_egg_prefix, validateEnvironmentVariables };
+export type { Egg, EggVariable, FlowStep, Nest };
+export { blank_egg_prefix, hidden_nest_prefix, MAX_DESCRIPTION_LENGTH, validateEnvironmentVariables };

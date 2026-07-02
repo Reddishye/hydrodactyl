@@ -247,4 +247,3 @@
     --tw-exit-translate-x: calc(--value(integer) * var(--spacing));
     --tw-exit-translate-x: --value(--translate- *, [percentage], ratio, [length]);
 }
-
