@@ -58,7 +58,7 @@
     - [ ] Redesigned "Startup Command" Field
     - [ ] Better Docker Image Selector
   - [ ] Schedules
-    - [ ] Less Cluttered "Create New Schedule" Modal
+    - [x] Less Cluttered "Create New Schedule" Modal
     - [ ] Option for admins and Users to create **Custom Actions** that are able to be used
       - [ ] Send http Request
       - [ ] Interact with another Owned Server
