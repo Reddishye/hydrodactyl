@@ -1,0 +1,5 @@
+allowBuilds:
+  '@carbon/icon-helpers': true
+  '@carbon/icons-react': true
+  '@swc/core': true
+  esbuild: true
