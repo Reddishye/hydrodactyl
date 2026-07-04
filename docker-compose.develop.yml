@@ -43,12 +43,16 @@ services:
             <<: *db-environment
             MYSQL_DATABASE: 'panel'
             MYSQL_USER: 'pterodactyl'
-        ports:
-            - '3306:3306'
+        # ports:
+        #     - '3306:3306'
     cache:
         image: redis:alpine
         restart: always
     panel:
+        build:
+            context: .
+            args:
+                DEV: "true"
         image: hydrodactyl:develop
         restart: always
         ports:
@@ -180,9 +184,6 @@ services:
 
 networks:
     default:
-        ipam:
-            config:
-                - subnet: 172.20.0.0/16
 
 volumes:
     panel_vendor:

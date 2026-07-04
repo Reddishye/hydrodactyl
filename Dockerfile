@@ -20,6 +20,8 @@ COPY . .
 RUN if [ "$DEV" = "false" ]; then \
     CI=true pnpm install --frozen-lockfile \
     && pnpm run ship; \
+    else \
+    mkdir -p public/assets public/build; \
     fi
 
 # Stage 1:

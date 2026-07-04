@@ -15,8 +15,8 @@
 @section('content')
 <div class="row">
     <div class="col-xs-12">
-        <div class="alert alert-danger">
-            Eggs are a powerful feature of Pterodactyl Panel that allow for extreme flexibility and configuration. Please note that while powerful, modifying an egg wrongly can very easily brick your servers and cause more problems. Please avoid editing our default eggs — those provided by <code>support@pterodactyl.io</code> — unless you are absolutely sure of what you are doing.
+        <div class="callout callout-warning">
+            <i class="fa fa-warning"></i> <strong>Eggs are powerful</strong> — modifying them incorrectly can break your servers. Avoid editing default eggs unless you know what you're doing.
         </div>
     </div>
 </div>

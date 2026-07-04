@@ -68,7 +68,7 @@ const MobileSidebarPanel = memo<{ navItems: NavItemData[] }>(({ navItems }) => {
                 <div className='sidebar-logo-container h-[64px] items-center mx-8 flex flex-none'>
                     <NavLink
                         to={'/'}
-                        className='flex items-center shrink-0 h-4 w-fit hydrodactyl-logo'
+                        className='flex items-center shrink-0 h-8 w-fit hydrodactyl-logo'
                         aria-label='Hydrodactyl'
                     >
                         <Logo />

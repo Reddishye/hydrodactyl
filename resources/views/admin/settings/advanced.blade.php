@@ -16,75 +16,61 @@
 @section('content')
   @yield('settings::nav')
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-md-8 col-md-offset-2">
     <form action="" method="POST">
-      <div class="box">
+      <div class="box box-primary">
       <div class="box-header with-border">
-        <h3 class="box-title">HTTP Connections</h3>
+        <i class="fa fa-plug"></i> <h3 class="box-title" style="display:inline;">HTTP Connections</h3>
       </div>
       <div class="box-body">
         <div class="row">
         <div class="form-group col-md-6">
           <label class="control-label">Connection Timeout</label>
-          <div>
           <input type="number" required class="form-control" name="pterodactyl:guzzle:connect_timeout"
             value="{{ old('pterodactyl:guzzle:connect_timeout', config('pterodactyl.guzzle.connect_timeout')) }}">
-          <p class="text-muted small">The amount of time in seconds to wait for a connection to be opened before
-            throwing an error.</p>
-          </div>
+          <p class="text-muted small" style="margin-top:4px;">Seconds to wait before timing out a connection attempt.</p>
         </div>
         <div class="form-group col-md-6">
           <label class="control-label">Request Timeout</label>
-          <div>
           <input type="number" required class="form-control" name="pterodactyl:guzzle:timeout"
             value="{{ old('pterodactyl:guzzle:timeout', config('pterodactyl.guzzle.timeout')) }}">
-          <p class="text-muted small">The amount of time in seconds to wait for a request to be completed before
-            throwing an error.</p>
-          </div>
-        </div>
-        </div>
-      </div>
-      </div>
-      <div class="box">
-      <div class="box-header with-border">
-        <h3 class="box-title">Automatic Allocation Creation</h3>
-      </div>
-      <div class="box-body">
-        <div class="row">
-        <div class="form-group col-md-4">
-          <label class="control-label">Status</label>
-          <div>
-          <select class="form-control" name="pterodactyl:client_features:allocations:enabled">
-            <option value="false">Disabled</option>
-            <option value="true" @if(old('pterodactyl:client_features:allocations:enabled', config('pterodactyl.client_features.allocations.enabled'))) selected @endif>Enabled</option>
-          </select>
-          <p class="text-muted small">If enabled users will have the option to automatically create new
-            allocations for their server via the frontend.</p>
-          </div>
-        </div>
-        <div class="form-group col-md-4">
-          <label class="control-label">Starting Port</label>
-          <div>
-          <input type="number" class="form-control" name="pterodactyl:client_features:allocations:range_start"
-            value="{{ old('pterodactyl:client_features:allocations:range_start', config('pterodactyl.client_features.allocations.range_start')) }}">
-          <p class="text-muted small">The starting port in the range that can be automatically allocated.</p>
-          </div>
-        </div>
-        <div class="form-group col-md-4">
-          <label class="control-label">Ending Port</label>
-          <div>
-          <input type="number" class="form-control" name="pterodactyl:client_features:allocations:range_end"
-            value="{{ old('pterodactyl:client_features:allocations:range_end', config('pterodactyl.client_features.allocations.range_end')) }}">
-          <p class="text-muted small">The ending port in the range that can be automatically allocated.</p>
-          </div>
+          <p class="text-muted small" style="margin-top:4px;">Seconds to wait before timing out an active request.</p>
         </div>
         </div>
       </div>
       </div>
       <div class="box box-primary">
+      <div class="box-header with-border">
+        <i class="fa fa-sitemap"></i> <h3 class="box-title" style="display:inline;">Automatic Allocation Creation</h3>
+      </div>
+      <div class="box-body">
+        <div class="row">
+        <div class="form-group col-md-4">
+          <label class="control-label">Status</label>
+          <select class="form-control" name="pterodactyl:client_features:allocations:enabled">
+            <option value="false">Disabled</option>
+            <option value="true" @if(old('pterodactyl:client_features:allocations:enabled', config('pterodactyl.client_features.allocations.enabled'))) selected @endif>Enabled</option>
+          </select>
+          <p class="text-muted small" style="margin-top:4px;">Let users automatically create allocations from the frontend.</p>
+        </div>
+        <div class="form-group col-md-4">
+          <label class="control-label">Starting Port</label>
+          <input type="number" class="form-control" name="pterodactyl:client_features:allocations:range_start"
+            value="{{ old('pterodactyl:client_features:allocations:range_start', config('pterodactyl.client_features.allocations.range_start')) }}">
+          <p class="text-muted small" style="margin-top:4px;">First port in the allocatable range.</p>
+        </div>
+        <div class="form-group col-md-4">
+          <label class="control-label">Ending Port</label>
+          <input type="number" class="form-control" name="pterodactyl:client_features:allocations:range_end"
+            value="{{ old('pterodactyl:client_features:allocations:range_end', config('pterodactyl.client_features.allocations.range_end')) }}">
+          <p class="text-muted small" style="margin-top:4px;">Last port in the allocatable range.</p>
+        </div>
+        </div>
+      </div>
       <div class="box-footer">
         {{ csrf_field() }}
-        <button type="submit" name="_method" value="PATCH" class="btn btn-sm btn-primary pull-right">Save</button>
+        <input type="hidden" name="_method" value="PATCH">
+        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Save</button>
       </div>
       </div>
     </form>

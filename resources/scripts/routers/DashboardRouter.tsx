@@ -47,10 +47,10 @@ const DashboardRouter = () => {
     };
 
     // Define refs for navigation buttons.
-    const NavigationHome = useRef(null);
-    const NavigationSettings = useRef(null);
-    const NavigationApi = useRef(null);
-    const NavigationSSH = useRef(null);
+    const NavigationHome = useRef<HTMLAnchorElement>(null);
+    const NavigationSettings = useRef<HTMLAnchorElement>(null);
+    const NavigationApi = useRef<HTMLAnchorElement>(null);
+    const NavigationSSH = useRef<HTMLAnchorElement>(null);
 
     const calculateTop = (pathname: string) => {
         // Get currents of navigation refs.
@@ -63,11 +63,11 @@ const DashboardRouter = () => {
         // Height of navigation links (56) minus highlight height (40) equals 16. 16 devided by 2 is 8.
         const HighlightOffset: number = 8;
 
-        if (pathname.endsWith(`/`) && ButtonHome != null) return (ButtonHome as any).offsetTop + HighlightOffset;
+        if (pathname.endsWith(`/`) && ButtonHome != null) return ButtonHome.offsetTop + HighlightOffset;
         if (pathname.endsWith(`/account`) && ButtonSettings != null)
-            return (ButtonSettings as any).offsetTop + HighlightOffset;
-        if (pathname.endsWith('/api') && ButtonApi != null) return (ButtonApi as any).offsetTop + HighlightOffset;
-        if (pathname.endsWith('/ssh') && ButtonSSH != null) return (ButtonSSH as any).offsetTop + HighlightOffset;
+            return ButtonSettings.offsetTop + HighlightOffset;
+        if (pathname.endsWith('/api') && ButtonApi != null) return ButtonApi.offsetTop + HighlightOffset;
+        if (pathname.endsWith('/ssh') && ButtonSSH != null) return ButtonSSH.offsetTop + HighlightOffset;
         return '0';
     };
 

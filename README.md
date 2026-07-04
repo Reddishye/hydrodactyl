@@ -1,10 +1,10 @@
 <p align="center">
 <a aria-label="Read the Hydrodactyl introduction blog post" href="https://blueprint.zip/blog/introducing-hydrodactyl?utm_source=githubreadme&utm_medium=readme&utm_campaign=HYDRODACTYL&utm_id=HYDRODACTYL"><img alt="" src=".github/banner_v6.jpg"></a>
 </p>
-<p align="right"><a href="https://discord.gg/sK686yHdaK">Join Hydrodactyl's Discord community 🡕</a> • <a href="https://blueprint.zip/blog/introducing-hydrodactyl">Read the blog post 🡕</a></p>
+<p align="right"><a href="https://discord.gg/sK686yHdaK">Join the Discord 🡕</a> • <a href="https://blueprint.zip/blog/introducing-hydrodactyl">Read the blog post 🡕</a></p>
 
 <br/>
-<h1 align="center">Hydrodactyl (formerly Pyrodactyl-oss)</h1>
+<h1 align="center">Hydrodactyl</h1>
 <p align="center">
     <a href="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml"><img src="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml/badge.svg" alt="Docker"></a>
     <a href="https://biomejs.dev"><img alt="Formatted with Biome" src="https://img.shields.io/badge/Formatted_with-Biome-60a5fa?style=flat&logo=biome"></a>
@@ -13,37 +13,36 @@
 
 <br/>
 
-Hydrodactyl is the Pterodactyl-based game server management panel that focuses on performance enhancements, a reimagined, accessible interface, and top-tier developer experience. Builds faster, compiles smaller: Hydrodactyl is the world's best Pterodactyl.
+Hydrodactyl is a modern, performance-focused game server management panel forked from Pterodactyl. It delivers smaller bundles, faster builds, and an accessible, reimagined interface.
 
-- Hydrodactyl is not compatible with Blueprint extensions. This project is intended to be an AIO solution.
-- Hydrodactyl is under development and pre-release. Some UI elements may appear broken, and there might be some bugs.
-- Please read our documentation at [https://hydrodactyl.dev](https://hydrodactyl.dev/docs/hydrodactyl) before installing.
-- For Hydrodactyl-specific issues, please use the [Hydrodactyl Discord](https://discord.gg/mnTJVSSaKp?utm_source=githubreadme&utm_medium=readme&utm_campaign=OSSLAUNCH&utm_id=OSSLAUNCH) instead of Pterodactyl or Blueprint support channels.
-
+- Not compatible with Blueprint extensions — this is an all-in-one solution.
+- Pre-release software. Some UI elements may appear broken and bugs may exist.
+- Logo customization is experimental and subject to change.
+- Read the docs at [hydrodactyl.dev](https://hydrodactyl.dev/docs/hydrodactyl) before installing.
 
 ![Dashboard Image](./.github/server_menu.jpeg)
 
-Hydrodactyl is Pterodactyl, but built using modern technologies and for everyone. Expect smaller bundle sizes, faster build times, faster loading times, better accessibility and more approachable.
+Built by the maintainer of the original Pyrodactyl project and funded by Blueprint.
 
-Built by the same maintainer behind the original Pyrodactyl project, funded by Blueprint for years to come.
+## Quick start
 
-## Install/development
+```bash
+git clone https://github.com/BlueprintFramework/hydrodactyl.git
+cd hydrodactyl
+cp .env.example .env
+docker compose up -d
+```
 
-**See our [Installation](https://hydrodactyl.dev/docs/hydrodactyl/installation) docs page on how to get started.**
-
-For local development, see our [Local Development](https://hydrodactyl.dev/docs/pyrodactyl/local-development) guide. You'll find instructions on how to get a development environment up and running for Linux, MacOS and Windows.
-
-Windows is only supported for local-development purposes.
+See the [Installation Guide](https://hydrodactyl.dev/docs/hydrodactyl/installation) and [Local Development Guide](https://hydrodactyl.dev/docs/pyrodactyl/local-development) for detailed instructions. Windows is supported for local development only.
 
 ![Dashboard Image](./.github/dashboard.jpeg)
 
-## Support the project
+## Support
 
-There are multiple ways to support Hydrodactyl:
-- [Support Hydrodactyl's maintainer by donating to Naterfute on Ko-Fi.](https://ko-fi.com/naterfute)
-- [Support the Blueprint organization with a donation](https://bpfw.io/donate), the nonprofit funding Hydrodactyl.
-- **Star the project on GitHub** and share it with someone who might be interested in using this! :D
-- Joining the [Hydrodactyl Discord community](https://discord.gg/sK686yHdaK).
+- [Donate on Ko-Fi](https://ko-fi.com/naterfute) — supports the maintainer
+- [Donate to Blueprint](https://bpfw.io/donate) — the nonprofit funding Hydrodactyl
+- [Join the Discord](https://discord.gg/sK686yHdaK)
+- Star the repo and share it with someone who might find it useful!
 
 <a href="https://star-history.com/#BlueprintFramework/hydrodactyl&Date">
   <picture>

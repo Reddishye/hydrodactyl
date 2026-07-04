@@ -24,10 +24,19 @@ class AssetComposer
    */
   public function compose(View $view): void
   {
+    $logoType = config('app.logo.type');
+    $logoValue = config('app.logo.value');
+    $logoUrl = match ($logoType) {
+      'upload' => $logoValue ? url('storage/' . $logoValue) : null,
+      'link' => $logoValue,
+      default => null,
+    };
+
     $view->with('siteConfiguration', [
       'name' => config('app.name') ?? 'Hydrodactyl',
       'locale' => config('app.locale') ?? 'en',
       'timezone' => config('app.timezone') ?? '',
+      'logo' => $logoUrl,
       'captcha' => [
         'enabled' => $this->captcha->getDefaultDriver() !== 'none',
         'provider' => $this->captcha->getDefaultDriver(),

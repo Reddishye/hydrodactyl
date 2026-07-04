@@ -2,6 +2,10 @@
 declare global {
     interface Window {
         SiteConfiguration?: {
+            name: string;
+            locale: string;
+            timezone: string;
+            logo?: string | null;
             captcha: {
                 enabled: boolean;
                 provider: string;

@@ -65,7 +65,7 @@ interface Nest {
 }
 
 const UnifiedRouter = () => {
-    const params = useParams<'id'>();
+    const _params = useParams<'id'>();
     const location = useLocation();
     const isServerRoute = location.pathname.startsWith('/server/');
 
