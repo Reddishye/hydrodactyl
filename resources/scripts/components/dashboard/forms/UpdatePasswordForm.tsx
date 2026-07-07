@@ -56,52 +56,45 @@ const UpdatePasswordForm = () => {
     };
 
     return (
-        <Fragment>
-            <Formik
-                onSubmit={submit}
-                validationSchema={schema}
-                initialValues={{ current: '', password: '', confirmPassword: '' }}
-            >
-                {({ isSubmitting, isValid }) => (
-                    <Fragment>
-                        <SpinnerOverlay size={'large'} visible={isSubmitting} />
-                        <Form className={`m-0`}>
+        <Formik
+            onSubmit={submit}
+            validationSchema={schema}
+            initialValues={{ current: '', password: '', confirmPassword: '' }}
+        >
+            {({ isSubmitting, isValid }) => (
+                <Fragment>
+                    <SpinnerOverlay size={'large'} visible={isSubmitting} />
+                    <Form className={`m-0`}>
+                        <Field id={'current_password'} type={'password'} name={'current'} label={'Current Password'} />
+                        <div className={`mt-6`}>
                             <Field
-                                id={'current_password'}
+                                id={'new_password'}
                                 type={'password'}
-                                name={'current'}
-                                label={'Current Password'}
+                                name={'password'}
+                                label={'New Password'}
+                                description={
+                                    'Your new password should be at least 8 characters in length and unique to this website.'
+                                }
                             />
-                            <div className={`mt-6`}>
-                                <Field
-                                    id={'new_password'}
-                                    type={'password'}
-                                    name={'password'}
-                                    label={'New Password'}
-                                    description={
-                                        'Your new password should be at least 8 characters in length and unique to this website.'
-                                    }
-                                />
-                            </div>
-                            <div className={`mt-6`}>
-                                <Field
-                                    id={'confirm_new_password'}
-                                    type={'password'}
-                                    name={'confirmPassword'}
-                                    label={'Confirm New Password'}
-                                />
-                            </div>
-                            <div className={`mt-6`}>
-                                <Button variant='secondary' disabled={isSubmitting || !isValid}>
-                                    {isSubmitting && <Spinner size='small' />}
-                                    {isSubmitting ? 'Updating...' : 'Update Password'}
-                                </Button>
-                            </div>
-                        </Form>
-                    </Fragment>
-                )}
-            </Formik>
-        </Fragment>
+                        </div>
+                        <div className={`mt-6`}>
+                            <Field
+                                id={'confirm_new_password'}
+                                type={'password'}
+                                name={'confirmPassword'}
+                                label={'Confirm New Password'}
+                            />
+                        </div>
+                        <div className={`mt-6`}>
+                            <Button variant='secondary' disabled={isSubmitting || !isValid}>
+                                {isSubmitting && <Spinner size='small' />}
+                                {isSubmitting ? 'Updating...' : 'Update Password'}
+                            </Button>
+                        </div>
+                    </Form>
+                </Fragment>
+            )}
+        </Formik>
     );
 };
 

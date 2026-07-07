@@ -96,7 +96,7 @@ export class CaptchaManager {
                 theme: 'auto',
                 size: 'normal',
                 onSuccess: (token: string) => this.handleSuccess(token),
-                onError: (error: any) => this.handleError(error),
+                onError: (error: unknown) => this.handleError(error),
                 onExpired: () => this.handleExpired(),
                 ...options,
             };
@@ -108,7 +108,7 @@ export class CaptchaManager {
             }
 
             return widgetId;
-        } catch (error) {
+        } catch (_error) {
             return null;
         }
     }
@@ -200,7 +200,7 @@ export class CaptchaManager {
     /**
      * Handle captcha error
      */
-    private handleError(error: any): void {
+    private handleError(error: unknown): void {
         // Dispatch custom event
         window.dispatchEvent(
             new CustomEvent('captcha:error', {

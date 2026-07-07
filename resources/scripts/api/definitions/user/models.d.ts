@@ -13,14 +13,14 @@ interface User extends Model {
     can(permission: SubuserPermission): boolean;
 }
 
-interface SSHKey extends Model {
+export interface SSHKey extends Model {
     name: string;
     publicKey: string;
     fingerprint: string;
     createdAt: Date;
 }
 
-interface ActivityLog extends Model<'actor'> {
+export interface ActivityLog extends Model<'actor'> {
     id: string;
     batch: UUID | null;
     event: string;

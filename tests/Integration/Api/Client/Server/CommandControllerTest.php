@@ -22,7 +22,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount();
 
-        $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
+        $response = $this->actingAs($user)->postJson("/api/client/servers/wings/$server->uuid/command", [
             'command' => '',
         ]);
 
@@ -38,7 +38,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 
-        $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
+        $response = $this->actingAs($user)->postJson("/api/client/servers/wings/$server->uuid/command", [
             'command' => 'say Test',
         ]);
 
@@ -59,7 +59,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
 
         $mock->expects('send')->with('say Test')->andReturn(new GuzzleResponse());
 
-        $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
+        $response = $this->actingAs($user)->postJson("/api/client/servers/wings/$server->uuid/command", [
             'command' => 'say Test',
         ]);
 
@@ -81,7 +81,7 @@ class CommandControllerTest extends ClientApiIntegrationTestCase
             )
         );
 
-        $response = $this->actingAs($user)->postJson("/api/client/servers/$server->uuid/command", [
+        $response = $this->actingAs($user)->postJson("/api/client/servers/wings/$server->uuid/command", [
             'command' => 'say Test',
         ]);
 

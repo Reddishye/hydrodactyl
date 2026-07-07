@@ -51,7 +51,7 @@ const UpdateEmailAddressForm = () => {
     };
 
     return (
-        <Formik onSubmit={submit} validationSchema={schema} initialValues={{ email: user!.email, password: '' }}>
+        <Formik onSubmit={submit} validationSchema={schema} initialValues={{ email: user?.email, password: '' }}>
             {({ isSubmitting, isValid }) => (
                 <Fragment>
                     <SpinnerOverlay size={'large'} visible={isSubmitting} />

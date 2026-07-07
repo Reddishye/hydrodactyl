@@ -145,9 +145,9 @@ class ServerCreationServiceTest extends IntegrationTestCase
 
         $this->assertFalse($response->isSuspended());
         $this->assertTrue($response->oom_disabled);
-        $this->assertSame(0, $response->database_limit);
-        $this->assertSame(0, $response->allocation_limit);
-        $this->assertSame(0, $response->backup_limit);
+        $this->assertNull($response->database_limit);
+        $this->assertNull($response->allocation_limit);
+        $this->assertNull($response->backup_limit);
     }
 
     /**

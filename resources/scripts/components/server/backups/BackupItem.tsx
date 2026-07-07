@@ -198,6 +198,7 @@ const BackupItem = ({ backup, isSelected = false, onToggleSelect, isSelectable =
                 {backup.status === 'failed' && backup.canRetry && (
                     <Can action='backup.create'>
                         <button
+                            type='button'
                             onClick={handleRetry}
                             className='p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-colors'
                             title='Retry backup'

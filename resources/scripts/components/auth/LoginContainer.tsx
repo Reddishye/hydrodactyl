@@ -51,6 +51,7 @@ function LoginContainer() {
                 }
             }
         } else {
+            // No captcha required
         }
 
         login(loginData)

@@ -1,12 +1,12 @@
-import { Formik, Form, type FormikHelpers } from 'formik';
-import { useState } from 'react';
+import { Form, Formik, type FormikHelpers } from 'formik';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { useState } from 'react';
 import { object, string } from 'yup';
 
 import setupAdmin from '@/api/auth/setup';
-import { Button } from '@/components/ui/button';
 import Field from '@/components/elements/Field';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import useFlash from '@/plugins/useFlash';
 
@@ -56,7 +56,7 @@ const schema = object().shape({
     password: string().required('A password is required.').min(8, 'Use at least 8 characters.'),
     password_confirmation: string()
         .required('Please confirm your password.')
-        .test('password-match', 'Passwords do not match.', function(v) {
+        .test('password-match', 'Passwords do not match.', function (v) {
             // Let .required() own the empty case so only one message shows.
             if (!v) return true;
             return v === this.parent.password;
@@ -88,7 +88,7 @@ const PasswordStrength = ({ value }: { value: string }) => {
     if (!value) return null;
     const score = scorePassword(value);
     // scorePassword() always returns 0-4 and STRENGTH has one entry per value.
-    const { label, className } = STRENGTH[score]!;
+    const { label, className } = STRENGTH[score] ?? { label: '', className: '' };
 
     return (
         <div className='flex items-center gap-3 mt-2.5'>
@@ -150,7 +150,15 @@ const SuccessPanel = ({ email }: { email: string }) => (
         transition={{ duration: 0.25 }}
         className='flex flex-col items-center text-center py-6 gap-4'
     >
-        <svg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <svg
+            width='44'
+            height='44'
+            viewBox='0 0 44 44'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+            aria-label='Success checkmark'
+            role='img'
+        >
             <circle cx='22' cy='22' r='21' stroke='#fa4e49' strokeWidth='2' opacity='0.35' />
             <motion.path
                 d='M14 22.5L19.5 28L31 16'
@@ -223,7 +231,13 @@ const SetupContainer = () => {
     };
 
     return (
-        <Formik initialValues={INITIAL} validationSchema={schema} onSubmit={onSubmit} validateOnBlur validateOnChange={false}>
+        <Formik
+            initialValues={INITIAL}
+            validationSchema={schema}
+            onSubmit={onSubmit}
+            validateOnBlur
+            validateOnChange={false}
+        >
             {({ values, validateForm, setTouched, isSubmitting, handleSubmit }) => {
                 // validateForm() runs the full schema and is what populates the
                 // Formik `errors` the touched <Field>s render against — keep it.
@@ -246,7 +260,7 @@ const SetupContainer = () => {
                 const back = () => setStep((s) => Math.max(0, s - 1));
 
                 // Light up the primary CTA once the current step is ready to proceed.
-                const ready = step === 0 ? true : schema.isValidSync(values);
+                const _ready = step === 0 ? true : schema.isValidSync(values);
 
                 return (
                     <Form className='w-full max-w-md mx-auto flex flex-col gap-8'>
@@ -287,13 +301,37 @@ const SetupContainer = () => {
                                         </p>
                                     </div>
                                     <Field id='email' name='email' type='email' label='Email' disabled={isSubmitting} />
-                                    <Field id='username' name='username' type='text' label='Username' disabled={isSubmitting} />
+                                    <Field
+                                        id='username'
+                                        name='username'
+                                        type='text'
+                                        label='Username'
+                                        disabled={isSubmitting}
+                                    />
                                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                                        <Field id='name_first' name='name_first' type='text' label='First name' disabled={isSubmitting} />
-                                        <Field id='name_last' name='name_last' type='text' label='Last name' disabled={isSubmitting} />
+                                        <Field
+                                            id='name_first'
+                                            name='name_first'
+                                            type='text'
+                                            label='First name'
+                                            disabled={isSubmitting}
+                                        />
+                                        <Field
+                                            id='name_last'
+                                            name='name_last'
+                                            type='text'
+                                            label='Last name'
+                                            disabled={isSubmitting}
+                                        />
                                     </div>
                                     <div>
-                                        <Field id='password' name='password' type='password' label='Password' disabled={isSubmitting} />
+                                        <Field
+                                            id='password'
+                                            name='password'
+                                            type='password'
+                                            label='Password'
+                                            disabled={isSubmitting}
+                                        />
                                         <PasswordStrength value={values.password} />
                                     </div>
                                     <Field

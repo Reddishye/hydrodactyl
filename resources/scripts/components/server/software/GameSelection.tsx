@@ -20,6 +20,7 @@ const GameSelection = ({ nests, onSelectNest, onBack }: Props) => (
                 {nests?.map((nest) =>
                     nest?.attributes?.name?.includes(hidden_nest_prefix) ? null : (
                         <button
+                            type='button'
                             key={nest?.attributes?.uuid}
                             onClick={() => onSelectNest(nest)}
                             className='p-4 sm:p-5 bg-[#ffffff08] border border-[#ffffff12] rounded-lg hover:border-[#ffffff20] transition-all text-left active:bg-[#ffffff12] touch-manipulation'

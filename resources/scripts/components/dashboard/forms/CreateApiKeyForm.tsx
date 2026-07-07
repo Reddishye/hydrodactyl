@@ -1,7 +1,6 @@
-import { Activity02Icon } from '@hugeicons/core-free-icons';
 import { type Actions, useStoreActions } from 'easy-peasy';
 import { Field, Form, Formik, type FormikHelpers } from 'formik';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { object, string } from 'yup';
 import createApiKey from '@/api/account/createApiKey';
 import type { ApiKey } from '@/api/account/getApiKeys';
@@ -10,7 +9,6 @@ import ApiKeyModal from '@/components/dashboard/ApiKeyModal';
 import ContentBox from '@/components/elements/ContentBox';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import Input from '@/components/elements/Input';
-import PageContentBlock from '@/components/elements/PageContentBlock';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import { Button } from '@/components/ui/button';

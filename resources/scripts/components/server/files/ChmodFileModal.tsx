@@ -20,7 +20,7 @@ interface File {
 type OwnProps = RequiredModalProps & { files: File[] };
 
 const ChmodFileModal = ({ files, ...props }: OwnProps) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const { mutate } = useFileManagerSwr();
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
@@ -31,7 +31,7 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
 
         await mutate(
             (data) =>
-                data!.map((f) =>
+                data?.map((f) =>
                     f.name === files[0]?.file ? { ...f, mode: fileBitsToString(mode, !f.isFile), modeBits: mode } : f,
                 ),
             false,
@@ -40,7 +40,7 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
         const data = files.map((f) => ({ file: f.file, mode: mode }));
 
         chmodFiles(uuid, directory, data)
-            .then((): Promise<any> => (files.length > 0 ? mutate() : Promise.resolve()))
+            .then((): Promise<unknown> => (files.length > 0 ? mutate() : Promise.resolve()))
             .then(() => setSelectedFiles([]))
             .catch((error) => {
                 mutate();

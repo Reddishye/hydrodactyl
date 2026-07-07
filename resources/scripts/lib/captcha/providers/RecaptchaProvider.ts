@@ -95,7 +95,7 @@ export class RecaptchaProvider extends BaseCaptchaProvider {
                         }
                         resolve('recaptcha-v3');
                     })
-                    .catch((error: any) => {
+                    .catch((error: unknown) => {
                         if (config.onError) {
                             config.onError(error);
                         }
@@ -105,13 +105,13 @@ export class RecaptchaProvider extends BaseCaptchaProvider {
         });
     }
 
-    getResponse(widgetId?: string): string | null {
+    getResponse(_widgetId?: string): string | null {
         // For reCAPTCHA v3, get the token from the hidden input
         const input = document.getElementById('g-recaptcha-response') as HTMLInputElement;
         return input ? input.value : null;
     }
 
-    reset(widgetId?: string): void {
+    reset(_widgetId?: string): void {
         // For reCAPTCHA v3, clear the hidden input and re-execute
         const input = document.getElementById('g-recaptcha-response') as HTMLInputElement;
         if (input) {
@@ -133,7 +133,7 @@ export class RecaptchaProvider extends BaseCaptchaProvider {
         }
     }
 
-    remove(widgetId?: string): void {
+    remove(_widgetId?: string): void {
         // For reCAPTCHA v3, remove the hidden input
         const input = document.getElementById('g-recaptcha-response');
         if (input) {

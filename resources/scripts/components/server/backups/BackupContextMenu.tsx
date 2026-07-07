@@ -27,7 +27,7 @@ interface Props {
 }
 
 const BackupContextMenu = ({ backup }: Props) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const daemonType = getGlobalDaemonType();
     const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
     const [modal, setModal] = useState('');
@@ -154,8 +154,11 @@ const BackupContextMenu = ({ backup }: Props) => {
             <Dialog open={modal === 'rename'} onClose={() => setModal('')} title='Rename Backup'>
                 <div className='space-y-4'>
                     <div>
-                        <label className='block text-sm font-medium text-zinc-200 mb-2'>Backup Name</label>
+                        <label htmlFor='backup-name' className='block text-sm font-medium text-zinc-200 mb-2'>
+                            Backup Name
+                        </label>
                         <input
+                            id='backup-name'
                             type='text'
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}

@@ -137,10 +137,23 @@ export const useOperationPolling = () => {
 
     React.useEffect(() => {
         return () => {
-            activePollers.forEach((cleanup) => cleanup());
+            activePollers.forEach((cleanup) => {
+                cleanup();
+            });
             activePollers.clear();
         };
     }, [activePollers]);
+
+    const stopPolling = React.useCallback(
+        (operationId: string) => {
+            const cleanup = activePollers.get(operationId);
+            if (cleanup) {
+                cleanup();
+                activePollers.delete(operationId);
+            }
+        },
+        [activePollers],
+    );
 
     const startPolling = React.useCallback(
         (
@@ -154,22 +167,13 @@ export const useOperationPolling = () => {
             const cleanup = pollOperationStatus(uuid, operationId, onUpdate, onComplete, onError);
             activePollers.set(operationId, cleanup);
         },
-        [activePollers],
-    );
-
-    const stopPolling = React.useCallback(
-        (operationId: string) => {
-            const cleanup = activePollers.get(operationId);
-            if (cleanup) {
-                cleanup();
-                activePollers.delete(operationId);
-            }
-        },
-        [activePollers],
+        [activePollers, stopPolling],
     );
 
     const stopAllPolling = React.useCallback(() => {
-        activePollers.forEach((cleanup) => cleanup());
+        activePollers.forEach((cleanup) => {
+            cleanup();
+        });
         activePollers.clear();
     }, [activePollers]);
 

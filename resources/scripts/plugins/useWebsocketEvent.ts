@@ -4,16 +4,16 @@ import type { SocketEvent } from '@/components/server/events';
 
 import { ServerContext } from '@/state/server';
 
-const useWebsocketEvent = (event: SocketEvent, callback: (data: any) => void) => {
+const useWebsocketEvent = (event: SocketEvent, callback: (data: unknown) => void) => {
     const { connected, instance } = ServerContext.useStoreState((state) => state.socket);
-    const savedCallback = useRef<any>(null);
+    const savedCallback = useRef<((data: unknown) => void) | null>(null);
 
     useEffect(() => {
         savedCallback.current = callback;
     }, [callback]);
 
     return useEffect(() => {
-        const eventListener = (data: any) => savedCallback.current(data);
+        const eventListener = (data: unknown) => savedCallback.current?.(data);
         if (connected && instance) {
             instance.addListener(event, eventListener);
         }

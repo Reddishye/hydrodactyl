@@ -19,8 +19,8 @@ const EditUserContainer = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [fetching, setFetching] = useState(false);
 
-    const serverId = ServerContext.useStoreState((state) => state.server.data!.id);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const serverId = ServerContext.useStoreState((state) => state.server.data?.id);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const subusers = ServerContext.useStoreState((state) => state.subusers.data);
     const setSubusers = ServerContext.useStoreActions((actions) => actions.subusers.setSubusers);
     const { addError } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
@@ -41,7 +41,7 @@ const EditUserContainer = () => {
                     setFetching(false);
                 });
         }
-    }, [uuid]);
+    }, [uuid, subusers.length, setSubusers, addError]);
 
     useEffect(() => {
         if (!fetching && subusers.length > 0 && !subuser) {

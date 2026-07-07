@@ -73,7 +73,10 @@ export const getStatusIconType = (status: OperationStatus): 'spinner' | 'success
 /**
  * Check if operation modal can be closed or dismissed.
  */
-export const canCloseOperation = (operation: any, error: string | null): boolean => {
+export const canCloseOperation = (
+    operation: { is_completed?: boolean; has_failed?: boolean } | null,
+    error: string | null,
+): boolean => {
     return Boolean((operation && (operation.is_completed || operation.has_failed)) || error);
 };
 

@@ -22,8 +22,8 @@ const ScheduleRow = ({ schedule, onDeleted }: Props) => {
     const [visible, setVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const serverId = ServerContext.useStoreState((state) => state.server.data!.id);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
+    const serverId = ServerContext.useStoreState((state) => state.server.data?.id);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
     const onDelete = () => {

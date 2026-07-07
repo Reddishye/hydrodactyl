@@ -27,7 +27,7 @@ interface Props {
 const VariableBox = ({ variable }: Props) => {
     const FLASH_KEY = `server:startup:${variable.envVariable}`;
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const [loading, setLoading] = useState(false);
     const [canEdit] = usePermissions(['startup.update']);
     const { clearFlashes, clearAndAddHttpError } = useFlash();
@@ -42,9 +42,9 @@ const VariableBox = ({ variable }: Props) => {
             .then(([response, invocation]) =>
                 mutate(
                     (data) => ({
-                        ...data!,
+                        ...(data ?? {}),
                         invocation,
-                        variables: (data!.variables || []).map((v) =>
+                        variables: (data?.variables || []).map((v) =>
                             v.envVariable === response.envVariable ? response : v,
                         ),
                     }),
@@ -117,67 +117,61 @@ const VariableBox = ({ variable }: Props) => {
                             }}
                         />
                     </div>
-                ) : (
-                    <>
-                        {selectValues.length > 0 && (variable.serverValue ?? variable.defaultValue) ? (
-                            <DropdownMenu onOpenChange={(open) => setDropDownOpen(open)}>
-                                <DropdownMenuTrigger asChild>
-                                    <button
-                                        className='w-full flex items-center justify-between gap-3 h-11 sm:h-12 px-3 sm:px-4 text-sm font-medium text-white transition-all duration-200 bg-linear-to-b from-[#ffffff10] to-[#ffffff09] border border-[#ffffff15] rounded-xl hover:from-[#ffffff15] hover:to-[#ffffff10] hover:border-[#ffffff25] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
-                                        disabled={!canEdit || !variable.isEditable}
-                                    >
-                                        <span className='font-mono text-neutral-200 truncate text-left'>
-                                            {variable.serverValue}
-                                        </span>
-                                        {dropDownOpen ? (
-                                            <ChevronUp
-                                                width={22}
-                                                height={22}
-                                                fill={'currentColor'}
-                                                className='w-[14px] h-[14px] opacity-60 flex-shrink-0'
-                                            />
-                                        ) : (
-                                            <ChevronDown
-                                                width={22}
-                                                height={22}
-                                                fill={'currentColor'}
-                                                className='w-[14px] h-[14px] opacity-60 flex-shrink-0'
-                                            />
-                                        )}
-                                    </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className='z-99999' sideOffset={8}>
-                                    <DropdownMenuRadioGroup
-                                        value={variable.serverValue ?? ''}
-                                        onValueChange={setVariableValue}
-                                    >
-                                        {selectValues.map((selectValue) => (
-                                            <DropdownMenuRadioItem
-                                                key={selectValue.replace('in:', '')}
-                                                value={selectValue.replace('in:', '')}
-                                            >
-                                                {selectValue.replace('in:', '')}
-                                            </DropdownMenuRadioItem>
-                                        ))}
-                                    </DropdownMenuRadioGroup>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        ) : (
-                            <Input
-                                className='w-full h-11 sm:h-12 text-sm sm:text-base'
-                                onKeyUp={(e) => {
-                                    if (canEdit && variable.isEditable) {
-                                        setVariableValue(e.currentTarget.value);
-                                    }
-                                }}
-                                readOnly={!canEdit || !variable.isEditable}
-                                name={variable.envVariable}
-                                defaultValue={variable.serverValue ?? ''}
-                                placeholder={variable.defaultValue || 'Enter value...'}
+                ) : selectValues.length > 0 && (variable.serverValue ?? variable.defaultValue) ? (
+                    <DropdownMenu onOpenChange={(open) => setDropDownOpen(open)}>
+                        <DropdownMenuTrigger asChild>
+                            <button
+                                type='button'
+                                className='w-full flex items-center justify-between gap-3 h-11 sm:h-12 px-3 sm:px-4 text-sm font-medium text-white transition-all duration-200 bg-linear-to-b from-[#ffffff10] to-[#ffffff09] border border-[#ffffff15] rounded-xl hover:from-[#ffffff15] hover:to-[#ffffff10] hover:border-[#ffffff25] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
                                 disabled={!canEdit || !variable.isEditable}
-                            />
-                        )}
-                    </>
+                            >
+                                <span className='font-mono text-neutral-200 truncate text-left'>
+                                    {variable.serverValue}
+                                </span>
+                                {dropDownOpen ? (
+                                    <ChevronUp
+                                        width={22}
+                                        height={22}
+                                        fill={'currentColor'}
+                                        className='w-[14px] h-[14px] opacity-60 flex-shrink-0'
+                                    />
+                                ) : (
+                                    <ChevronDown
+                                        width={22}
+                                        height={22}
+                                        fill={'currentColor'}
+                                        className='w-[14px] h-[14px] opacity-60 flex-shrink-0'
+                                    />
+                                )}
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className='z-99999' sideOffset={8}>
+                            <DropdownMenuRadioGroup value={variable.serverValue ?? ''} onValueChange={setVariableValue}>
+                                {selectValues.map((selectValue) => (
+                                    <DropdownMenuRadioItem
+                                        key={selectValue.replace('in:', '')}
+                                        value={selectValue.replace('in:', '')}
+                                    >
+                                        {selectValue.replace('in:', '')}
+                                    </DropdownMenuRadioItem>
+                                ))}
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                ) : (
+                    <Input
+                        className='w-full h-11 sm:h-12 text-sm sm:text-base'
+                        onKeyUp={(e) => {
+                            if (canEdit && variable.isEditable) {
+                                setVariableValue(e.currentTarget.value);
+                            }
+                        }}
+                        readOnly={!canEdit || !variable.isEditable}
+                        name={variable.envVariable}
+                        defaultValue={variable.serverValue ?? ''}
+                        placeholder={variable.defaultValue || 'Enter value...'}
+                        disabled={!canEdit || !variable.isEditable}
+                    />
                 )}
             </InputSpinner>
         </div>

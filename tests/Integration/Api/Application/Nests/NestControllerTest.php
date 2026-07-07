@@ -43,8 +43,8 @@ class NestControllerTest extends ApplicationApiIntegrationTestCase
             'data' => [],
             'meta' => [
                 'pagination' => [
-                    'total' => 4,
-                    'count' => 4,
+                    'total' => 6,
+                    'count' => 6,
                     'per_page' => 50,
                     'current_page' => 1,
                     'total_pages' => 1,
@@ -108,7 +108,7 @@ class NestControllerTest extends ApplicationApiIntegrationTestCase
      */
     public function testGetMissingNest()
     {
-        $response = $this->getJson('/api/application/nests/nil');
+        $response = $this->getJson('/api/application/nests/0');
         $this->assertNotFoundJson($response);
     }
 

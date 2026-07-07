@@ -19,19 +19,17 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({
 }) => {
     useEffect(() => {
         if (title) {
-            document.title = title + ' | Hydrodactyl';
+            document.title = `${title} | Hydrodactyl`;
         }
     }, [title]);
 
     return (
-        <>
-            <div
-                className={`${className || ''} max-w-[120rem] overflow-y-auto w-full mx-auto flex flex-col flex-1 h-full relative rounded-2xl ${background ? 'bg-bg-raised border border-mocha-400 p-7' : ''}`}
-            >
-                {showFlashKey && <FlashMessageRender byKey={showFlashKey} />}
-                {children}
-            </div>
-        </>
+        <div
+            className={`${className || ''} max-w-[120rem] overflow-y-auto w-full mx-auto flex flex-col flex-1 h-full relative rounded-2xl ${background ? 'bg-bg-raised border border-mocha-400 p-7' : ''}`}
+        >
+            {showFlashKey && <FlashMessageRender byKey={showFlashKey} />}
+            {children}
+        </div>
     );
 };
 

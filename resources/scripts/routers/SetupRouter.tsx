@@ -1,7 +1,6 @@
 import { Navigate } from 'react-router-dom';
-
-import SetupContainer from '@/components/setup/SetupContainer';
 import Logo from '@/components/elements/HydroLogo';
+import SetupContainer from '@/components/setup/SetupContainer';
 
 // `window.SetupRequired` is injected by the backend (templates/wrapper.blade.php)
 // only when the panel is unauthenticated and has zero users. Once any user
@@ -43,8 +42,8 @@ const SetupRouter = () => {
                             Set up your panel.
                         </h1>
                         <p className='text-sm text-secondary max-w-sm leading-relaxed'>
-                            A fresh install has no administrator yet — let&apos;s create your first
-                            account and get you signed in.
+                            A fresh install has no administrator yet — let&apos;s create your first account and get you
+                            signed in.
                         </p>
                     </div>
 

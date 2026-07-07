@@ -3,7 +3,7 @@ import http from '@/api/http';
 interface LoginData {
     user: string;
     password: string;
-    [key: string]: any; // Allow additional fields like captcha responses
+    [key: string]: unknown; // Allow additional fields like captcha responses
 }
 
 interface LoginResponse {
@@ -18,7 +18,7 @@ export default async (data: LoginData): Promise<LoginResponse> => {
         await http.get('/sanctum/csrf-cookie');
 
         // Pass through all data including captcha responses
-        const payload: Record<string, any> = {
+        const payload: Record<string, unknown> = {
             ...data,
         };
 
@@ -37,21 +37,28 @@ export default async (data: LoginData): Promise<LoginResponse> => {
                 response.data.data?.confirmationToken,
             error: response.data.error ?? response.data.message,
         };
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const err = error as {
+            response?: {
+                data?: { error?: string; message?: string; errors?: Array<{ detail?: string; code?: string }> };
+                status?: number;
+            };
+            message?: string;
+        };
         const loginError = new Error(
-            error.response?.data?.error ??
-                error.response?.data?.message ??
-                error.message ??
+            err.response?.data?.error ??
+                err.response?.data?.message ??
+                err.message ??
                 'Login failed. Please try again.',
-        ) as any;
+        ) as Error & { response?: unknown; detail?: string; code?: string };
 
-        loginError.response = error.response;
-        loginError.detail = error.response?.data?.errors?.[0]?.detail;
-        loginError.code = error.response?.data?.errors?.[0]?.code;
+        loginError.response = err.response;
+        loginError.detail = err.response?.data?.errors?.[0]?.detail;
+        loginError.code = err.response?.data?.errors?.[0]?.code;
 
         console.error('Login API Error:', {
-            status: error.response?.status,
-            data: error.response?.data,
+            status: err.response?.status,
+            data: err.response?.data,
             detail: loginError.detail,
             message: loginError.message,
         });

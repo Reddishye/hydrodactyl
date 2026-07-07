@@ -7,7 +7,7 @@
         @apply w-full first:col-span-2 sm:first:col-span-1;
     }
 
-    @screen md {
+    @media (width >= 48rem) {
         @apply mb-0 flex flex-1 justify-end;
 
         & button {

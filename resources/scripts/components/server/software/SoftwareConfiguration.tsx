@@ -58,10 +58,14 @@ const SoftwareConfiguration = ({
                         <h3 className='text-lg font-semibold text-neutral-200'>Software Configuration</h3>
                         <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
                             <div>
-                                <label className='text-sm font-medium text-neutral-300 block mb-2'>
+                                <label
+                                    htmlFor='startup_command'
+                                    className='text-sm font-medium text-neutral-300 block mb-2'
+                                >
                                     Startup Command
                                 </label>
                                 <textarea
+                                    id='startup_command'
                                     value={customStartup}
                                     onChange={(e) => onStartupChange(e.target.value)}
                                     placeholder='Enter custom startup command...'
@@ -78,11 +82,20 @@ const SoftwareConfiguration = ({
                                 </p>
                             </div>
                             <div>
-                                <label className='text-sm font-medium text-neutral-300 block mb-2'>Docker Image</label>
+                                <label
+                                    htmlFor='docker_image_trigger'
+                                    className='text-sm font-medium text-neutral-300 block mb-2'
+                                >
+                                    Docker Image
+                                </label>
                                 {eggPreview.docker_images && Object.keys(eggPreview.docker_images).length > 1 ? (
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <button className='w-full px-3 py-2 bg-[#ffffff08] border border-[#ffffff12] rounded-lg text-sm text-neutral-200 focus:outline-none focus:border-brand transition-colors text-left flex items-center justify-between hover:border-[#ffffff20]'>
+                                            <button
+                                                id='docker_image_trigger'
+                                                type='button'
+                                                className='w-full px-3 py-2 bg-[#ffffff08] border border-[#ffffff12] rounded-lg text-sm text-neutral-200 focus:outline-none focus:border-brand transition-colors text-left flex items-center justify-between hover:border-[#ffffff20]'
+                                            >
                                                 <span className='truncate'>
                                                     {selectedDockerImage || 'Select image...'}
                                                 </span>
@@ -91,6 +104,7 @@ const SoftwareConfiguration = ({
                                                     fill='none'
                                                     stroke='currentColor'
                                                     viewBox='0 0 24 24'
+                                                    aria-hidden='true'
                                                 >
                                                     <path
                                                         strokeLinecap='round'
@@ -138,7 +152,10 @@ const SoftwareConfiguration = ({
                                 {eggPreview.variables.map((variable) => (
                                     <div key={variable.env_variable} className='space-y-3'>
                                         <div>
-                                            <label className='text-sm font-medium text-neutral-200 block mb-1'>
+                                            <label
+                                                htmlFor={variable.env_variable}
+                                                className='text-sm font-medium text-neutral-200 block mb-1'
+                                            >
                                                 {variable.name}
                                                 {!variable.user_editable && (
                                                     <span className='ml-2 px-2 py-0.5 text-xs bg-amber-500/20 text-amber-400 rounded'>
@@ -164,6 +181,7 @@ const SoftwareConfiguration = ({
                                         {variable.user_editable ? (
                                             <div>
                                                 <input
+                                                    id={variable.env_variable}
                                                     type='text'
                                                     value={pendingVariables[variable.env_variable] || ''}
                                                     onChange={(e) =>
@@ -207,7 +225,10 @@ const SoftwareConfiguration = ({
                         <div className='space-y-3'>
                             <div className='flex items-center justify-between p-4 bg-[#ffffff08] border border-[#ffffff12] rounded-lg hover:border-[#ffffff20] transition-colors'>
                                 <div className='flex-1 min-w-0 pr-4'>
-                                    <label className='text-sm font-medium text-neutral-200 block mb-1'>
+                                    <label
+                                        htmlFor='create-backup-switch'
+                                        className='text-sm font-medium text-neutral-200 block mb-1'
+                                    >
                                         Create Backup
                                     </label>
                                     <p className='text-xs text-neutral-400 leading-relaxed'>
@@ -220,6 +241,7 @@ const SoftwareConfiguration = ({
                                 </div>
                                 <div className='flex-shrink-0'>
                                     <Switch
+                                        id='create-backup-switch'
                                         checked={shouldBackup}
                                         onCheckedChange={onBackupChange}
                                         disabled={
@@ -231,7 +253,10 @@ const SoftwareConfiguration = ({
 
                             <div className='flex items-center justify-between p-4 bg-[#ffffff08] border border-[#ffffff12] rounded-lg hover:border-[#ffffff20] transition-colors'>
                                 <div className='flex-1 min-w-0 pr-4'>
-                                    <label className='text-sm font-medium text-neutral-200 block mb-1'>
+                                    <label
+                                        htmlFor='wipe-files-switch'
+                                        className='text-sm font-medium text-neutral-200 block mb-1'
+                                    >
                                         Wipe Files
                                     </label>
                                     <p className='text-xs text-neutral-400 leading-relaxed'>
@@ -239,7 +264,11 @@ const SoftwareConfiguration = ({
                                     </p>
                                 </div>
                                 <div className='flex-shrink-0'>
-                                    <Switch checked={shouldWipe} onCheckedChange={onWipeChange} />
+                                    <Switch
+                                        id='wipe-files-switch'
+                                        checked={shouldWipe}
+                                        onCheckedChange={onWipeChange}
+                                    />
                                 </div>
                             </div>
                         </div>

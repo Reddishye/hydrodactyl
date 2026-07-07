@@ -16,7 +16,7 @@ const CircleProgress = ({ progress, className }: { progress: number; className?:
     const offset = circumference - (progress / 100) * circumference;
 
     return (
-        <svg className={className} viewBox='0 0 32 32'>
+        <svg className={className} viewBox='0 0 32 32' role='img' aria-label={`${progress.toFixed(0)}% complete`}>
             <circle
                 stroke='currentColor'
                 strokeWidth='4'
@@ -128,55 +128,54 @@ const FileManagerStatus = () => {
     }, [count]);
 
     return (
-        <>
-            <Tooltip.Provider>
-                {count > 0 && (
-                    <Tooltip.Root delayDuration={200}>
-                        <Tooltip.Trigger asChild>
-                            <Button
-                                variant='secondary'
-                                size='sm'
-                                className='w-10 h-10 p-0'
-                                onClick={() => {
-                                    setOpen(true);
-                                }}
+        <Tooltip.Provider>
+            {count > 0 && (
+                <Tooltip.Root delayDuration={200}>
+                    <Tooltip.Trigger asChild>
+                        <Button
+                            variant='secondary'
+                            size='sm'
+                            className='w-10 h-10 p-0'
+                            onClick={() => {
+                                setOpen(true);
+                            }}
+                        >
+                            <svg
+                                className='animate-spin h-5 w-5 text-white'
+                                xmlns='http://www.w3.org/2000/svg'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                aria-hidden='true'
                             >
-                                <svg
-                                    className='animate-spin h-5 w-5 text-white'
-                                    xmlns='http://www.w3.org/2000/svg'
-                                    fill='none'
-                                    viewBox='0 0 24 24'
-                                >
-                                    <circle
-                                        className='opacity-25'
-                                        cx='12'
-                                        cy='12'
-                                        r='10'
-                                        stroke='currentColor'
-                                        strokeWidth='4'
-                                    ></circle>
-                                    <path
-                                        className='opacity-75'
-                                        fill='currentColor'
-                                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                                    ></path>
-                                </svg>
-                            </Button>
-                        </Tooltip.Trigger>
-                        <Tooltip.Portal>
-                            <Tooltip.Content
-                                side='top'
-                                className='px-2 py-1 text-sm bg-gray-800 text-gray-100 rounded shadow-lg'
-                                sideOffset={5}
-                            >
-                                {`${count} files are uploading, click to view`}
-                            </Tooltip.Content>
-                        </Tooltip.Portal>
-                    </Tooltip.Root>
-                )}
-                <FileUploadListDialog open={open} onClose={() => setOpen(false)} />
-            </Tooltip.Provider>
-        </>
+                                <circle
+                                    className='opacity-25'
+                                    cx='12'
+                                    cy='12'
+                                    r='10'
+                                    stroke='currentColor'
+                                    strokeWidth='4'
+                                ></circle>
+                                <path
+                                    className='opacity-75'
+                                    fill='currentColor'
+                                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                                ></path>
+                            </svg>
+                        </Button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Portal>
+                        <Tooltip.Content
+                            side='top'
+                            className='px-2 py-1 text-sm bg-gray-800 text-gray-100 rounded shadow-lg'
+                            sideOffset={5}
+                        >
+                            {`${count} files are uploading, click to view`}
+                        </Tooltip.Content>
+                    </Tooltip.Portal>
+                </Tooltip.Root>
+            )}
+            <FileUploadListDialog open={open} onClose={() => setOpen(false)} />
+        </Tooltip.Provider>
     );
 };
 

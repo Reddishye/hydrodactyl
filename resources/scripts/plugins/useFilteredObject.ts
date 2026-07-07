@@ -12,9 +12,11 @@ export default <T extends object>(data: T): T => {
         Object.entries(input)
             .filter(([_, value]) => !empty.includes(value))
             .reduce((obj, [k, v]) => {
-                const parsed = isObject(v) ? removeEmptyValues(v as any) : v;
+                const parsed = isObject(v) ? removeEmptyValues(v as T) : v;
 
-                return isObject(parsed) && isEmptyObject(parsed) ? obj : { ...obj, [k]: parsed };
+                if (isObject(parsed) && isEmptyObject(parsed)) return obj;
+                (obj as Record<string, unknown>)[k] = parsed;
+                return obj;
             }, {} as T);
 
     return removeEmptyValues(data);

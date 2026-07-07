@@ -54,7 +54,7 @@ const Dialog = ({
 
     const onDialogClose = (): void => {
         if (!preventExternalClose) {
-            return onClose();
+            onClose();
         }
     };
 
@@ -83,6 +83,7 @@ const Dialog = ({
                             <div
                                 ref={container}
                                 className={styles.dialogContainer}
+                                role='dialog'
                                 onMouseDown={onContainerClick.bind(this, true)}
                                 onMouseUp={onContainerClick.bind(this, false)}
                             >
@@ -116,7 +117,7 @@ const Dialog = ({
                                     {/* Keep this below the other buttons so that it isn't the default focus if they're present. */}
                                     {!hideCloseIcon && (
                                         <div className={'absolute right-0 top-0 m-4 p-2 opacity-45 hover:opacity-100'}>
-                                            <button onClick={onClose} className='cursor-pointer'>
+                                            <button type='button' onClick={onClose} className='cursor-pointer'>
                                                 <Xmark width={22} height={22} fill='currentColor' />
                                             </button>
                                         </div>

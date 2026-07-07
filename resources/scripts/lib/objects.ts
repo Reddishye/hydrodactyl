@@ -28,7 +28,7 @@ function getObjectKeys<T extends object>(o: T): (keyof T)[] {
  * @param object
  * @param indentLevel
  */
-function formatObjectToIdentString(object: any, indentLevel: number = 0): string {
+function formatObjectToIdentString(object: unknown, indentLevel: number = 0): string {
     const indent = '  '.repeat(indentLevel);
 
     if (typeof object === 'string') {

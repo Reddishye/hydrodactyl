@@ -24,7 +24,7 @@ import SoftwareConfiguration from './SoftwareConfiguration';
 import SoftwareOverview from './SoftwareOverview';
 import SoftwareSelection from './SoftwareSelection';
 import type { Egg, FlowStep, Nest } from './types';
-import { blank_egg_prefix, validateEnvironmentVariables } from './types';
+import { validateEnvironmentVariables } from './types';
 import WipeConfirmationModal from './WipeConfirmationModal';
 
 const SoftwareContainer = () => {
@@ -273,7 +273,7 @@ const SoftwareContainer = () => {
                 }
             });
 
-            if (daemonType?.toLowerCase() == 'elytra') {
+            if (daemonType?.toLowerCase() === 'elytra') {
                 const response = await applyEggChange(uuid, {
                     egg_id: selectedEgg.attributes.id,
                     nest_id: selectedNest.attributes.id,
@@ -286,7 +286,7 @@ const SoftwareContainer = () => {
 
                 setCurrentOperationId(response.operation_id);
                 setShowOperationModal(true);
-            } else if (daemonType?.toLowerCase() == 'wings') {
+            } else if (daemonType?.toLowerCase() === 'wings') {
                 await applyEggChangeSync(uuid, {
                     egg_id: selectedEgg.attributes.id,
                     nest_id: selectedNest.attributes.id,
@@ -449,7 +449,7 @@ const SoftwareContainer = () => {
                 onDismiss={() => setShowWipeConfirmation(false)}
             />
 
-            {daemonType == 'elytra' && (
+            {daemonType === 'elytra' && (
                 <OperationProgressModal
                     visible={showOperationModal}
                     operationId={currentOperationId}
@@ -459,7 +459,7 @@ const SoftwareContainer = () => {
                     onError={handleOperationError}
                 />
             )}
-            {daemonType == 'wings' && (
+            {daemonType === 'wings' && (
                 <WingsOperationProgressModal
                     visible={showOperationModal}
                     operationId={currentOperationId}

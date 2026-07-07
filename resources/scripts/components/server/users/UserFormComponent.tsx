@@ -46,13 +46,13 @@ const PermissionIcon = ({ name }: { name: string }) => {
 };
 
 const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmitting, setIsSubmitting }: Props) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const appendSubuser = ServerContext.useStoreActions((actions) => actions.subusers.appendSubuser);
     const { clearFlashes, clearAndAddHttpError } = useStoreActions(
         (actions: Actions<ApplicationStore>) => actions.flashes,
     );
 
-    const isRootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const isRootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
     const permissions = useStoreState((state) => state.permissions.data);
     const loggedInPermissions = ServerContext.useStoreState((state) => state.server.permissions);
     const [canEditUser] = usePermissions(subuser ? ['user.update'] : ['user.create']);
@@ -85,7 +85,7 @@ const UserFormComponent = ({ subuser, onSuccess, onCancel, flashKey, isSubmittin
         () => () => {
             clearFlashes(flashKey);
         },
-        [],
+        [flashKey, clearFlashes],
     );
 
     const getCategoryKeys = (key: string) => Object.keys(permissions[key]?.keys ?? {});

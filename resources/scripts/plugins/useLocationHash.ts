@@ -8,10 +8,12 @@ export default () => {
         value
             .substring(1)
             .split('&')
-            .reduce((obj, str) => {
+            .reduce((obj: Record<string, string>, str) => {
                 const [key = '', value = ''] = str.split('=');
 
-                return !str.trim() ? obj : { ...obj, [key]: value };
+                if (!str.trim()) return obj;
+                obj[key] = value;
+                return obj;
             }, {});
 
     const pathTo = (params: Record<string, string>): string => {
@@ -26,7 +28,8 @@ export default () => {
             .join('&');
     };
 
-    const hash = useMemo((): Record<string, string> => getHashObject(location.hash), [location.hash]);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: getHashObject is defined inside, not needed
+    const hash = useMemo((): Record<string, string> => getHashObject(location.hash), [location.hash, getHashObject]);
 
     return { hash, pathTo };
 };

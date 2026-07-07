@@ -19,7 +19,7 @@ const RotatePasswordButton = ({
 }) => {
     const [loading, setLoading] = useState(false);
     const { addFlash, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
-    const server = ServerContext.useStoreState((state) => state.server.data!);
+    const server = ServerContext.useStoreState((state) => state.server.data);
 
     if (!databaseId) {
         return null;
@@ -29,6 +29,7 @@ const RotatePasswordButton = ({
         setLoading(true);
         clearFlashes();
 
+        if (!server) return;
         rotateDatabasePassword(server.uuid, databaseId)
             .then((database) => onUpdate(database))
             .catch((error) => {

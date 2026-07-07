@@ -45,7 +45,7 @@ const CommandMenu = () => {
     };
 
     const cmdkNavigate = (url: string) => {
-        navigate('/server/' + id + url);
+        navigate(`/server/${id}${url}`);
         setOpen(false);
     };
 

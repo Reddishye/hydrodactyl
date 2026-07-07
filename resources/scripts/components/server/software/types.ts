@@ -81,7 +81,7 @@ const validateEnvironmentVariables = (variables: EggVariable[], pendingVariables
 
                 case 'integer':
                 case 'numeric':
-                    if (value && isNaN(Number(value))) {
+                    if (value && Number.isNaN(Number(value))) {
                         errors.push(`${variable.name} must be a number.`);
                     }
                     break;
@@ -96,7 +96,7 @@ const validateEnvironmentVariables = (variables: EggVariable[], pendingVariables
 
                 case 'min': {
                     if (ruleValue && value) {
-                        const minValue = parseInt(ruleValue);
+                        const minValue = parseInt(ruleValue, 10);
                         if (value.length < minValue) {
                             errors.push(`${variable.name} must be at least ${minValue} characters.`);
                         }
@@ -106,7 +106,7 @@ const validateEnvironmentVariables = (variables: EggVariable[], pendingVariables
 
                 case 'max': {
                     if (ruleValue && value) {
-                        const maxValue = parseInt(ruleValue);
+                        const maxValue = parseInt(ruleValue, 10);
                         if (value.length > maxValue) {
                             errors.push(`${variable.name} may not be greater than ${maxValue} characters.`);
                         }
@@ -116,7 +116,7 @@ const validateEnvironmentVariables = (variables: EggVariable[], pendingVariables
 
                 case 'between': {
                     if (ruleValue && value) {
-                        const [min, max] = ruleValue.split(',').map((v) => parseInt(v.trim()));
+                        const [min, max] = ruleValue.split(',').map((v) => parseInt(v.trim(), 10));
                         if (value.length < min || value.length > max) {
                             errors.push(`${variable.name} must be between ${min} and ${max} characters.`);
                         }

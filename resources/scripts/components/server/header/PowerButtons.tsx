@@ -26,7 +26,8 @@ const PowerButtons = ({ className }: PowerButtonProps) => {
     ): void => {
         e.preventDefault();
         if (action === 'kill') {
-            return setOpen(true);
+            setOpen(true);
+            return;
         }
 
         if (instance) {

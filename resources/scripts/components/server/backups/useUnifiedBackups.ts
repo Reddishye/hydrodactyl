@@ -7,7 +7,7 @@ import type { UnifiedBackup } from './types';
 
 export const useUnifiedBackups = () => {
     const { data: backups, error, isValidating, mutate } = getServerBackups();
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const daemonType = getGlobalDaemonType();
 
     const liveProgress = useContext(LiveProgressContext);
@@ -84,7 +84,7 @@ export const useUnifiedBackups = () => {
             unifiedBackups.push({
                 uuid: backup.uuid,
                 name: live?.backupName || backup.name,
-                status: live ? (live.status as any) : backup.isSuccessful ? 'completed' : 'failed',
+                status: live ? (live.status as string) : backup.isSuccessful ? 'completed' : 'failed',
                 progress: live ? live.progress : backup.isSuccessful ? 100 : 0,
                 message: live ? live.message : backup.isSuccessful ? 'Completed' : 'Failed',
                 isSuccessful: backup.isSuccessful,
@@ -95,7 +95,7 @@ export const useUnifiedBackups = () => {
                 createdAt: backup.createdAt,
                 completedAt: backup.completedAt,
                 canRetry: live ? live.canRetry : backup.canRetry,
-                canDelete: live ? false : true,
+                canDelete: !live,
                 canDownload: backup.isSuccessful && !live,
                 canRestore: backup.isSuccessful && !live,
                 isLiveOnly: false,
@@ -112,7 +112,7 @@ export const useUnifiedBackups = () => {
             unifiedBackups.push({
                 uuid: backupUuid,
                 name: live.backupName || live.message || 'Processing...',
-                status: live.status as any,
+                status: live.status as string,
                 progress: live.progress,
                 message: live.message,
                 isSuccessful: false,

@@ -17,7 +17,7 @@ export default ({ query, ...params }: QueryParams): Promise<PaginatedResult<Serv
         })
             .then(({ data }) =>
                 resolve({
-                    items: (data.data || []).map((datum: any) => rawDataToServerObject(datum)),
+                    items: (data.data || []).map((datum: Record<string, unknown>) => rawDataToServerObject(datum)),
                     pagination: getPaginationSet(data.meta.pagination),
                 }),
             )

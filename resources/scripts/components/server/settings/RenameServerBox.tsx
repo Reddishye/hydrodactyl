@@ -33,13 +33,14 @@ const RenameServerForm = () => {
 };
 
 const RenameServerBox = () => {
-    const server = ServerContext.useStoreState((state) => state.server.data!);
+    const server = ServerContext.useStoreState((state) => state.server.data);
     const setServer = ServerContext.useStoreActions((actions) => actions.server.setServer);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
     const submit = ({ name, description }: Values) => {
         clearFlashes('settings');
         toast('Updating server details...');
+        if (!server) return;
         renameServer(server.uuid, name, description)
             .then(() => setServer({ ...server, name, description }))
             .catch((error) => {

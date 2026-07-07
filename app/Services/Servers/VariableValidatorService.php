@@ -36,7 +36,7 @@ class VariableValidatorService
         }
 
         /** @var \Pterodactyl\Models\EggVariable[] $variables */
-        $variables = $query->get();
+        $variables = $query->orderBy('id')->get();
 
         $data = $rules = $customAttributes = [];
         foreach ($variables as $variable) {

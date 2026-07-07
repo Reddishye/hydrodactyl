@@ -22,7 +22,7 @@ class ResourceUtilizationControllerTest extends ClientApiIntegrationTestCase
             return $server->uuid === $value->uuid;
         }))->andReturnSelf()->getMock()->expects('getDetails')->andReturns([]);
 
-        $response = $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/resources");
+        $response = $this->actingAs($user)->getJson("/api/client/servers/wings/$server->uuid/resources");
 
         $response->assertOk();
         $response->assertJson([

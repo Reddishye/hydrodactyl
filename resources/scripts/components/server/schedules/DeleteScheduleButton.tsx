@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import deleteSchedule from '@/api/server/schedules/deleteSchedule';
 import { Dialog } from '@/components/elements/dialog';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import { Button } from '@/components/ui/button';
 
 import type { ApplicationStore } from '@/state';
@@ -17,7 +16,7 @@ interface Props {
 const DeleteScheduleButton = ({ scheduleId, onDeleted }: Props) => {
     const [visible, setVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
 
     const onDelete = () => {

@@ -25,7 +25,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
             ]);
 
         $this->postJson(
-            $endpoint = "/api/client/servers/$server->uuid/users/{$subuser->user->uuid}",
+            $endpoint = "/api/client/servers/wings/$server->uuid/users/{$subuser->user->uuid}",
             $data = [
                 'permissions' => [
                     'control.start',
@@ -66,7 +66,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
             ]);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/$server->uuid/users/{$subuser->user->uuid}", [
+            ->postJson("/api/client/servers/wings/$server->uuid/users/{$subuser->user->uuid}", [
                 'permissions' => [
                     'control.start',
                     'control.stop',
@@ -98,7 +98,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
             ->create(['permissions' => ['foo.bar']]);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/$server->uuid/users/{$subuser->user->uuid}", [
+            ->postJson("/api/client/servers/wings/$server->uuid/users/{$subuser->user->uuid}", [
                 'permissions' => [Permission::ACTION_USER_READ, Permission::ACTION_CONTROL_CONSOLE],
             ])
             ->assertForbidden();
@@ -114,7 +114,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_READ, Permission::ACTION_USER_UPDATE]);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/$server->uuid/users/$user->uuid", [])
+            ->postJson("/api/client/servers/wings/$server->uuid/users/$user->uuid", [])
             ->assertForbidden();
     }
 
@@ -127,7 +127,7 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
         [$user2] = $this->generateTestAccount(['foo.bar']);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/$server->uuid/users/$user2->uuid", [])
+            ->postJson("/api/client/servers/wings/$server->uuid/users/$user2->uuid", [])
             ->assertNotFound();
     }
 }

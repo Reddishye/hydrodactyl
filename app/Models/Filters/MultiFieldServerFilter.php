@@ -63,7 +63,7 @@ class MultiFieldServerFilter implements Filter
                     ->orWhere('servers.uuid', 'LIKE', "$value%")
                     ->orWhere('servers.uuidShort', $value)
                     ->orWhere('servers.external_id', $value)
-                    ->orWhereRaw('LOWER(servers.name) LIKE ?', ["%$value%"]);
+                    ->orWhereRaw('LOWER(servers.name) LIKE ?', ['%' . mb_strtolower($value) . '%']);
             });
     }
 }

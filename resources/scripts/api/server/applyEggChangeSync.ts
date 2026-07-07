@@ -68,7 +68,7 @@ export default async (uuid: string, data: ApplyEggChangeData): Promise<void> => 
                 );
                 const files = filesResponse.data?.data || [];
                 if (files.length > 0) {
-                    const fileNames = files.map((file: any) => file.name);
+                    const fileNames = files.map((file: Record<string, unknown>) => file.name);
                     await http.post(`/api/client/servers/${daemonType}/${uuid}/files/delete`, {
                         root: '/',
                         files: fileNames,

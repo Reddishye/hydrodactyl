@@ -10,7 +10,7 @@ export interface ServerDatabase {
     password?: string;
 }
 
-export const rawDataToServerDatabase = (data: any): ServerDatabase => ({
+export const rawDataToServerDatabase = (data: Record<string, unknown>): ServerDatabase => ({
     id: data.id,
     name: data.name,
     username: data.username,
@@ -27,7 +27,11 @@ export default (uuid: string, includePassword = true): Promise<ServerDatabase[]>
             params: includePassword ? { include: 'password' } : undefined,
         })
             .then((response) =>
-                resolve((response.data.data || []).map((item: any) => rawDataToServerDatabase(item.attributes))),
+                resolve(
+                    (response.data.data || []).map((item: Record<string, unknown>) =>
+                        rawDataToServerDatabase(item.attributes as Record<string, unknown>),
+                    ),
+                ),
             )
             .catch(reject);
     });

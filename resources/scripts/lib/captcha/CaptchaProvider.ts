@@ -57,7 +57,7 @@ export interface CaptchaRenderConfig {
     theme?: 'light' | 'dark' | 'auto';
     size?: 'normal' | 'compact' | 'invisible' | 'flexible';
     onSuccess?: (token: string) => void;
-    onError?: (error: any) => void;
+    onError?: (error: unknown) => void;
     onExpired?: () => void;
 }
 

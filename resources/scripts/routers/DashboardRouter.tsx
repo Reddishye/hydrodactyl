@@ -22,7 +22,7 @@ import routes from '@/routers/routes';
 
 const DashboardRouter = () => {
     const location = useLocation();
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
 
     // Mobile menu state
     const [isMobileMenuVisible, setMobileMenuVisible] = useState(false);
@@ -64,8 +64,7 @@ const DashboardRouter = () => {
         const HighlightOffset: number = 8;
 
         if (pathname.endsWith(`/`) && ButtonHome != null) return ButtonHome.offsetTop + HighlightOffset;
-        if (pathname.endsWith(`/account`) && ButtonSettings != null)
-            return ButtonSettings.offsetTop + HighlightOffset;
+        if (pathname.endsWith(`/account`) && ButtonSettings != null) return ButtonSettings.offsetTop + HighlightOffset;
         if (pathname.endsWith('/api') && ButtonApi != null) return ButtonApi.offsetTop + HighlightOffset;
         if (pathname.endsWith('/ssh') && ButtonSSH != null) return ButtonSSH.offsetTop + HighlightOffset;
         return '0';
@@ -79,7 +78,7 @@ const DashboardRouter = () => {
         setHeight('34px');
         const timeoutId = setTimeout(() => setHeight('40px'), 200);
         return () => clearTimeout(timeoutId);
-    }, [top]);
+    }, []);
 
     return (
         <Fragment key={'dashboard-router'}>
@@ -123,7 +122,10 @@ const DashboardRouter = () => {
                         </NavLink>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <button className='w-10 h-10 flex items-center justify-center rounded-md text-white hover:bg-white/10 p-2 cursor-pointer'>
+                                <button
+                                    type='button'
+                                    className='w-10 h-10 flex items-center justify-center rounded-md text-white hover:bg-white/10 p-2 cursor-pointer'
+                                >
                                     {' '}
                                     <Ellipsis fill='currentColor' width={26} height={22} />
                                 </button>

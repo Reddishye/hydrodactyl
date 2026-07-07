@@ -1,7 +1,7 @@
 import http from '@/api/http';
 import { getGlobalDaemonType } from '@/api/server/getServer';
 
-export default async (uuid: string, password: string, twoFactor: any, totpCode: any): Promise<number> => {
+export default async (uuid: string, password: string, twoFactor: unknown, totpCode: unknown): Promise<number> => {
     const daemonType = getGlobalDaemonType();
     const response = await http.delete(`/api/client/servers/${daemonType}/${uuid}/backups/delete-all`, {
         data: {

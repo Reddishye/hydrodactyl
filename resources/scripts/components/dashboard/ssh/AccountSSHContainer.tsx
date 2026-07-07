@@ -2,7 +2,7 @@ import { Eye, EyeSlash, Key, Plus, TrashBin } from '@gravity-ui/icons';
 import { format } from 'date-fns';
 import { type Actions, useStoreActions } from 'easy-peasy';
 import { Field, Form, Formik, type FormikHelpers } from 'formik';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { object, string } from 'yup';
 import { createSSHKey, deleteSSHKey, useSSHKeys } from '@/api/account/ssh-keys';
 import { httpErrorToHuman } from '@/api/http';
@@ -41,7 +41,7 @@ const AccountSSHContainer = () => {
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     const doDeletion = () => {
         if (!deleteKey) return;

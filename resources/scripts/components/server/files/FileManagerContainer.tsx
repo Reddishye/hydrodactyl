@@ -31,12 +31,12 @@ const sortFiles = (files: FileObject[]): FileObject[] => {
 };
 
 const FileManagerContainer = () => {
-    const id = ServerContext.useStoreState((state) => state.server.data!.id);
+    const id = ServerContext.useStoreState((state) => state.server.data?.id);
 
-    const { hash, pathname } = useLocation();
+    const { hash } = useLocation();
     const { data: files, error, mutate } = useFileManagerSwr();
 
-    const directory = ServerContext.useStoreState((state) => state.files.directory);
+    const _directory = ServerContext.useStoreState((state) => state.files.directory);
     const clearFlashes = useStoreActions((actions) => actions.flashes.clearFlashes);
     const setDirectory = ServerContext.useStoreActions((actions) => actions.files.setDirectory);
 
@@ -49,11 +49,11 @@ const FileManagerContainer = () => {
         clearFlashes('files');
         setSelectedFiles([]);
         setDirectory(hashToPath(hash));
-    }, [hash]);
+    }, [hash, setDirectory, clearFlashes, setSelectedFiles]);
 
     useEffect(() => {
         mutate();
-    }, [directory]);
+    }, [mutate]);
 
     const onSelectAllClick = () => {
         console.log('files', files);
@@ -78,7 +78,7 @@ const FileManagerContainer = () => {
         if (searchInputRef.current) {
             searchInputRef.current.value = '';
         }
-    }, [hash, pathname, directory]);
+    }, []);
 
     if (error) {
         return <ServerError title={'Something went wrong.'} message={httpErrorToHuman(error)} />;
@@ -112,53 +112,50 @@ const FileManagerContainer = () => {
                     </div>
                 </ErrorBoundary>
             </div>
-            {!files ? null : (
+            {!files ? null : !files.length ? (
+                <p className={`text-sm text-zinc-400 text-center`}>This folder is empty.</p>
+            ) : (
                 <>
-                    {!files.length ? (
-                        <p className={`text-sm text-zinc-400 text-center`}>This folder is empty.</p>
-                    ) : (
-                        <>
-                            <div className='relative p-1 border-[1px] border-[#ffffff12] rounded-md sm:ml-12 sm:mr-12 mx-2'>
-                                <div className='absolute left-4 top-1/2 pl-2 -translate-y-1/2 pointer-events-none'>
-                                    <svg
-                                        xmlns='http://www.w3.org/2000/svg'
-                                        fill='none'
-                                        viewBox='0 0 24 24'
-                                        strokeWidth={1.5}
-                                        stroke='currentColor'
-                                        className='w-5 h-5 opacity-40'
-                                    >
-                                        <path
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            d='m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z'
-                                        />
-                                    </svg>
-                                </div>
-
-                                <input
-                                    ref={searchInputRef}
-                                    className='pl-14 py-4 w-full rounded-lg bg-[#ffffff11] text-sm font-bold outline-none'
-                                    type='text'
-                                    placeholder='Search...'
-                                    onChange={(event) => debouncedSearchTerm(event.target.value)}
-                                />
-                            </div>
-                            <div
-                                data-hydrodactyl-file-manager-files
-                                className='p-1 border-[1px] border-[#ffffff12] rounded-xl sm:ml-12 sm:mr-12 mx-2 bg-[radial-gradient(124.75%_124.75%_at_50.01%_-10.55%,_rgb(16,16,16)_0%,rgb(4,4,4)_100%)]'
+                    <div className='relative p-1 border-[1px] border-[#ffffff12] rounded-md sm:ml-12 sm:mr-12 mx-2'>
+                        <div className='absolute left-4 top-1/2 pl-2 -translate-y-1/2 pointer-events-none'>
+                            <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                fill='none'
+                                viewBox='0 0 24 24'
+                                strokeWidth={1.5}
+                                stroke='currentColor'
+                                className='w-5 h-5 opacity-40'
+                                aria-hidden='true'
                             >
-                                <VirtualizedList
-                                    itemClassName=''
-                                    items={filesArray}
-                                    renderItem={(file) => <FileObjectRow file={file} />}
-                                    estimateSize={() => 54}
-                                    gap={2}
+                                <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    d='m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z'
                                 />
-                            </div>
-                            <MassActionsBar />
-                        </>
-                    )}
+                            </svg>
+                        </div>
+
+                        <input
+                            ref={searchInputRef}
+                            className='pl-14 py-4 w-full rounded-lg bg-[#ffffff11] text-sm font-bold outline-none'
+                            type='text'
+                            placeholder='Search...'
+                            onChange={(event) => debouncedSearchTerm(event.target.value)}
+                        />
+                    </div>
+                    <div
+                        data-hydrodactyl-file-manager-files
+                        className='p-1 border-[1px] border-[#ffffff12] rounded-xl sm:ml-12 sm:mr-12 mx-2 bg-[radial-gradient(124.75%_124.75%_at_50.01%_-10.55%,_rgb(16,16,16)_0%,rgb(4,4,4)_100%)]'
+                    >
+                        <VirtualizedList
+                            itemClassName=''
+                            items={filesArray}
+                            renderItem={(file) => <FileObjectRow file={file} />}
+                            estimateSize={() => 54}
+                            gap={2}
+                        />
+                    </div>
+                    <MassActionsBar />
                 </>
             )}
         </ServerContentBlock>

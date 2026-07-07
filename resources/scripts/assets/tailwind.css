@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "./tailwindcss-animate.css";
 /* @import 'tw-animate-css'; */
-@plugin 'tailwind-scrollbar';
+@plugin "tailwind-scrollbar";
 
 @theme {
     --color-ring: deepskyblue;
@@ -50,6 +50,6 @@
 
     --transition-duration-250: 250ms;
 
-    --font-schibsted: 'Schibsted Grotesk', sans-serif;
-    --font-manrope: 'Manrope', serif;
+    --font-schibsted: "Schibsted Grotesk", sans-serif;
+    --font-manrope: "Manrope", serif;
 }

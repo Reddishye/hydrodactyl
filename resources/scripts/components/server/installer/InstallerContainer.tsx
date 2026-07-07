@@ -4,7 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { httpErrorToHuman } from '@/api/http';
 import deleteFiles from '@/api/server/files/deleteFiles';
-import type { GameVersions, MarketplaceProject, MarketplaceSourceMeta, MarketplaceType } from '@/api/server/marketplace';
+import type {
+    GameVersions,
+    MarketplaceProject,
+    MarketplaceSourceMeta,
+    MarketplaceType,
+} from '@/api/server/marketplace';
 import { getMarketplaceGameVersions, getMarketplaceLoaders, searchMarketplace } from '@/api/server/marketplace';
 import { MainPageHeader } from '@/components/elements/MainPageHeader';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
@@ -54,7 +59,15 @@ const readSavedTab = (): MarketplaceType | null => {
     return null;
 };
 
-const VersionDropdown = ({ versions, value, onChange }: { versions: string[]; value: string | null; onChange: (v: string | null) => void }) => {
+const VersionDropdown = ({
+    versions,
+    value,
+    onChange,
+}: {
+    versions: string[];
+    value: string | null;
+    onChange: (v: string | null) => void;
+}) => {
     const [open, setOpen] = useState(false);
     const [filter, setFilter] = useState('');
     const parentRef = useRef<HTMLDivElement>(null);
@@ -73,9 +86,18 @@ const VersionDropdown = ({ versions, value, onChange }: { versions: string[]; va
     }, [open, virtualizer]);
 
     return (
-        <DropdownMenu open={open} onOpenChange={(next) => { setOpen(next); if (!next) setFilter(''); }}>
+        <DropdownMenu
+            open={open}
+            onOpenChange={(next) => {
+                setOpen(next);
+                if (!next) setFilter('');
+            }}
+        >
             <DropdownMenuTrigger asChild>
-                <button className='inline-flex items-center gap-2 rounded-xl border border-mocha-300/50 bg-mocha-400/50 px-3 py-3 text-sm text-cream-400 focus:border-brand-400/60 focus:outline-none'>
+                <button
+                    type='button'
+                    className='inline-flex items-center gap-2 rounded-xl border border-mocha-300/50 bg-mocha-400/50 px-3 py-3 text-sm text-cream-400 focus:border-brand-400/60 focus:outline-none'
+                >
                     {value ?? 'Any'}
                     <ChevronDown width={14} height={14} fill='currentColor' className='text-cream-400/40' />
                 </button>
@@ -108,7 +130,12 @@ const VersionDropdown = ({ versions, value, onChange }: { versions: string[]; va
                                     data-selected={v === value}
                                     role='option'
                                     aria-selected={v === value}
-                                    onMouseDown={() => { onChange(v); setOpen(false); setFilter(''); }}
+                                    tabIndex={-1}
+                                    onMouseDown={() => {
+                                        onChange(v);
+                                        setOpen(false);
+                                        setFilter('');
+                                    }}
                                 >
                                     {v}
                                 </div>
@@ -203,7 +230,9 @@ const InstallerContainer = () => {
     const findEggVersion = useCallback(
         (versions: GameVersions): { version: string | null; type: string } | null => {
             // Collect candidate env var names from egg features' loaders + common patterns
-            const candidates = new Set(loadersFor(eggFeatures, tab, knownLoaders).map((l) => `${l.toUpperCase()}_VERSION`));
+            const candidates = new Set(
+                loadersFor(eggFeatures, tab, knownLoaders).map((l) => `${l.toUpperCase()}_VERSION`),
+            );
             for (const v of ['MINECRAFT_VERSION', 'VANILLA_VERSION', 'MC_VERSION']) {
                 candidates.add(v);
             }
@@ -213,7 +242,7 @@ const InstallerContainer = () => {
                 if (!eggVar) continue;
                 const raw = eggVar.serverValue || eggVar.defaultValue || '';
                 if (raw === 'latest') {
-                    const releases = versions['release'];
+                    const releases = versions.release;
                     if (releases && releases.length > 0) {
                         return { version: releases[0], type: 'release' };
                     }
@@ -277,7 +306,7 @@ const InstallerContainer = () => {
                 setGameVersion(gameVersions[types[0]][0] ?? null);
             }
         }
-    }, [tab, eggFeatures, findEggVersion]);
+    }, [tab, eggFeatures, findEggVersion, gameVersions]);
 
     // Debounced, cancellable search. "all" fans out across every enabled
     // provider on the backend; a specific provider queries just that one.
@@ -290,7 +319,12 @@ const InstallerContainer = () => {
             setLoading(true);
             setError(null);
             searchMarketplace(uuid, {
-                type: tab, source, query: query.trim() || undefined, loader, game_version: gameVersion, limit: PAGE_SIZE,
+                type: tab,
+                source,
+                query: query.trim() || undefined,
+                loader,
+                game_version: gameVersion,
+                limit: PAGE_SIZE,
             })
                 .then((data) => {
                     if (id !== requestId.current) return;
@@ -451,9 +485,17 @@ const InstallerContainer = () => {
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <button className='inline-flex items-center gap-2 rounded-xl border border-mocha-300/50 bg-mocha-400/50 px-3 py-3 text-sm text-cream-400 focus:border-brand-400/60 focus:outline-none'>
+                                    <button
+                                        type='button'
+                                        className='inline-flex items-center gap-2 rounded-xl border border-mocha-300/50 bg-mocha-400/50 px-3 py-3 text-sm text-cream-400 focus:border-brand-400/60 focus:outline-none'
+                                    >
                                         {source === ALL_PROVIDERS ? 'All Providers' : sourceLabel(source)}
-                                        <ChevronDown width={14} height={14} fill='currentColor' className='text-cream-400/40' />
+                                        <ChevronDown
+                                            width={14}
+                                            height={14}
+                                            fill='currentColor'
+                                            className='text-cream-400/40'
+                                        />
                                     </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align='end'>
@@ -492,9 +534,17 @@ const InstallerContainer = () => {
                                 <>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <button className='inline-flex items-center gap-2 rounded-xl border border-mocha-300/50 bg-mocha-400/50 px-3 py-3 text-sm text-cream-400 focus:border-brand-400/60 focus:outline-none'>
+                                            <button
+                                                type='button'
+                                                className='inline-flex items-center gap-2 rounded-xl border border-mocha-300/50 bg-mocha-400/50 px-3 py-3 text-sm text-cream-400 focus:border-brand-400/60 focus:outline-none'
+                                            >
                                                 {releaseType.charAt(0).toUpperCase() + releaseType.slice(1)}
-                                                <ChevronDown width={14} height={14} fill='currentColor' className='text-cream-400/40' />
+                                                <ChevronDown
+                                                    width={14}
+                                                    height={14}
+                                                    fill='currentColor'
+                                                    className='text-cream-400/40'
+                                                />
                                             </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align='end'>
@@ -509,7 +559,12 @@ const InstallerContainer = () => {
                                                     .filter((t) => gameVersions[t])
                                                     .concat(
                                                         Object.keys(gameVersions)
-                                                            .filter((t) => !['release', 'snapshot', 'beta', 'alpha'].includes(t))
+                                                            .filter(
+                                                                (t) =>
+                                                                    !['release', 'snapshot', 'beta', 'alpha'].includes(
+                                                                        t,
+                                                                    ),
+                                                            )
                                                             .sort(),
                                                     )
                                                     .map((t) => (

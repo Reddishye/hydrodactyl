@@ -36,8 +36,8 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
         $response = $this->actingAs($user)
             ->getJson(
                 $individual
-                    ? "/api/client/servers/$server->uuid/schedules/$schedule->id"
-                    : "/api/client/servers/$server->uuid/schedules"
+                    ? "/api/client/servers/wings/$server->uuid/schedules/$schedule->id"
+                    : "/api/client/servers/wings/$server->uuid/schedules"
             )
             ->assertOk();
 
@@ -66,7 +66,7 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
         $schedule = Schedule::factory()->create(['server_id' => $server2->id]);
 
         $this->actingAs($user)
-            ->getJson("/api/client/servers/$server->uuid/schedules/$schedule->id")
+            ->getJson("/api/client/servers/wings/$server->uuid/schedules/$schedule->id")
             ->assertNotFound();
     }
 
@@ -78,13 +78,13 @@ class GetServerSchedulesTest extends ClientApiIntegrationTestCase
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 
         $this->actingAs($user)
-            ->getJson("/api/client/servers/$server->uuid/schedules")
+            ->getJson("/api/client/servers/wings/$server->uuid/schedules")
             ->assertForbidden();
 
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
         $this->actingAs($user)
-            ->getJson("/api/client/servers/$server->uuid/schedules/$schedule->id")
+            ->getJson("/api/client/servers/wings/$server->uuid/schedules/$schedule->id")
             ->assertForbidden();
     }
 

@@ -87,7 +87,7 @@ const Modal: React.FC<ModalProps> = ({
 
     const onDialogClose = (): void => {
         if (isDismissable) {
-            return onDismissed();
+            onDismissed();
         }
     };
 
@@ -125,6 +125,7 @@ const Modal: React.FC<ModalProps> = ({
                                 <div
                                     ref={container}
                                     className={styles.dialogContainer}
+                                    role='dialog'
                                     onMouseDown={onContainerClick.bind(this, true)}
                                     onMouseUp={onContainerClick.bind(this, false)}
                                 >
@@ -140,6 +141,7 @@ const Modal: React.FC<ModalProps> = ({
                                             {title && <h2 className={`text-2xl text-zinc-100`}>{title}</h2>}
                                             {dismissable && (
                                                 <button
+                                                    type='button'
                                                     onClick={onDismissed}
                                                     className={'opacity-45 hover:opacity-100 p-6 -m-6 cursor-pointer'}
                                                 >

@@ -24,8 +24,8 @@ const UploadButton = () => {
     const { mutate } = useFileManagerSwr();
     const { addError, clearAndAddHttpError } = useFlashKey('files');
 
-    const name = ServerContext.useStoreState((state) => state.server.data!.name);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const name = ServerContext.useStoreState((state) => state.server.data?.name);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const directory = ServerContext.useStoreState((state) => state.files.directory);
     const { clearFileUploads, removeFileUpload, pushFileUpload } = ServerContext.useStoreActions(
         (actions) => actions.files,
@@ -51,7 +51,7 @@ const UploadButton = () => {
 
     useEffect(() => {
         return () => timeouts.forEach(clearTimeout);
-    }, []);
+    }, [timeouts.forEach]);
 
     const onFileSubmission = (files: FileList) => {
         clearAndAddHttpError();
@@ -126,6 +126,7 @@ const UploadButton = () => {
                                 fill='none'
                                 xmlns='http://www.w3.org/2000/svg'
                                 className='w-8 h-8'
+                                aria-hidden='true'
                             >
                                 <path
                                     d='M16.2812 1.25C17.5268 1.24996 18.5627 1.24993 19.3845 1.36163C20.2516 1.47949 21.0278 1.73812 21.6498 2.36687C22.2702 2.9941 22.524 3.77443 22.6399 4.64582C22.7501 5.47443 22.75 6.51982 22.75 7.78076V10.7193C22.75 11.9802 22.7501 13.0256 22.6399 13.8542C22.524 14.7256 22.2702 15.5059 21.6498 16.1331C21.0278 16.7619 20.2516 17.0205 19.3845 17.1384C18.5627 17.2501 17.5268 17.25 16.2812 17.25L15.2876 17.25C14.7353 17.25 14.2876 16.8023 14.2876 16.25C14.2876 15.6977 14.7353 15.25 15.2876 15.25H16.2108C17.545 15.25 18.4439 15.2478 19.1151 15.1566C19.7564 15.0694 20.0386 14.918 20.2278 14.7267C20.4186 14.5338 20.5704 14.2441 20.6573 13.5905C20.7479 12.9093 20.75 11.9979 20.75 10.65V7.85C20.75 6.5021 20.7479 5.59069 20.6573 4.90947C20.5704 4.2559 20.4186 3.96621 20.2278 3.77334C20.0386 3.58198 19.7564 3.43057 19.1151 3.34341C18.4439 3.25217 17.545 3.25 16.2108 3.25H15.2876C13.9534 3.25 13.0545 3.25217 12.3833 3.34341C12.2051 3.36763 12.1496 3.58343 12.285 3.70185L14.9085 5.99743C15.263 6.30758 15.3458 6.81271 15.1369 7.21248C15.0964 7.2899 15.0762 7.32861 15.0131 7.3711C14.9501 7.41358 14.8886 7.41953 14.7656 7.43142L9.74449 7.91666C9.19222 7.91361 8.74697 7.46344 8.75002 6.91116C8.75496 6.01395 8.77445 5.23439 8.86797 4.57713C8.96274 3.91111 9.14328 3.29001 9.52575 2.75108C9.62278 2.61437 9.73032 2.48648 9.84864 2.36687C10.4706 1.73812 11.2468 1.47949 12.1139 1.36163C12.9357 1.24993 13.9716 1.24996 15.2172 1.25H16.2812Z'
@@ -163,7 +164,7 @@ const UploadButton = () => {
                 }}
                 multiple
             />
-            <Button variant='secondary' onClick={() => fileUploadInput.current && fileUploadInput.current.click()}>
+            <Button variant='secondary' onClick={() => fileUploadInput.current?.click()}>
                 Upload
             </Button>
         </>

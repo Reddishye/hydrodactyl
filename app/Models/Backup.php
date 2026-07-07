@@ -61,6 +61,7 @@ class Backup extends Model
         'is_successful' => false,
         'is_locked' => false,
         'is_automatic' => false,
+        'ignored_files' => '[]',
         'checksum' => null,
         'bytes' => 0,
         'upload_id' => null,

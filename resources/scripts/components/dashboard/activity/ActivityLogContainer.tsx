@@ -146,7 +146,8 @@ const ActivityLogContainer = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [showFilters, autoRefresh]);
+        // biome-ignore lint/correctness/useExhaustiveDependencies: handleKeyDown uses refs for callbacks
+    }, [showFilters, autoRefresh, exportLogs]);
 
     useEffect(() => {
         setFilters((value) => ({
@@ -157,7 +158,7 @@ const ActivityLogContainer = () => {
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     return (
         <PageContentBlock title={'Account Activity Log'}>
@@ -230,7 +231,12 @@ const ActivityLogContainer = () => {
 
                             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                                 <div>
-                                    <label className='block text-sm font-medium text-zinc-300 mb-2'>Search</label>
+                                    <label
+                                        htmlFor='activity-search'
+                                        className='block text-sm font-medium text-zinc-300 mb-2'
+                                    >
+                                        Search
+                                    </label>
                                     <div className='relative'>
                                         <Magnifier
                                             width={22}
@@ -239,6 +245,7 @@ const ActivityLogContainer = () => {
                                             fill='currentColor'
                                         />
                                         <Input.Text
+                                            id='activity-search'
                                             type='text'
                                             placeholder='Search events, IPs, users...'
                                             value={searchTerm}
@@ -249,8 +256,14 @@ const ActivityLogContainer = () => {
                                 </div>
 
                                 <div>
-                                    <label className='block text-sm font-medium text-zinc-300 mb-2'>Event Type</label>
+                                    <label
+                                        htmlFor='activity-event-type'
+                                        className='block text-sm font-medium text-zinc-300 mb-2'
+                                    >
+                                        Event Type
+                                    </label>
                                     <Select
+                                        id='activity-event-type'
                                         value={selectedEventType}
                                         onChange={(e) => setSelectedEventType(e.target.value)}
                                         className='w-full px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-zinc-500 transition-colors duration-150'
@@ -271,8 +284,14 @@ const ActivityLogContainer = () => {
                                 </div>
 
                                 <div>
-                                    <label className='block text-sm font-medium text-zinc-300 mb-2'>Time Range</label>
+                                    <label
+                                        htmlFor='activity-time-range'
+                                        className='block text-sm font-medium text-zinc-300 mb-2'
+                                    >
+                                        Time Range
+                                    </label>
                                     <Select
+                                        id='activity-time-range'
                                         value={dateRange}
                                         onChange={(e) => setDateRange(e.target.value)}
                                         className='w-full px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 hover:border-zinc-500 transition-colors duration-150'

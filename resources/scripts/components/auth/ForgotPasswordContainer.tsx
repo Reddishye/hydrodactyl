@@ -2,7 +2,7 @@ import type { FormikHelpers } from 'formik';
 import { Formik } from 'formik';
 import { object, string } from 'yup';
 import http, { httpErrorToHuman } from '@/api/http';
-import LoginFormContainer, { ReturnToLogin, TitleSection } from '@/components/auth/LoginFormContainer';
+import LoginFormContainer, { TitleSection } from '@/components/auth/LoginFormContainer';
 import Button from '@/components/elements/Button';
 import Captcha, { getCaptchaResponse } from '@/components/elements/Captcha';
 import Field from '@/components/elements/Field';
@@ -23,7 +23,7 @@ const ForgotPasswordContainer = () => {
         // Get captcha response if enabled
         const captchaResponse = getCaptchaResponse();
 
-        let requestData: any = { email };
+        let requestData: Record<string, unknown> = { email };
         if (CaptchaManager.isEnabled() && captchaResponse) {
             const fieldName = CaptchaManager.getProviderInstance().getResponseFieldName();
             if (fieldName) {

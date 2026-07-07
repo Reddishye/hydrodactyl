@@ -74,15 +74,17 @@ $('#pNodeId').on('change', function () {
 
 $('#pNestId').on('change', function (event) {
     const nestId = $(this).val();
-    $('#pEggId').html('').select2({
-        data: $.map(_.get(Hydrodactyl.nests, $(this).val() + '.eggs', []), function(item) {
-            return {
-                id: item.id,
-                text: item.name,
-            };
-        }),
-    })
-    .change();
+    $('#pEggId')
+        .html('')
+        .select2({
+            data: $.map(_.get(Hydrodactyl.nests, $(this).val() + '.eggs', []), function (item) {
+                return {
+                    id: item.id,
+                    text: item.name,
+                };
+            }),
+        })
+        .change();
 });
 
 $('#pEggId').on('change', function (event) {

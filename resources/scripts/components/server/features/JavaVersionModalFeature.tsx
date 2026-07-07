@@ -34,7 +34,7 @@ const JavaVersionModalFeature = () => {
     const [dropDownOpen, setDropDownOpen] = useState(false);
     const [selectedVersion, setSelectedVersion] = useState('');
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const status = ServerContext.useStoreState((state) => state.status.value);
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const { instance } = ServerContext.useStoreState((state) => state.socket);
@@ -49,7 +49,7 @@ const JavaVersionModalFeature = () => {
         mutate().then((value) => {
             setSelectedVersion(Object.values(value?.dockerImages || [])[0] || '');
         });
-    }, [visible]);
+    }, [visible, mutate]);
 
     useWebsocketEvent(SocketEvent.CONSOLE_OUTPUT, (data) => {
         if (status === 'running') return;
@@ -76,7 +76,7 @@ const JavaVersionModalFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:javaVersion');
-    }, []);
+    }, [clearFlashes]);
 
     return (
         <Modal
@@ -98,6 +98,7 @@ const JavaVersionModalFeature = () => {
                         <DropdownMenu onOpenChange={(open) => setDropDownOpen(open)}>
                             <DropdownMenuTrigger asChild>
                                 <button
+                                    type='button'
                                     className='flex items-center justify-center h-8 px-4 text-sm font-medium text-white transition-colors duration-150 bg-linear-to-b from-[#ffffff10] to-[#ffffff09] border border-[#ffffff15] rounded-xl shadow-xs hover:from-[#ffffff05] hover:to-[#ffffff04] cursor-pointer'
                                     disabled={!data}
                                 >

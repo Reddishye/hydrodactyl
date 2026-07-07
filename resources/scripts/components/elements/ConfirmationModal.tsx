@@ -17,19 +17,17 @@ const ConfirmationModal: React.FC<Props> = ({ children, buttonText, onConfirmed,
     const { dismiss } = useContext(ModalContext);
 
     return (
-        <>
-            <div className='flex flex-col w-full'>
-                <div className={`text-zinc-300`}>{children}</div>
-                <div className={`flex gap-4 items-center justify-end my-6`}>
-                    <Button variant='secondary' onClick={() => dismiss()}>
-                        Cancel
-                    </Button>
-                    <Button variant='attention' onClick={() => onConfirmed()} disabled={disabled}>
-                        {buttonText}
-                    </Button>
-                </div>
+        <div className='flex flex-col w-full'>
+            <div className={`text-zinc-300`}>{children}</div>
+            <div className={`flex gap-4 items-center justify-end my-6`}>
+                <Button variant='secondary' onClick={() => dismiss()}>
+                    Cancel
+                </Button>
+                <Button variant='attention' onClick={() => onConfirmed()} disabled={disabled}>
+                    {buttonText}
+                </Button>
             </div>
-        </>
+        </div>
     );
 };
 

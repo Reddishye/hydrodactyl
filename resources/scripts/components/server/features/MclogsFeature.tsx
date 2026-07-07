@@ -24,7 +24,7 @@ const useLogAnalysis = () => {
     const [error, setError] = useState<string | null>(null);
     const [showCard, setShowCard] = useState(false);
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const status = ServerContext.useStoreState((state) => state.status.value);
 
     const consoleBufferRef = useRef<string[]>([]);
@@ -288,7 +288,7 @@ const AnalysisModal = ({
                     <div className='flex-1'>
                         <h3 className='font-semibold text-red-400 text-lg'>Analysis Failed</h3>
                         <p className='text-neutral-300 mt-2'>{error}</p>
-                        {(/latest\.log/i.test(error!) || /no log content/i.test(error!)) && (
+                        {(/latest\.log/i.test(error ?? '') || /no log content/i.test(error ?? '')) && (
                             <p className='text-neutral-400 mt-3 text-sm'>
                                 This usually means the log file doesn&apos;t exist yet. Try starting your server to
                                 generate logs first.

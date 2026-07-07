@@ -1,10 +1,10 @@
+import * as child from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react-swc';
-import * as child from 'child_process';
-import fs from 'fs';
 import laravel from 'laravel-vite-plugin';
 import million from 'million/compiler';
-import path from 'path';
 import { dirname, resolve } from 'pathe';
 import { defineConfig } from 'vite';
 import manifestSRI from 'vite-plugin-manifest-sri';
@@ -18,7 +18,7 @@ function getLaravelAppVersion() {
 
         const versionMatch = configContent.match(/'version'\s*=>\s*'(.*?)'/);
 
-        if (versionMatch && versionMatch[1]) {
+        if (versionMatch?.[1]) {
             return versionMatch[1];
         }
 
@@ -32,8 +32,8 @@ function getLaravelAppVersion() {
 
 const laravelVersion = getLaravelAppVersion();
 
-let branchName;
-let commitHash;
+let branchName: string;
+let commitHash: string;
 
 try {
     branchName = child.execSync('git rev-parse --abbrev-ref HEAD').toString().trimEnd();
@@ -56,10 +56,7 @@ export default defineConfig({
         outDir: 'public/build',
 
         rollupOptions: {
-            input: [
-                path.resolve('resources/scripts/index.tsx'),
-                path.resolve('resources/scripts/admin/index.tsx'),
-            ],
+            input: [path.resolve('resources/scripts/index.tsx'), path.resolve('resources/scripts/admin/index.tsx')],
             output: {
                 // @ts-expect-error It won't fail lol
                 manualChunks(id) {

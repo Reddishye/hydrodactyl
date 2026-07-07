@@ -35,7 +35,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
         $expected = Utilities::getScheduleNextRunDate('5', '*', '*', '*', '*');
 
         $response = $this->actingAs($user)
-            ->postJson("/api/client/servers/{$server->uuid}/schedules/{$schedule->id}", $this->updateData);
+            ->postJson("/api/client/servers/wings/{$server->uuid}/schedules/{$schedule->id}", $this->updateData);
 
         $schedule = $schedule->refresh();
 
@@ -59,7 +59,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
         $schedule = Schedule::factory()->create(['server_id' => $server2->id]);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/{$server->uuid}/schedules/{$schedule->id}")
+            ->postJson("/api/client/servers/wings/{$server->uuid}/schedules/{$schedule->id}")
             ->assertNotFound();
     }
 
@@ -74,7 +74,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/{$server->uuid}/schedules/{$schedule->id}")
+            ->postJson("/api/client/servers/wings/{$server->uuid}/schedules/{$schedule->id}")
             ->assertForbidden();
     }
 
@@ -99,7 +99,7 @@ class UpdateServerScheduleTest extends ClientApiIntegrationTestCase
         $this->assertTrue($schedule->is_processing);
 
         $response = $this->actingAs($user)
-            ->postJson("/api/client/servers/{$server->uuid}/schedules/{$schedule->id}", $this->updateData);
+            ->postJson("/api/client/servers/wings/{$server->uuid}/schedules/{$schedule->id}", $this->updateData);
 
         $schedule = $schedule->refresh();
 

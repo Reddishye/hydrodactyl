@@ -2,7 +2,7 @@ import type { ActionCreator } from 'easy-peasy';
 import { useFormikContext, withFormik } from 'formik';
 import { useState } from 'react';
 import type { Location, RouteProps } from 'react-router-dom';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import loginCheckpoint from '@/api/auth/loginCheckpoint';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
 import Button from '@/components/elements/Button';
@@ -57,7 +57,8 @@ function LoginCheckpointForm() {
                 >
                     Sign in
                 </Button>
-                <span
+                <button
+                    type='button'
                     onClick={() => {
                         setFieldValue('code', '');
                         setFieldValue('recoveryCode', '');
@@ -68,7 +69,7 @@ function LoginCheckpointForm() {
                     }
                 >
                     {!isMissingDevice ? "I've Lost My Device" : 'I Have My Device'}
-                </span>
+                </button>
             </div>
             <div
                 className={`text-right w-full rounded-b-lg border-0 ring-0 outline-hidden capitalize font-bold text-sm py-2 hover:cursor-pointer `}

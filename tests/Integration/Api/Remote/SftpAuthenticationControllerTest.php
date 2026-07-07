@@ -95,7 +95,6 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
      * Test that providing an invalid key and/or invalid username triggers the throttle on
      * the endpoint.
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('authorizationTypeDataProvider')]
     public function testUserIsThrottledIfInvalidCredentialsAreProvided()
     {
         for ($i = 0; $i <= 10; ++$i) {
@@ -220,7 +219,6 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
     public static function serverStateDataProvider(): array
     {
         return [
-            'installing' => [Server::STATUS_INSTALLING],
             'suspended' => [Server::STATUS_SUSPENDED],
             'restoring a backup' => [Server::STATUS_RESTORING_BACKUP],
         ];

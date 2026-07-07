@@ -23,7 +23,7 @@ const CheckBox = forwardRef<HTMLInputElement, Props>(({ className, label, inputF
             )}
             {...props}
         />
-        {label && <label className={clsx('ml-2', styles.label)}>{label}</label>}
+        {label && <span className={clsx('ml-2', styles.label)}>{label}</span>}
         {inputField && (
             <input type='text' className={clsx('ml-2', 'form-input', styles.input_field, 'border-branding')} />
         )}

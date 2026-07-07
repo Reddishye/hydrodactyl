@@ -59,24 +59,23 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
     {
         switch (get_class($model)) {
             case Server::class:
-                $link = "/api/client/servers/$model->uuid";
+                $link = "/api/client/servers/wings/$model->uuid";
                 break;
             case Schedule::class:
-                $link = "/api/client/servers/{$model->server->uuid}/schedules/$model->id";
+                $link = "/api/client/servers/wings/{$model->server->uuid}/schedules/$model->id";
                 break;
             case Task::class:
-                $link = "/api/client/servers/{$model->schedule->server->uuid}/schedules/{$model->schedule->id}/tasks/$model->id";
+                $link = "/api/client/servers/wings/{$model->schedule->server->uuid}/schedules/{$model->schedule->id}/tasks/$model->id";
                 break;
             case Allocation::class:
-                $link = "/api/client/servers/{$model->server->uuid}/network/allocations/$model->id";
+                $link = "/api/client/servers/wings/{$model->server->uuid}/network/allocations/$model->id";
                 break;
             case Backup::class:
-                $link = "/api/client/servers/{$model->server->uuid}/backups/$model->uuid";
+                $link = "/api/client/servers/wings/{$model->server->uuid}/backups/$model->uuid";
                 break;
             default:
-                throw new \InvalidArgumentException(sprintf('Cannot create link for Model of type %s', class_basename($model)));
+                throw new \InvalidArgumentException('Unknown model type: ' . get_class($model));
         }
-
         return $link . ($append ? '/' . ltrim($append, '/') : '');
     }
 

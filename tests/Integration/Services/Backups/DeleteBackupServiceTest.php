@@ -7,9 +7,7 @@ use GuzzleHttp\Psr7\Response;
 use Pterodactyl\Enums\BackupAdapter;
 use Pterodactyl\Models\Backup;
 use GuzzleHttp\Exception\ClientException;
-use Pterodactyl\Extensions\Backups\BackupManager;
-use Pterodactyl\Extensions\Filesystem\S3Filesystem;
-use Pterodactyl\Services\Backups\DeleteBackupService;
+use Pterodactyl\Services\Backups\Wings\DeleteBackupService;
 use Pterodactyl\Tests\Integration\IntegrationTestCase;
 use Pterodactyl\Repositories\Wings\DaemonBackupRepository;
 use Pterodactyl\Exceptions\Service\Backup\BackupLockedException;
@@ -95,17 +93,6 @@ class DeleteBackupServiceTest extends IntegrationTestCase
         $backup = Backup::factory()->create([
             'disk' => BackupAdapter::S3->value,
             'server_id' => $server->id,
-        ]);
-
-        $manager = $this->mock(BackupManager::class);
-        $adapter = $this->mock(S3Filesystem::class);
-
-        $manager->expects('adapter')->with(BackupAdapter::S3->value)->andReturn($adapter);
-
-        $adapter->expects('getBucket')->andReturn('foobar');
-        $adapter->expects('getClient->deleteObject')->with([
-            'Bucket' => 'foobar',
-            'Key' => sprintf('%s/%s.tar.gz', $server->uuid, $backup->uuid),
         ]);
 
         $this->app->make(DeleteBackupService::class)->handle($backup);

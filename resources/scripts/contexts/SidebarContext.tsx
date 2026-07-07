@@ -28,7 +28,7 @@ export const SidebarProvider: React.FC<{ children: ReactNode }> = ({ children })
             document.body.setAttribute('data-sidebar-minimized', String(newValue));
             return newValue;
         });
-    }, []);
+    }, [setIsMinimized]);
 
     const toggleMobile = useCallback(() => {
         setMobileOpen((prev) => !prev);

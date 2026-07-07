@@ -21,7 +21,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
     {
         [$user, $server] = $this->generateTestAccount([Permission::ACTION_CONTROL_RESTART]);
 
-        $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket")
+        $this->actingAs($user)->getJson("/api/client/servers/wings/$server->uuid/websocket")
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertJsonPath('errors.0.code', 'HttpForbiddenException')
             ->assertJsonPath('errors.0.detail', 'You do not have permission to connect to this server\'s websocket.');
@@ -35,7 +35,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         [, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
         [$user] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 
-        $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket")
+        $this->actingAs($user)->getJson("/api/client/servers/wings/$server->uuid/websocket")
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
@@ -53,7 +53,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         $server->node->scheme = 'https';
         $server->node->save();
 
-        $response = $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket");
+        $response = $this->actingAs($user)->getJson("/api/client/servers/wings/$server->uuid/websocket");
 
         $response->assertOk();
         $response->assertJsonStructure(['data' => ['token', 'socket']]);
@@ -102,7 +102,7 @@ class WebsocketControllerTest extends ClientApiIntegrationTestCase
         /** @var \Pterodactyl\Models\Server $server */
         [$user, $server] = $this->generateTestAccount($permissions);
 
-        $response = $this->actingAs($user)->getJson("/api/client/servers/$server->uuid/websocket");
+        $response = $this->actingAs($user)->getJson("/api/client/servers/wings/$server->uuid/websocket");
 
         $response->assertOk();
         $response->assertJsonStructure(['data' => ['token', 'socket']]);

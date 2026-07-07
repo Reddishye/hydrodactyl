@@ -9,10 +9,10 @@ declare module 'react' {
 
 declare module 'styled-components' {
     interface StyledComponentBase<
-        C extends string | ComponentType<any>,
+        C extends string | ComponentType<object>,
         T extends object,
         O extends object = object,
-        A extends keyof any = never,
+        A extends keyof unknown = never,
     > extends ForwardRefExoticBase<StyledComponentProps<C, T, O, A>> {
         (
             props: StyledComponentProps<C, T, O, A> & {

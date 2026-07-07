@@ -29,6 +29,7 @@ const SoftwareSelection = ({ selectedNest, isLoading, selectedEggUuid, onSelectE
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
                     {selectedNest?.attributes?.relationships?.eggs?.data?.map((egg) => (
                         <button
+                            type='button'
                             key={egg.attributes.uuid}
                             onClick={() => onSelectEgg(egg)}
                             disabled={isLoading}

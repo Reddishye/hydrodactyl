@@ -6,7 +6,15 @@ import { cn } from '../../lib/utils';
 
 // million-ignore
 const CommandIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='12' height='12' fill='none' {...props}>
+    <svg
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 24 24'
+        width='12'
+        height='12'
+        fill='none'
+        aria-hidden='true'
+        {...props}
+    >
         <path d='M15 9V15H9V9H15Z' stroke='currentColor' strokeWidth='1.5' strokeLinejoin='round' />
         <path
             d='M15 15H18C19.6569 15 21 16.3431 21 18C21 19.6569 19.6569 21 18 21C16.3431 21 15 19.6569 15 18V15Z'

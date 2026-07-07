@@ -19,9 +19,9 @@ import { ServerContext } from '@/state/server';
 const NetworkContainer = () => {
     const [_, setLoading] = useState(false);
     const [showSubdomainModal, setShowSubdomainModal] = useState(false);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const allocationLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.allocations);
-    const allocations = ServerContext.useStoreState((state) => state.server.data!.allocations, isEqual);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
+    const allocationLimit = ServerContext.useStoreState((state) => state.server.data?.featureLimits.allocations);
+    const allocations = ServerContext.useStoreState((state) => state.server.data?.allocations, isEqual);
     const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
 
     const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
@@ -29,11 +29,11 @@ const NetworkContainer = () => {
 
     useEffect(() => {
         mutate(allocations);
-    }, []);
+    }, [allocations, mutate]);
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     useDeepCompareEffect(() => {
         if (!data) return;
@@ -113,7 +113,12 @@ const NetworkContainer = () => {
                         <div className='flex flex-col items-center justify-center py-12'>
                             <div className='text-center'>
                                 <div className='w-12 h-12 mx-auto mb-4 rounded-full bg-[#ffffff11] flex items-center justify-center'>
-                                    <svg className='w-6 h-6 text-zinc-400' fill='currentColor' viewBox='0 0 20 20'>
+                                    <svg
+                                        className='w-6 h-6 text-zinc-400'
+                                        fill='currentColor'
+                                        viewBox='0 0 20 20'
+                                        aria-hidden='true'
+                                    >
                                         <path
                                             fillRule='evenodd'
                                             d='M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'

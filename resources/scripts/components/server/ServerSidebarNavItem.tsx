@@ -106,5 +106,3 @@ const ServerSidebarNavItem = forwardRef<HTMLAnchorElement, ServerSidebarNavItemP
 ServerSidebarNavItem.displayName = 'ServerSidebarNavItem';
 
 export default ServerSidebarNavItem;
-
-

@@ -9,7 +9,8 @@ export const setupInterceptors = (navigate: NavigateFunction) => {
         (error: AxiosError) => {
             if (error.response?.status === 400) {
                 if (
-                    (error.response?.data as Record<string, any>).errors?.[0].code === 'TwoFactorAuthRequiredException'
+                    (error.response?.data as Record<string, unknown>).errors?.[0].code ===
+                    'TwoFactorAuthRequiredException'
                 ) {
                     if (!window.location.pathname.startsWith('/account')) {
                         navigate('/account', { state: { twoFactorRedirect: true } });

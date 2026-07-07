@@ -1,4 +1,3 @@
-import { Activity02Icon } from '@hugeicons/core-free-icons';
 import { useContext } from 'react';
 import CopyOnClick from '@/components/elements/CopyOnClick';
 

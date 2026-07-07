@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import getServerResourceUsage, { type ServerPowerState, type ServerStats } from '@/api/server/getServerResourceUsage';
 import type { Server } from '@/api/server/getServer';
+import getServerResourceUsage, { type ServerPowerState, type ServerStats } from '@/api/server/getServerResourceUsage';
 import { bytesToString, ip } from '@/lib/formatters';
 
 // Determines if the current value is in an alarm threshold so we can show it in red rather
@@ -92,7 +92,8 @@ const ServerRow = ({ server, className }: { server: Server; className?: string }
         return () => {
             if (interval.current) clearInterval(interval.current);
         };
-    }, [isSuspended]);
+        // biome-ignore lint/correctness/useExhaustiveDependencies: getStats is intentionally recreated each render
+    }, [isSuspended, getStats]);
 
     const alarms = { cpu: false, memory: false, disk: false };
     if (stats) {
@@ -111,9 +112,7 @@ const ServerRow = ({ server, className }: { server: Server; className?: string }
             <div className={`flex items-center`}>
                 <div className='flex flex-col'>
                     <div className='flex items-center gap-2'>
-                        <p className={`text-xl tracking-tight font-bold truncate max-w-[20vw]`}>
-                            {server.name}
-                        </p>{' '}
+                        <p className={`text-xl tracking-tight font-bold truncate max-w-[20vw]`}>{server.name}</p>{' '}
                         <div className={'status-bar'} />
                     </div>
                     <p className={`text-sm text-[#ffffff66]`}>
@@ -143,10 +142,10 @@ const ServerRow = ({ server, className }: { server: Server; className?: string }
                                 {server.isTransferring
                                     ? 'Transferring'
                                     : server.status === 'installing'
-                                        ? 'Installing'
-                                        : server.status === 'restoring_backup'
-                                            ? 'Restoring Backup'
-                                            : 'Unavailable'}
+                                      ? 'Installing'
+                                      : server.status === 'restoring_backup'
+                                        ? 'Restoring Backup'
+                                        : 'Unavailable'}
                             </span>
                         </div>
                     ) : (

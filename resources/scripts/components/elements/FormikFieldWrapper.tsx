@@ -10,7 +10,7 @@ interface Props {
     className?: string;
     label?: string;
     description?: string;
-    validate?: (value: any) => undefined | string | Promise<any>;
+    validate?: (value: unknown) => undefined | string | Promise<unknown>;
 }
 
 const FormikFieldWrapper = ({ id, name, label, className, description, validate, children }: Props) => (

@@ -33,11 +33,11 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
         getTwoFactorTokenData()
             .then(setToken)
             .catch((error) => clearAndAddHttpError(error));
-    }, []);
+    }, [clearAndAddHttpError]);
 
     useEffect(() => {
         setProps((state) => ({ ...state, preventExternalClose: submitting }));
-    }, [submitting]);
+    }, [submitting, setProps]);
 
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -70,7 +70,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
             </div>
             <CopyOnClick text={token?.secret}>
                 <p className={'font-mono text-sm text-zinc-100 text-center mt-2'}>
-                    {token?.secret.match(/.{1,4}/g)!.join(' ') || 'Loading...'}
+                    {token?.secret.match(/.{1,4}/g)?.join(' ') || 'Loading...'}
                 </p>
             </CopyOnClick>
             <p id={'totp-code-description'} className={'mt-6'}>

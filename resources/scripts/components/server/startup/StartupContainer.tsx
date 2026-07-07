@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import isEqual from 'react-fast-compare';
 import { httpErrorToHuman } from '@/api/http';
+import type { Server } from '@/api/server/getServer';
 import processStartupCommand from '@/api/server/processStartupCommand';
 import resetStartupCommand from '@/api/server/resetStartupCommand';
 import revertDockerImage from '@/api/server/revertDockerImage';
@@ -42,13 +43,13 @@ const StartupContainer = () => {
     const [canEditCommand] = usePermissions(['startup.command']);
     const [canEditDockerImage] = usePermissions(['startup.docker-image']);
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const server = ServerContext.useStoreState((state) => state.server.data!, isEqual);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
+    const server = ServerContext.useStoreState((state) => state.server.data as Server, isEqual);
     const variables = ServerContext.useStoreState(
         ({ server }) => ({
-            variables: server.data!.variables,
-            invocation: server.data!.invocation,
-            dockerImage: server.data!.dockerImage,
+            variables: server.data?.variables,
+            invocation: server.data?.invocation,
+            dockerImage: server.data?.dockerImage,
         }),
         isEqual,
     );
@@ -126,7 +127,7 @@ const StartupContainer = () => {
             .then((invocation) => {
                 mutate(
                     (data) => ({
-                        ...data!,
+                        ...(data ?? {}),
                         invocation,
                         rawStartupCommand: commandValue,
                     }),
@@ -240,10 +241,14 @@ const StartupContainer = () => {
                             <div className='space-y-4'>
                                 <div className='grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6'>
                                     <div>
-                                        <label className='block text-sm font-medium text-neutral-300 mb-3'>
+                                        <label
+                                            htmlFor='raw_command'
+                                            className='block text-sm font-medium text-neutral-300 mb-3'
+                                        >
                                             Raw Command
                                         </label>
                                         <textarea
+                                            id='raw_command'
                                             className='w-full h-32 sm:h-36 md:h-40 px-3 py-3 sm:px-4 sm:py-4 text-sm sm:text-base font-mono bg-linear-to-b from-[#ffffff12] to-[#ffffff08] border-2 border-blue-500/30 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/60 placeholder:text-neutral-500 transition-all touch-manipulation'
                                             value={commandValue}
                                             onChange={(e) => handleCommandChange(e.target.value)}
@@ -256,9 +261,9 @@ const StartupContainer = () => {
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-neutral-300 mb-3'>
+                                        <span className='block text-sm font-medium text-neutral-300 mb-3'>
                                             Live Preview
-                                        </label>
+                                        </span>
                                         <CopyOnClick text={liveProcessedCommand}>
                                             <div className='cursor-pointer group'>
                                                 <div className='w-full h-32 sm:h-36 md:h-40 px-3 py-3 sm:px-4 sm:py-4 font-mono bg-linear-to-b from-[#ffffff06] to-[#ffffff03] border-2 border-green-500/20 rounded-xl text-sm sm:text-base overflow-auto group-hover:border-green-500/40 transition-all'>
@@ -312,7 +317,7 @@ const StartupContainer = () => {
                                 {data.rawStartupCommand && (
                                     <div className='space-y-3'>
                                         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-                                            <label className='text-sm font-medium text-neutral-300'>Raw Command</label>
+                                            <span className='text-sm font-medium text-neutral-300'>Raw Command</span>
                                             {canEditCommand && (
                                                 <Button
                                                     variant='secondary'
@@ -344,9 +349,7 @@ const StartupContainer = () => {
                                 )}
                                 <div className='space-y-3'>
                                     <div className='flex flex-col items-center sm:flex-row gap-2'>
-                                        <label className='text-sm font-medium text-neutral-300'>
-                                            Processed Command
-                                        </label>
+                                        <span className='text-sm font-medium text-neutral-300'>Processed Command</span>
                                         <span className='text-xs text-neutral-500 rounded w-fit'>Read-only</span>
                                     </div>
                                     <CopyOnClick text={data.invocation}>
@@ -382,7 +385,10 @@ const StartupContainer = () => {
                                 <InputSpinner visible={loading}>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <button className='w-full flex items-center justify-between gap-3 font-medium text-sm sm:text-base px-3 py-3 sm:px-4 sm:py-3 rounded-md bg-linear-to-b from-[#ffffff10] to-[#ffffff09] border border-[#ffffff15] hover:from-[#ffffff15] hover:to-[#ffffff10] hover:border-[#ffffff25] transition-all cursor-pointer touch-manipulation'>
+                                            <button
+                                                type='button'
+                                                className='w-full flex items-center justify-between gap-3 font-medium text-sm sm:text-base px-3 py-3 sm:px-4 sm:py-3 rounded-md bg-linear-to-b from-[#ffffff10] to-[#ffffff09] border border-[#ffffff15] hover:from-[#ffffff15] hover:to-[#ffffff10] hover:border-[#ffffff25] transition-all cursor-pointer touch-manipulation'
+                                            >
                                                 <span className='truncate text-left font-mono text-neutral-200'>
                                                     {Object.keys(data.dockerImages).find(
                                                         (key) => data.dockerImages[key] === variables.dockerImage,
@@ -395,6 +401,7 @@ const StartupContainer = () => {
                                                     viewBox='0 0 13 13'
                                                     fill='none'
                                                     className='flex-shrink-0 opacity-60'
+                                                    aria-hidden='true'
                                                 >
                                                     <path
                                                         fillRule='evenodd'

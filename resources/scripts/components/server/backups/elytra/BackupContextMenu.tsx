@@ -12,8 +12,7 @@ import { useEffect, useState } from 'react';
 import http, { httpErrorToHuman } from '@/api/http';
 import { getServerBackupDownloadUrl } from '@/api/server/backups';
 import { getGlobalDaemonType } from '@/api/server/getServer';
-import { ServerBackup } from '@/api/server/types';
-import { Button } from '@/components/ui/button';
+import type { ServerBackup } from '@/api/server/types';
 import Can from '@/components/elements/Can';
 import {
     DropdownMenu,
@@ -26,8 +25,9 @@ import { Dialog } from '@/components/elements/dialog';
 import Spinner from '@/components/elements/Spinner';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import { Button } from '@/components/ui/button';
 import useFlash from '@/plugins/useFlash';
-import { ApplicationStore } from '@/state';
+import type { ApplicationStore } from '@/state';
 import { ServerContext } from '@/state/server';
 
 import { useUnifiedBackups } from '../useUnifiedBackups';
@@ -37,7 +37,7 @@ interface Props {
 }
 
 const BackupContextMenu = ({ backup }: Props) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const daemonType = getGlobalDaemonType();
     const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
     const [modal, setModal] = useState('');
@@ -49,7 +49,13 @@ const BackupContextMenu = ({ backup }: Props) => {
     const [restorePassword, setRestorePassword] = useState('');
     const [restoreTotpCode, setRestoreTotpCode] = useState('');
     const { clearFlashes, clearAndAddHttpError, addFlash } = useFlash();
-    const { deleteBackup, restoreBackup, renameBackup, toggleBackupLock, refresh } = useUnifiedBackups();
+    const {
+        deleteBackup: _deleteBackup,
+        restoreBackup: _restoreBackup,
+        renameBackup,
+        toggleBackupLock,
+        refresh,
+    } = useUnifiedBackups();
     const hasTwoFactor = useStoreState((state: ApplicationStore) => state.user.data?.useTotp || false);
 
     const doDownload = () => {
@@ -210,8 +216,11 @@ const BackupContextMenu = ({ backup }: Props) => {
             <Dialog open={modal === 'rename'} onClose={() => setModal('')} title='Rename Backup'>
                 <div className='space-y-4'>
                     <div>
-                        <label className='block text-sm font-medium text-zinc-200 mb-2'>Backup Name</label>
+                        <label htmlFor='elytra-backup-name' className='block text-sm font-medium text-zinc-200 mb-2'>
+                            Backup Name
+                        </label>
                         <input
+                            id='elytra-backup-name'
                             type='text'
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
@@ -339,8 +348,8 @@ const BackupContextMenu = ({ backup }: Props) => {
                         {loading
                             ? 'Restoring...'
                             : countdown > 0
-                                ? `Delete All & Restore (${countdown}s)`
-                                : 'Delete All & Restore Backup'}
+                              ? `Delete All & Restore (${countdown}s)`
+                              : 'Delete All & Restore Backup'}
                     </Button>
                 </Dialog.Footer>
             </Dialog>
@@ -366,6 +375,8 @@ const BackupContextMenu = ({ backup }: Props) => {
                                 fill='none'
                                 viewBox='0 0 24 24'
                                 stroke='currentColor'
+                                role='img'
+                                aria-label='Warning'
                             >
                                 <path
                                     strokeLinecap='round'
@@ -478,10 +489,7 @@ const BackupContextMenu = ({ backup }: Props) => {
                             {!backup.isLocked && (
                                 <>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                        onClick={() => setModal('delete')}
-                                        className='cursor-pointer '
-                                    >
+                                    <DropdownMenuItem onClick={() => setModal('delete')} className='cursor-pointer '>
                                         <TrashBin width={22} height={22} className=' mr-2' fill='currentColor' />
                                         Delete
                                     </DropdownMenuItem>

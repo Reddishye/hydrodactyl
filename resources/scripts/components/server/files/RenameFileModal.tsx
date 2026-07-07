@@ -19,7 +19,7 @@ type OwnProps = RequiredModalProps & {
 };
 
 const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const { mutate } = useFileManagerSwr();
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
@@ -32,14 +32,14 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
         if (files.length === 1) {
             if (!useMoveTerminology && len === 1) {
                 // Rename the file within this directory.
-                mutate((data) => data!.map((f) => (f.name === files[0] ? { ...f, name } : f)), false);
+                mutate((data) => data?.map((f) => (f.name === files[0] ? { ...f, name } : f)), false);
             } else if (useMoveTerminology || len > 1) {
                 // Remove the file from this directory since they moved it elsewhere.
-                mutate((data) => data!.filter((f) => f.name !== files[0]), false);
+                mutate((data) => data?.filter((f) => f.name !== files[0]), false);
             }
         }
 
-        let data;
+        let data: Array<{ from: string; to: string }>;
         if (useMoveTerminology && files.length > 1) {
             data = files.map((f) => ({ from: f, to: join(name, f) }));
         } else {
@@ -47,7 +47,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
         }
 
         renameFiles(uuid, directory, data)
-            .then((): Promise<any> => (files.length > 0 ? mutate() : Promise.resolve()))
+            .then((): Promise<unknown> => (files.length > 0 ? mutate() : Promise.resolve()))
             .then(() => setSelectedFiles([]))
             .catch((error) => {
                 mutate();

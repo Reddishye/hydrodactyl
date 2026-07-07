@@ -70,7 +70,9 @@ const files: ServerFileStore = {
     }),
 
     clearFileUploads: action((state) => {
-        Object.values(state.uploads).forEach((upload) => upload.abort.abort());
+        Object.values(state.uploads).forEach((upload) => {
+            upload.abort.abort();
+        });
 
         state.uploads = {};
     }),

@@ -1,6 +1,6 @@
 import { TZDate } from '@date-fns/tz';
 
-import { toString } from 'cronstrue';
+import { toString as cronToString } from 'cronstrue';
 import { format } from 'date-fns';
 import { useStoreState } from 'easy-peasy';
 import { Form, Formik, type FormikHelpers } from 'formik';
@@ -105,7 +105,7 @@ const getCronDescription = (
     try {
         // Build cron expression: minute hour dayOfMonth month dayOfWeek
         const cronExpression = `${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`;
-        const description = toString(cronExpression, {
+        const description = cronToString(cronExpression, {
             throwExceptionOnParseError: false,
             verbose: true,
         });
@@ -127,7 +127,7 @@ const getCronDescription = (
 const EditScheduleModal = ({ schedule, visible, onDismissed, ...props }: Props) => {
     const { addError, clearFlashes } = useFlash();
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
     const serverTimezone = useStoreState((state) => state.settings.data?.timezone || 'Unknown');
 

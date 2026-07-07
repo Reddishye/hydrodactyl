@@ -12,7 +12,7 @@ class TaskFactory extends Factory
   public function definition(): array
   {
     return [
-      'sequence_id' => $this->faker->numberBetween(1, 10),
+      'sequence_id' => $this->faker->unique()->numberBetween(1, 1000),
       'action' => 'command',
       'payload' => 'test command',
       'time_offset' => 120,

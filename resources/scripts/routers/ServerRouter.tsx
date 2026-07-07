@@ -37,7 +37,7 @@ const ServerRouter = () => {
     const params = useParams<'id'>();
     const location = useLocation();
 
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
     const [error, setError] = useState('');
     const [subdomainSupported, setSubdomainSupported] = useState(false);
 
@@ -280,7 +280,10 @@ const ServerRouter = () => {
                                 </NavLink>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <button className='w-10 h-10 flex items-center justify-center rounded-md text-white hover:bg-[#ffffff11] p-2 select-none cursor-pointer'>
+                                        <button
+                                            type='button'
+                                            className='w-10 h-10 flex items-center justify-center rounded-md text-white hover:bg-[#ffffff11] p-2 select-none cursor-pointer'
+                                        >
                                             <Ellipsis fill='currentColor' width={26} height={22} />
                                         </button>
                                     </DropdownMenuTrigger>
@@ -331,7 +334,9 @@ const ServerRouter = () => {
                                         ref={getRefForRoute(route)}
                                         route={route}
                                         serverId={id}
-                                        onClick={() => { /* no-op */ }}
+                                        onClick={() => {
+                                            /* no-op */
+                                        }}
                                     />
                                 ))}
                             </ul>

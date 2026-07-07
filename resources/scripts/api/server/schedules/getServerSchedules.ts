@@ -34,7 +34,7 @@ export interface Task {
     updatedAt: Date;
 }
 
-export const rawDataToServerTask = (data: any): Task => ({
+export const rawDataToServerTask = (data: Record<string, unknown>): Task => ({
     id: data.id,
     sequenceId: data.sequence_id,
     action: data.action,
@@ -46,7 +46,7 @@ export const rawDataToServerTask = (data: any): Task => ({
     updatedAt: new Date(data.updated_at),
 });
 
-export const rawDataToServerSchedule = (data: any): Schedule => ({
+export const rawDataToServerSchedule = (data: Record<string, unknown>): Schedule => ({
     id: data.id,
     name: data.name,
     cron: {
@@ -64,7 +64,9 @@ export const rawDataToServerSchedule = (data: any): Schedule => ({
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
 
-    tasks: (data.relationships?.tasks?.data || []).map((row: any) => rawDataToServerTask(row.attributes)),
+    tasks: (data.relationships?.tasks?.data || []).map((row: Record<string, unknown>) =>
+        rawDataToServerTask(row.attributes as Record<string, unknown>),
+    ),
 });
 
 export default async (uuid: string): Promise<Schedule[]> => {
@@ -74,5 +76,7 @@ export default async (uuid: string): Promise<Schedule[]> => {
         },
     });
 
-    return (data.data || []).map((row: any) => rawDataToServerSchedule(row.attributes));
+    return (data.data || []).map((row: Record<string, unknown>) =>
+        rawDataToServerSchedule(row.attributes as Record<string, unknown>),
+    );
 };

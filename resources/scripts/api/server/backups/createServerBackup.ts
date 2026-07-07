@@ -10,7 +10,7 @@ interface RequestParameters {
 }
 
 interface CreateBackupResponse {
-    data: any;
+    data: unknown;
     meta: {
         job_id: string;
         status: string;

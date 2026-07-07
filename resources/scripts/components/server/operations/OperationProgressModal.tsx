@@ -1,7 +1,7 @@
 import { TriangleExclamation } from '@gravity-ui/icons';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { type ServerOperation, useOperationPolling } from '@/api/server/serverOperations';
+import { type OperationStatus, type ServerOperation, useOperationPolling } from '@/api/server/serverOperations';
 import { Dialog } from '@/components/elements/dialog';
 import Spinner from '@/components/elements/Spinner';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,7 @@ const OperationProgressModal: React.FC<Props> = ({
     onComplete,
     onError,
 }) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const [operation, setOperation] = useState<ServerOperation | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [autoCloseTimer, setAutoCloseTimer] = useState<NodeJS.Timeout | null>(null);
@@ -97,7 +97,7 @@ const OperationProgressModal: React.FC<Props> = ({
     }, [visible, operationId, uuid, startPolling, stopPolling, onComplete, onError, onClose, autoCloseTimer]);
 
     const renderStatusIcon = (status: string) => {
-        const iconType = getStatusIconType(status as any);
+        const iconType = getStatusIconType(status as OperationStatus);
 
         switch (iconType) {
             case 'spinner':
@@ -131,7 +131,7 @@ const OperationProgressModal: React.FC<Props> = ({
     return (
         <Dialog
             open={visible}
-            onClose={canClose ? handleClose : () => {}}
+            onClose={canClose ? handleClose : () => undefined}
             preventExternalClose={!canClose}
             hideCloseIcon={!canClose}
             title={operationType}

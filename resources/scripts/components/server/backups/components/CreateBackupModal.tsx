@@ -79,7 +79,7 @@ const CreateBackupModal = ({ visible, onDismissed, onSubmit }: CreateBackupModal
 
     useEffect(() => {
         clearFlashes('backups:create');
-    }, [visible]);
+    }, [clearFlashes]);
 
     return (
         <Formik

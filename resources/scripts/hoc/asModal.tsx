@@ -17,8 +17,8 @@ interface State {
 
 function asModal<P extends object>(
     modalProps?: SettableModalProps | ((props: P) => SettableModalProps),
-): (Component: any) => any {
-    return function (Component) {
+): (Component: React.ComponentType<P & AsModalProps>) => React.ComponentType<P & AsModalProps> {
+    return function (Component: React.ComponentType<P & AsModalProps>) {
         return class extends PureComponent<P & AsModalProps, State> {
             static displayName = `asModal(${Component.displayName})`;
 

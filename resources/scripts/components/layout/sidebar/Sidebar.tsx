@@ -80,7 +80,7 @@ export default memo(function Sidebar({ navItems, className, onNavClick }: Sideba
                 if (item.end) {
                     return path === item.to;
                 }
-                return path === item.to || path.startsWith(item.to + '/');
+                return path === item.to || path.startsWith(`${item.to}/`);
             },
             tabName: item.tabName,
             ref: item.ref,

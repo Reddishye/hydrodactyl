@@ -8,9 +8,8 @@ import createServerDatabase from '@/api/server/databases/createServerDatabase';
 import getServerDatabases from '@/api/server/databases/getServerDatabases';
 import Can from '@/components/elements/Can';
 import Field from '@/components/elements/Field';
-import { MainPageHeader } from '@/components/elements/MainPageHeader';
 import Modal from '@/components/elements/Modal';
-import { PageListContainer, PageListItem } from '@/components/elements/pages/PageList';
+import { PageListContainer } from '@/components/elements/pages/PageList';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import DatabaseRow from '@/components/server/databases/DatabaseRow';
@@ -38,8 +37,8 @@ const databaseSchema = object().shape({
 });
 
 const DatabasesContainer = () => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const databaseLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.databases);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
+    const databaseLimit = ServerContext.useStoreState((state) => state.server.data?.featureLimits.databases);
 
     const { addError, clearFlashes } = useFlash();
     const [loading, setLoading] = useState(true);
@@ -78,7 +77,7 @@ const DatabasesContainer = () => {
                 addError({ key: 'databases', message: httpErrorToHuman(error) });
             })
             .then(() => setLoading(false));
-    }, []);
+    }, [clearFlashes, uuid, setDatabases, databases.length, addError]);
 
     return (
         <ServerContentBlock className='p-0!' title={'Databases'} showFlashKey={'databases'}>
@@ -165,7 +164,7 @@ const DatabasesContainer = () => {
             ) : databases.length > 0 ? (
                 <PageListContainer data-hydrodactyl-databases>
                     <For each={databases} memo>
-                        {(database, index) => <DatabaseRow key={database.id} database={database} />}
+                        {(database, _index) => <DatabaseRow key={database.id} database={database} />}
                     </For>
                 </PageListContainer>
             ) : (

@@ -45,6 +45,7 @@ const schema = object().shape({
     action: string().required().oneOf(['command', 'power', 'backup']),
     payload: string().when('action', {
         is: (v) => v !== 'backup',
+        // biome-ignore lint/suspicious/noThenProperty: yup's when() API uses `then` as property name
         then: () => string().required('A task payload must be provided.'),
         otherwise: () => string(),
     }),
@@ -68,7 +69,7 @@ const ActionListener = () => {
             setValue(initialPayload || '');
             setTouched(false);
         }
-    }, [value]);
+    }, [value, setValue, setTouched, initialPayload, initialAction]);
 
     return null;
 };
@@ -76,9 +77,9 @@ const ActionListener = () => {
 const TaskDetailsModal = ({ schedule, task, visible, onDismissed, ...props }: Props) => {
     const { clearFlashes, addError } = useFlash();
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
-    const backupLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backups);
+    const backupLimit = ServerContext.useStoreState((state) => state.server.data?.featureLimits.backups);
 
     useEffect(() => {
         clearFlashes('schedule:task');

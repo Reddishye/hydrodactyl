@@ -15,9 +15,9 @@ interface Props {
 function FadeTransition({ children, duration, ...props }: Props) {
     const [enterDuration, exitDuration] = Array.isArray(duration)
         ? duration
-        : duration!
+        : duration
           ? ['duration-200', 'duration-100']
-          : [duration, duration];
+          : ['duration-200', 'duration-100'];
 
     return (
         <Transition

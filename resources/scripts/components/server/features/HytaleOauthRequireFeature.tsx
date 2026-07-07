@@ -40,7 +40,7 @@ const HytaleOauthRequireFeature = () => {
 
     useEffect(() => {
         clearFlashes('feature:hytaleOauth');
-    }, []);
+    }, [clearFlashes]);
 
     const handleAuthenticate = () => {
         if (verificationUri) {
@@ -88,12 +88,13 @@ const HytaleOauthRequireFeature = () => {
                 <div className='bg-zinc-900 border border-zinc-700 rounded p-4 text-center'>
                     <div className='text-zinc-400 text-sm mb-2'>DEVICE CODE</div>
                     {userCode ? (
-                        <div
-                            className='text-3xl font-mono text-white tracking-wider mb-2 cursor-pointer hover:text-zinc-300 transition-colors'
+                        <button
+                            type='button'
+                            className='text-3xl font-mono text-white tracking-wider mb-2 cursor-pointer hover:text-zinc-300 transition-colors w-full text-center bg-transparent border-none'
                             onClick={() => navigator.clipboard.writeText(userCode)}
                         >
                             {userCode}
-                        </div>
+                        </button>
                     ) : (
                         <div className='text-3xl font-mono text-white tracking-wider mb-2'>•••• ••••</div>
                     )}

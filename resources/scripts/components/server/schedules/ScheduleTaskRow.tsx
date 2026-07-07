@@ -17,7 +17,13 @@ interface Props {
     task: Task;
 }
 
-const getActionDetails = (action: string): [string, any, boolean?] => {
+const getActionDetails = (
+    action: string,
+): [
+    string,
+    React.ComponentType<React.SVGProps<SVGSVGElement>> | typeof import('@gravity-ui/icons').Terminal,
+    boolean?,
+] => {
     switch (action) {
         case 'command':
             return ['Send Command', Terminal, true];
@@ -31,7 +37,7 @@ const getActionDetails = (action: string): [string, any, boolean?] => {
 };
 
 const ScheduleTaskRow = ({ schedule, task }: Props) => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const { clearFlashes, addError } = useFlash();
     const [visible, setVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);

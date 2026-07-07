@@ -94,7 +94,7 @@ export const extractRelevantLogs = (
 /**
  * Tiny debounce for browser/Node.
  */
-export const debounce = <T extends (...args: any[]) => void>(fn: T, delay: number) => {
+export const debounce = <T extends (...args: Array<unknown>) => void>(fn: T, delay: number) => {
     let t: ReturnType<typeof setTimeout> | null = null;
     return (...args: Parameters<T>) => {
         if (t) clearTimeout(t);

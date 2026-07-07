@@ -25,7 +25,7 @@ export function fileBitsToString(mode: string, directory: boolean): string {
         if ((m & (1 << (9 - 1 - i))) !== 0) {
             buf = buf + c;
         } else {
-            buf = buf + '-';
+            buf = `${buf}-`;
         }
     });
 

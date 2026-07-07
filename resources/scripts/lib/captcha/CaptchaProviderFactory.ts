@@ -4,46 +4,34 @@ import { NullProvider } from './providers/NullProvider';
 import { RecaptchaProvider } from './providers/RecaptchaProvider';
 import { TurnstileProvider } from './providers/TurnstileProvider';
 
-export class CaptchaProviderFactory {
-    private static providers: Map<string, () => CaptchaProviderInterface> = new Map([
-        ['turnstile', () => new TurnstileProvider()],
-        ['hcaptcha', () => new HCaptchaProvider()],
-        ['recaptcha', () => new RecaptchaProvider()],
-        ['none', () => new NullProvider()],
-    ]);
+const providers: Map<string, () => CaptchaProviderInterface> = new Map([
+    ['turnstile', () => new TurnstileProvider()],
+    ['hcaptcha', () => new HCaptchaProvider()],
+    ['recaptcha', () => new RecaptchaProvider()],
+    ['none', () => new NullProvider()],
+]);
 
-    /**
-     * Create a captcha provider instance
-     */
-    static create(providerName: string): CaptchaProviderInterface {
-        const providerFactory = CaptchaProviderFactory.providers.get(providerName);
+function create(providerName: string): CaptchaProviderInterface {
+    const providerFactory = providers.get(providerName);
 
-        if (!providerFactory) {
-            console.warn(`Unknown captcha provider: ${providerName}, falling back to null provider`);
-            return new NullProvider();
-        }
-
-        return providerFactory();
+    if (!providerFactory) {
+        console.warn(`Unknown captcha provider: ${providerName}, falling back to null provider`);
+        return new NullProvider();
     }
 
-    /**
-     * Register a new captcha provider
-     */
-    static register(name: string, factory: () => CaptchaProviderInterface): void {
-        CaptchaProviderFactory.providers.set(name, factory);
-    }
-
-    /**
-     * Get all available provider names
-     */
-    static getAvailableProviders(): string[] {
-        return Array.from(CaptchaProviderFactory.providers.keys());
-    }
-
-    /**
-     * Check if a provider is available
-     */
-    static hasProvider(name: string): boolean {
-        return CaptchaProviderFactory.providers.has(name);
-    }
+    return providerFactory();
 }
+
+function register(name: string, factory: () => CaptchaProviderInterface): void {
+    providers.set(name, factory);
+}
+
+function getAvailableProviders(): string[] {
+    return Array.from(providers.keys());
+}
+
+function hasProvider(name: string): boolean {
+    return providers.has(name);
+}
+
+export const CaptchaProviderFactory = { create, register, getAvailableProviders, hasProvider };

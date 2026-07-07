@@ -22,6 +22,7 @@ const MobileFullScreenMenu = ({ isVisible, onClose, children }: MobileFullScreen
         <div className='lg:hidden fixed inset-0 z-9999 bg-[#1a1a1a] pt-16'>
             {/* Close button */}
             <button
+                type='button'
                 onClick={onClose}
                 className='absolute top-4 right-4 p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200'
                 aria-label='Close menu'

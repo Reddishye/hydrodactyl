@@ -27,7 +27,7 @@ function ResetPasswordContainer() {
 
     useEffect(() => {
         clearFlashes();
-    }, []);
+    }, [clearFlashes]);
 
     const parsed = new URLSearchParams(location.search);
     if (email.length === 0 && parsed.get('email')) {
@@ -42,7 +42,7 @@ function ResetPasswordContainer() {
         // Get captcha response if enabled
         const captchaResponse = getCaptchaResponse();
 
-        let resetData: any = {
+        let resetData: Record<string, unknown> = {
             token: params.token ?? '',
             password,
             password_confirmation,

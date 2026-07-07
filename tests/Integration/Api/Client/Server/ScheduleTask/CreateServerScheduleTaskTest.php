@@ -92,6 +92,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
     public function testBackupsCanNotBeTaskedIfLimit0()
     {
         [$user, $server] = $this->generateTestAccount();
+        $server->update(['backup_limit' => 0]);
 
         /** @var Schedule $schedule */
         $schedule = Schedule::factory()->create(['server_id' => $server->id]);
@@ -149,7 +150,7 @@ class CreateServerScheduleTaskTest extends ClientApiIntegrationTestCase
         $schedule = Schedule::factory()->create(['server_id' => $server2->id]);
 
         $this->actingAs($user)
-            ->postJson("/api/client/servers/$server->uuid/schedules/$schedule->id/tasks")
+            ->postJson("/api/client/servers/wings/$server->uuid/schedules/$schedule->id/tasks")
             ->assertNotFound();
     }
 

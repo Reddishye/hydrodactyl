@@ -1,7 +1,7 @@
 import { Eye, EyeSlash, Key, Plus, TrashBin } from '@gravity-ui/icons';
 import { format } from 'date-fns';
 import { type Actions, useStoreActions } from 'easy-peasy';
-import { type FormikHelpers } from 'formik';
+import type { FormikHelpers } from 'formik';
 import { lazy, useEffect, useState } from 'react';
 import createApiKey from '@/api/account/createApiKey';
 import deleteApiKey from '@/api/account/deleteApiKey';
@@ -43,7 +43,7 @@ const AccountApiContainer = () => {
             .then((keys) => setKeys(keys))
             .then(() => setLoading(false))
             .catch((error) => clearAndAddHttpError(error));
-    }, []);
+    }, [clearAndAddHttpError]);
 
     const doDeletion = (identifier: string) => {
         setLoading(true);
@@ -64,7 +64,7 @@ const AccountApiContainer = () => {
                 resetForm();
                 setSubmitting(false);
                 setApiKey(`${key.identifier}${secretToken}`);
-                setKeys((s) => [...s!, key]);
+                setKeys((s) => [...(s ?? []), key]);
                 setShowCreateModal(false);
             })
             .catch((error) => {
@@ -164,9 +164,12 @@ const AccountApiContainer = () => {
                                                                 <pre>{key.identifier}</pre>
                                                             </CopyOnClick>
                                                         ) : (
-                                                            <span onClick={() => toggleKeyVisibility(key.identifier)}>
+                                                            <button
+                                                                type='button'
+                                                                onClick={() => toggleKeyVisibility(key.identifier)}
+                                                            >
                                                                 ••••••••••••••••
-                                                            </span>
+                                                            </button>
                                                         )}
                                                     </span>
                                                 </code>

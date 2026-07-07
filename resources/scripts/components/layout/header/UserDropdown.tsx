@@ -24,7 +24,7 @@ import { Button } from '../../ui/button';
 export interface UserDropdownMenuItem {
     id: string;
     label?: string;
-    icon?: React.ComponentType<any>;
+    icon?: React.ComponentType<Record<string, unknown>>;
     badge?: string;
     onSelect?: () => void;
     showWhen?: boolean;
@@ -40,8 +40,8 @@ interface UserDropdownProps {
 }
 
 export default function UserDropdown({ serverId }: UserDropdownProps) {
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
-    const email = useStoreState((state) => state.user.data!.email);
+    const rootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
+    const email = useStoreState((state) => state.user.data?.email);
     const navigate = useNavigate();
     const [emailHash, setEmailHash] = useState<string>('');
 

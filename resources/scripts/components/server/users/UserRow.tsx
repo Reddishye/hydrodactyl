@@ -14,9 +14,9 @@ interface Props {
 }
 
 const UserRow = ({ subuser }: Props) => {
-    const uuid = useStoreState((state) => state.user!.data!.uuid);
+    const uuid = useStoreState((state) => state.user?.data?.uuid);
     const navigate = useNavigate();
-    const serverId = ServerContext.useStoreState((state) => state.server.data!.id);
+    const serverId = ServerContext.useStoreState((state) => state.server.data?.id);
 
     const handleEditClick = () => {
         navigate(`/server/${serverId}/users/${subuser.uuid}/edit`);

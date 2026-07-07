@@ -143,7 +143,8 @@ const ServerActivityLogContainer = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [showFilters]);
+        // biome-ignore lint/correctness/useExhaustiveDependencies: handleKeyDown uses refs for callbacks
+    }, [showFilters, exportLogs]);
 
     useEffect(() => {
         setFilters((value) => ({
@@ -154,7 +155,7 @@ const ServerActivityLogContainer = () => {
 
     useEffect(() => {
         clearAndAddHttpError(error);
-    }, [error]);
+    }, [error, clearAndAddHttpError]);
 
     return (
         <ServerContentBlock title={'Activity Log'} showFlashKey={'activity'}>
@@ -237,7 +238,12 @@ const ServerActivityLogContainer = () => {
 
                                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                                     <div>
-                                        <label className='block text-sm font-medium text-zinc-300 mb-2'>Search</label>
+                                        <label
+                                            htmlFor='server-activity-search'
+                                            className='block text-sm font-medium text-zinc-300 mb-2'
+                                        >
+                                            Search
+                                        </label>
                                         <div className='relative'>
                                             <Magnifier
                                                 width={22}
@@ -246,6 +252,7 @@ const ServerActivityLogContainer = () => {
                                                 fill='currentColor'
                                             />
                                             <Input.Text
+                                                id='server-activity-search'
                                                 type='text'
                                                 placeholder='Search events, IPs, users...'
                                                 value={searchTerm}
@@ -256,10 +263,14 @@ const ServerActivityLogContainer = () => {
                                     </div>
 
                                     <div>
-                                        <label className='block text-sm font-medium text-zinc-300 mb-2'>
+                                        <label
+                                            htmlFor='server-activity-event-type'
+                                            className='block text-sm font-medium text-zinc-300 mb-2'
+                                        >
                                             Event Type
                                         </label>
                                         <Select
+                                            id='server-activity-event-type'
                                             value={selectedEventType}
                                             onChange={(e) => setSelectedEventType(e.target.value)}
                                             className='w-full px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 focus:border-brand focus:ring-1 focus:ring-brand hover:border-zinc-500 transition-colors duration-150'
@@ -280,10 +291,14 @@ const ServerActivityLogContainer = () => {
                                     </div>
 
                                     <div>
-                                        <label className='block text-sm font-medium text-zinc-300 mb-2'>
+                                        <label
+                                            htmlFor='server-activity-time-range'
+                                            className='block text-sm font-medium text-zinc-300 mb-2'
+                                        >
                                             Time Range
                                         </label>
                                         <Select
+                                            id='server-activity-time-range'
                                             value={dateRange}
                                             onChange={(e) => setDateRange(e.target.value)}
                                             className='w-full px-3 py-2 bg-zinc-800 border border-zinc-600 rounded-lg text-zinc-100 focus:border-brand focus:ring-1 focus:ring-brand hover:border-zinc-500 transition-colors duration-150'

@@ -27,6 +27,7 @@ class BackupFactory extends Factory
       'name' => $this->faker->sentence,
       'disk' => BackupAdapter::Wings->value,
       'is_successful' => true,
+      'ignored_files' => [],
       'created_at' => CarbonImmutable::now(),
       'completed_at' => CarbonImmutable::now(),
     ];

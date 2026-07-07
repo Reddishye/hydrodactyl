@@ -1,4 +1,4 @@
-import { AntennaSignal, Check, CrownDiamond, Pencil, TrashBin, Xmark } from '@gravity-ui/icons';
+import { AntennaSignal, Check, CrownDiamond, TrashBin, Xmark } from '@gravity-ui/icons';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import isEqual from 'react-fast-compare';
 import type { Allocation } from '@/api/server/getServer';
@@ -29,7 +29,7 @@ const AllocationRow = ({ allocation }: Props) => {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const { mutate } = getServerAllocations();
 
     const onNotesChanged = useCallback(
@@ -148,6 +148,7 @@ const AllocationRow = ({ allocation }: Props) => {
                     ) : (
                         <Can action={'allocation.update'}>
                             <button
+                                type='button'
                                 onClick={startEdit}
                                 className='w-full text-left text-xs text-zinc-500 truncate hover:text-zinc-300 transition-colors'
                             >

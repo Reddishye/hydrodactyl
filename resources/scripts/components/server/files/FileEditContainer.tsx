@@ -46,8 +46,8 @@ const FileEditContainer = () => {
 
     const navigate = useNavigate();
 
-    const id = ServerContext.useStoreState((state) => state.server.data!.id);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const id = ServerContext.useStoreState((state) => state.server.data?.id);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const instance = ServerContext.useStoreState((state) => state.socket.instance);
     const setDirectory = ServerContext.useStoreActions((actions) => actions.files.setDirectory);
     const { addError, clearFlashes } = useFlash();
@@ -73,7 +73,7 @@ const FileEditContainer = () => {
                 setError(httpErrorToHuman(error));
             })
             .then(() => setLoading(false));
-    }, [action, uuid, filename]);
+    }, [action, uuid, filename, setDirectory]);
 
     const save = (name?: string) => {
         return new Promise<void>((resolve, reject) => {
@@ -180,7 +180,14 @@ const FileEditContainer = () => {
             <div className='flex flex-row items-center gap-4 absolute top-2.5 right-2'>
                 <DropdownMenu>
                     <DropdownMenuTrigger className='flex items-center gap-2 font-bold text-sm px-3 py-1 rounded-md h-fit bg-[#ffffff11]'>
-                        <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'>
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            aria-hidden='true'
+                        >
                             <path
                                 d='M8 12H8.00897M11.9955 12H12.0045M15.991 12H16'
                                 stroke='currentColor'
@@ -204,7 +211,14 @@ const FileEditContainer = () => {
                             />
                         </svg>
                         <span className='sm:block hidden'>{language?.name ?? 'Language'}</span>
-                        <svg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 13 13' fill='none'>
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='13'
+                            height='13'
+                            viewBox='0 0 13 13'
+                            fill='none'
+                            aria-hidden='true'
+                        >
                             <path
                                 fillRule='evenodd'
                                 clipRule='evenodd'
@@ -252,6 +266,7 @@ const FileEditContainer = () => {
                                             height='13'
                                             viewBox='0 0 13 13'
                                             fill='none'
+                                            aria-hidden='true'
                                         >
                                             <path
                                                 fillRule='evenodd'

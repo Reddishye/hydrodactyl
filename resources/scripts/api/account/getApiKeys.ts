@@ -8,7 +8,7 @@ export interface ApiKey {
     lastUsedAt: Date | null;
 }
 
-export const rawDataToApiKey = (data: any): ApiKey => ({
+export const rawDataToApiKey = (data: Record<string, unknown>): ApiKey => ({
     identifier: data.identifier,
     description: data.description,
     allowedIps: data.allowed_ips,
@@ -19,7 +19,13 @@ export const rawDataToApiKey = (data: any): ApiKey => ({
 export default (): Promise<ApiKey[]> => {
     return new Promise((resolve, reject) => {
         http.get('/api/client/account/api-keys')
-            .then(({ data }) => resolve((data.data || []).map((d: any) => rawDataToApiKey(d.attributes))))
+            .then(({ data }) =>
+                resolve(
+                    (data.data || []).map((d: Record<string, unknown>) =>
+                        rawDataToApiKey(d.attributes as Record<string, unknown>),
+                    ),
+                ),
+            )
             .catch(reject);
     });
 };

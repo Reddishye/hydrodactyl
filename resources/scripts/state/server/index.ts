@@ -59,7 +59,8 @@ const server: ServerDataStore = {
     }),
 
     setServerFromState: action((state, payload) => {
-        const output = payload(state.data!);
+        if (!state.data) return;
+        const output = payload(state.data);
         if (!isEqual(output, state.data)) {
             state.data = output;
         }

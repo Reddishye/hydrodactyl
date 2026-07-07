@@ -3,7 +3,7 @@
     "version": "canary",
     "buildNumber": "30",
     "engines": {
-        "node": ">=20.0"
+        "node": ">=22.13"
     },
     "type": "module",
     "dependencies": {
@@ -106,20 +106,18 @@
         "vite-plugin-manifest-sri": "^0.2.0"
     },
     "scripts": {
-        "lint": "bunx biome lint --write",
-        "check": "bunx biome check",
+        "lint": "biome lint --write",
+        "check": "biome check",
         "lint:turbo": "turbo lint",
         "dev": "vite",
         "dev:setup": "bash ./bin/devSetup.sh",
         "build": "vite build",
         "build:turbo": "turbo build",
-        "ship": "turbo build"
+        "ship": "turbo build",
+        "test": "php vendor/bin/phpunit",
+        "test:unit": "php vendor/bin/phpunit --testsuite=Unit",
+        "test:integration": "php vendor/bin/phpunit --testsuite=Integration"
     },
-    "browserslist": [
-        "> 0.5%",
-        "last 2 versions",
-        "firefox esr",
-        "not dead"
-    ],
+    "browserslist": ["> 0.5%", "last 2 versions", "firefox esr", "not dead"],
     "packageManager": "pnpm@11.3.0"
 }

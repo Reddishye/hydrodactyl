@@ -1,6 +1,6 @@
 import { ArrowDownToLine, Plus } from '@gravity-ui/icons';
 import { useStoreState } from 'easy-peasy';
-import { type FormikHelpers } from 'formik';
+import type { FormikHelpers } from 'formik';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import deleteAllServerBackups from '@/api/server/backups/deleteAllServerBackups';
@@ -65,9 +65,9 @@ const BackupContainer = () => {
     const { backups, backupCount, storage, pagination, error, isValidating, createBackup, retryBackup, refresh } =
         useUnifiedBackups();
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const backupLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backups);
-    const backupStorageLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backupStorageMb);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
+    const backupLimit = ServerContext.useStoreState((state) => state.server.data?.featureLimits.backups);
+    const backupStorageLimit = ServerContext.useStoreState((state) => state.server.data?.featureLimits.backupStorageMb);
 
     // Check if any backup operation is in progress
     const hasActiveOperation = Object.values(liveProgress).some((op) => !op.completed);
@@ -188,6 +188,8 @@ const BackupContainer = () => {
                                             fill='none'
                                             viewBox='0 0 24 24'
                                             stroke='currentColor'
+                                            role='img'
+                                            aria-label='Delete'
                                         >
                                             <path
                                                 strokeLinecap='round'
@@ -301,14 +303,11 @@ const BackupContainer = () => {
                                     className='pt-2'
                                 />
 
-                                {pagination &&
-                                    pagination.currentPage &&
-                                    pagination.totalPages &&
-                                    pagination.totalPages > 1 && (
-                                        <Pagination data={{ items: backups, pagination }} onPageSelect={setPage}>
-                                            {() => null}
-                                        </Pagination>
-                                    )}
+                                {pagination?.currentPage && pagination.totalPages && pagination.totalPages > 1 && (
+                                    <Pagination data={{ items: backups, pagination }} onPageSelect={setPage}>
+                                        {() => null}
+                                    </Pagination>
+                                )}
                             </>
                         )}
                     </div>
@@ -339,8 +338,8 @@ const BackupContainerWrapper = () => {
 
     // Single websocket listener for the entire page
     const handleBackupStatus = useCallback(
-        (rawData: any) => {
-            let data;
+        (rawData: unknown) => {
+            let data: Record<string, unknown> | string;
             try {
                 if (typeof rawData === 'string') {
                     data = JSON.parse(rawData);

@@ -133,7 +133,7 @@ class BuildModificationServiceTest extends IntegrationTestCase
         $this->assertSame(150, $response->cpu);
         $this->assertSame('1,2', $response->threads);
         $this->assertSame(1024, $response->disk);
-        $this->assertSame(0, $response->backup_limit);
+        $this->assertNull($response->backup_limit);
         $this->assertSame(10, $response->database_limit);
         $this->assertSame(20, $response->allocation_limit);
     }

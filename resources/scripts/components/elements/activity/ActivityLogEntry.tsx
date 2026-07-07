@@ -1,7 +1,5 @@
 import type { ActivityLog } from '@definitions/user';
 import { TerminalLine } from '@gravity-ui/icons';
-// FIXME: add icons back
-import clsx from 'clsx';
 // FIXME: replace with radix tooltip
 // import Tooltip from '@/components/elements/tooltip/Tooltip';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -12,8 +10,6 @@ import ActivityLogMetaButton from '@/components/elements/activity/ActivityLogMet
 import { formatObjectToIdentString } from '@/lib/objects';
 
 import useLocationHash from '@/plugins/useLocationHash';
-
-import style from './style.module.css';
 
 interface Props {
     activity: ActivityLog;

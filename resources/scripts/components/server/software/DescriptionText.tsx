@@ -6,7 +6,7 @@ interface Props {
     id: string;
 }
 
-const DescriptionText = ({ description, id }: Props) => {
+const DescriptionText = ({ description, id: _id }: Props) => {
     const [showFull, setShowFull] = useState(false);
     const isLong = description.length > MAX_DESCRIPTION_LENGTH;
 
@@ -17,7 +17,7 @@ const DescriptionText = ({ description, id }: Props) => {
             {isLong && !showFull ? (
                 <>
                     {description.slice(0, MAX_DESCRIPTION_LENGTH)}...{' '}
-                    <button onClick={toggle} className='text-brand hover:underline font-medium'>
+                    <button type='button' onClick={toggle} className='text-brand hover:underline font-medium'>
                         Show more
                     </button>
                 </>
@@ -27,7 +27,7 @@ const DescriptionText = ({ description, id }: Props) => {
                     {isLong && (
                         <>
                             {' '}
-                            <button onClick={toggle} className='text-brand hover:underline font-medium'>
+                            <button type='button' onClick={toggle} className='text-brand hover:underline font-medium'>
                                 Show less
                             </button>
                         </>

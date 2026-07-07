@@ -60,16 +60,14 @@ const FlashStatusContainer = ({ byKey }: Props) => {
         state.flashes.items.filter((flash) => (byKey ? flash.key === byKey : true)),
     );
 
-    return flashes.length ? (
-        <>
-            {flashes.map((flash, index) => (
-                <Fragment key={flash.id || flash.type + flash.message}>
-                    {index > 0 && <></>}
-                    <StatusContainer type={flash.type} text={flash.message}></StatusContainer>
-                </Fragment>
-            ))}
-        </>
-    ) : null;
+    return flashes.length
+        ? flashes.map((flash, index) => (
+              <Fragment key={flash.id || flash.type + flash.message}>
+                  {index > 0 && null}
+                  <StatusContainer type={flash.type} text={flash.message}></StatusContainer>
+              </Fragment>
+          ))
+        : null;
 };
 
 export default FlashStatusContainer;

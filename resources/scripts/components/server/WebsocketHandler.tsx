@@ -102,7 +102,8 @@ function WebsocketHandler() {
         }
 
         connect(uuid);
-    }, [uuid]);
+        // biome-ignore lint/correctness/useExhaustiveDependencies: connect is intentionally recreated
+    }, [uuid, instance, connect]);
 
     return error ? (
         <FadeTransition duration='duration-150' show>

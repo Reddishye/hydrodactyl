@@ -11,7 +11,10 @@ const Features = ({ enabled }: { enabled: string[] }) => {
     const mapped: ListItems = useMemo(() => {
         return getObjectKeys(features)
             .filter((key) => enabled.map((v) => v.toLowerCase()).includes(key.toLowerCase()))
-            .reduce((arr, key) => [...arr, [key, features[key]]] as ListItems, [] as ListItems);
+            .reduce((arr, key) => {
+                arr.push([key, features[key]]);
+                return arr;
+            }, [] as ListItems);
     }, [enabled]);
 
     return (

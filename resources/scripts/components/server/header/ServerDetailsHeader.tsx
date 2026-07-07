@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { SocketEvent, SocketRequest } from '@/components/server/events';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
+import { bytesToString } from '@/lib/formatters';
 import { cn } from '@/lib/utils';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import { ServerContext } from '@/state/server';
@@ -12,7 +12,7 @@ type Stats = Record<'memory' | 'cpu' | 'disk' | 'uptime' | 'rx' | 'tx', number>;
 
 // @ts-expect-error - Unused parameter in component definition
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Limit = ({ limit, children }: { limit: string | null; children: React.ReactNode }) => <>{children}</>;
+const _Limit = ({ children }: { limit: string | null; children: React.ReactNode }) => <>{children}</>;
 
 const ServerDetailsHeader = ({ className }: { className?: string }) => {
     const [stats, setStats] = useState<Stats>({
@@ -28,7 +28,7 @@ const ServerDetailsHeader = ({ className }: { className?: string }) => {
     // const status = ServerContext.useStoreState((state) => state.status.value);
     const connected = ServerContext.useStoreState((state) => state.socket.connected);
     const instance = ServerContext.useStoreState((state) => state.socket.instance);
-    const limits = ServerContext.useStoreState((state) => state.server.data!.limits);
+    const _limits = ServerContext.useStoreState((state) => state.server.data?.limits);
 
     // const textLimits = useMemo(
     //     () => ({
@@ -54,10 +54,10 @@ const ServerDetailsHeader = ({ className }: { className?: string }) => {
     }, [instance, connected]);
 
     useWebsocketEvent(SocketEvent.STATS, (data) => {
-        let stats: any = {};
+        let stats: Record<string, unknown> = {};
         try {
             stats = JSON.parse(data);
-        } catch (e) {
+        } catch (_e) {
             return;
         }
 

@@ -15,7 +15,7 @@ const useSSHKeys = (config?: SWRConfiguration<SSHKey[], AxiosError>) => {
         async () => {
             const { data } = await http.get('/api/client/account/ssh-keys');
 
-            return (data as FractalResponseList).data.map((datum: any) => {
+            return (data as FractalResponseList).data.map((datum: Record<string, unknown>) => {
                 return Transformers.toSSHKey(datum.attributes);
             });
         },

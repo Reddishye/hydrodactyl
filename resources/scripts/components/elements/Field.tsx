@@ -5,7 +5,7 @@ interface OwnProps {
     name: string;
     label?: string;
     description?: string;
-    validate?: (value: any) => undefined | string | Promise<any>;
+    validate?: (value: unknown) => undefined | string | Promise<unknown>;
 }
 
 type Props = OwnProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'>;

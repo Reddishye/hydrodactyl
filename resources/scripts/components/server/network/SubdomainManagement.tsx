@@ -67,7 +67,7 @@ interface Props {
     onClose?: () => void;
 }
 
-const SubdomainManagement = ({ onClose }: Props) => {
+const SubdomainManagement = ({ onClose: _onClose }: Props) => {
     const [loading, setLoading] = useState(false);
     const [subdomainInfo, setSubdomainInfo] = useState<SubdomainInfo | null>(null);
     const [checkingAvailability, setCheckingAvailability] = useState(false);
@@ -78,16 +78,12 @@ const SubdomainManagement = ({ onClose }: Props) => {
     } | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network:subdomain');
 
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        loadSubdomainInfo();
-    }, []);
-
-    const loadSubdomainInfo = async () => {
+    const loadSubdomainInfo = useCallback(async () => {
         try {
             clearFlashes();
             const data = await getSubdomainInfo(uuid);
@@ -95,7 +91,11 @@ const SubdomainManagement = ({ onClose }: Props) => {
         } catch (error) {
             clearAndAddHttpError(error as Error);
         }
-    };
+    }, [uuid, clearFlashes, clearAndAddHttpError]);
+
+    useEffect(() => {
+        loadSubdomainInfo();
+    }, [loadSubdomainInfo]);
 
     const checkAvailability = useCallback(
         async (subdomain: string, domainId: string) => {
@@ -116,13 +116,13 @@ const SubdomainManagement = ({ onClose }: Props) => {
 
             try {
                 setCheckingAvailability(true);
-                const response = await checkSubdomainAvailability(uuid, subdomain.trim(), parseInt(domainId));
+                const response = await checkSubdomainAvailability(uuid, subdomain.trim(), parseInt(domainId, 10));
                 setAvailabilityStatus({
                     checked: true,
                     available: response.available,
                     message: response.message,
                 });
-            } catch (error) {
+            } catch (_error) {
                 setAvailabilityStatus({
                     checked: true,
                     available: false,
@@ -163,7 +163,7 @@ const SubdomainManagement = ({ onClose }: Props) => {
         try {
             clearFlashes();
             setLoading(true);
-            await setSubdomain(uuid, values.subdomain.trim(), parseInt(values.domain_id));
+            await setSubdomain(uuid, values.subdomain.trim(), parseInt(values.domain_id, 10));
             await loadSubdomainInfo();
             setAvailabilityStatus(null);
             if (isEditing) {
@@ -221,7 +221,12 @@ const SubdomainManagement = ({ onClose }: Props) => {
             <div className='flex flex-col items-center justify-center py-12'>
                 <div className='text-center'>
                     <div className='w-12 h-12 mx-auto mb-3 rounded-full bg-[#ffffff11] flex items-center justify-center'>
-                        <svg className='w-6 h-6 text-zinc-400' fill='currentColor' viewBox='0 0 20 20'>
+                        <svg
+                            className='w-6 h-6 text-zinc-400'
+                            fill='currentColor'
+                            viewBox='0 0 20 20'
+                            aria-hidden='true'
+                        >
                             <path
                                 fillRule='evenodd'
                                 d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
@@ -296,7 +301,7 @@ const SubdomainManagement = ({ onClose }: Props) => {
                     onSubmit={handleSetSubdomain}
                     enableReinitialize
                 >
-                    {({ values, setFieldValue, isSubmitting, isValid, errors, resetForm }) => (
+                    {({ values, setFieldValue, isSubmitting, isValid, errors: _errors, resetForm }) => (
                         <Form className='space-y-6'>
                             <div className='space-y-4'>
                                 <FormikFieldWrapper

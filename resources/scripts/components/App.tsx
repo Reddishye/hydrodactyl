@@ -58,7 +58,9 @@ const App = () => {
     }
 
     if (!store.getState().settings.data) {
-        store.getActions().settings.setSettings(SiteConfiguration!);
+        if (SiteConfiguration) {
+            store.getActions().settings.setSettings(SiteConfiguration);
+        }
     }
 
     return (
