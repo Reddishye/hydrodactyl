@@ -3,7 +3,7 @@
     "version": "canary",
     "buildNumber": "30",
     "engines": {
-        "node": ">=20.0"
+        "node": ">=22.13"
     },
     "type": "module",
     "dependencies": {
@@ -106,8 +106,8 @@
         "vite-plugin-manifest-sri": "^0.2.0"
     },
     "scripts": {
-        "lint": "bunx biome lint --write",
-        "check": "bunx biome check",
+        "lint": "biome lint --write",
+        "check": "biome check",
         "lint:turbo": "turbo lint",
         "dev": "vite",
         "dev:setup": "bash ./bin/devSetup.sh",
