@@ -41,6 +41,11 @@
                             <input type="text" class="form-control" id="endpoint" name="endpoint" value="{{ old('endpoint') }}" placeholder="https://s3.amazonaws.com">
                             <p class="small text-muted no-margin">The S3 endpoint URL. Leave blank for AWS S3.</p>
                         </div>
+                        <div class="form-group">
+                            <label for="region">Region</label>
+                            <input type="text" class="form-control" id="region" name="region" value="{{ old('region', 'us-east-1') }}" placeholder="us-east-1">
+                            <p class="small text-muted no-margin">Required for some S3-compatible providers such as Backblaze B2, which uses regions like <code>us-west-004</code>.</p>
+                        </div>
                     </div>
 
                     <div class="col-md-6">
@@ -112,15 +117,17 @@
             access_key: $('#access_key').val(),
             secret_key: $('#secret_key').val(),
             endpoint: $('#endpoint').val(),
+            region: $('#region').val(),
             bucket_name: $('#bucket_name').val(),
-            use_path_style_endpoint: $('input[name="use_path_style_endpoint"]').is(':checked') ? '1' : '0',
+            use_path_style_endpoint: $('#use_path_style_endpoint').is(':checked') ? '1' : '0',
         })
         .done(function (response) {
             swal({ type: 'success', title: 'Success', text: response.message });
         })
         .fail(function (xhr) {
             const response = xhr.responseJSON || {};
-            swal({ type: 'error', title: 'Connection Failed', text: response.message || 'An unexpected error occurred.' });
+            const message = response.message || xhr.responseText || `Request failed with status ${xhr.status}.`;
+            swal({ type: 'error', title: 'Connection Failed', text: message });
         })
         .always(function () {
             $button.prop('disabled', false);

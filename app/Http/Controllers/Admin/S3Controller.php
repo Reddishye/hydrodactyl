@@ -111,13 +111,14 @@ class S3Controller extends Controller
             'secret_key' => 'required|string',
             'bucket_name' => 'required|string',
             'endpoint' => 'nullable|string',
+            'region' => 'nullable|string|max:64',
             'use_path_style_endpoint' => 'nullable|boolean',
         ]);
 
         try {
             $config = [
                 'version' => 'latest',
-                'region' => 'us-east-1',
+                'region' => trim((string) $request->input('region', '')) ?: 'us-east-1',
                 'credentials' => [
                     'key' => $request->input('access_key'),
                     'secret' => $request->input('secret_key'),

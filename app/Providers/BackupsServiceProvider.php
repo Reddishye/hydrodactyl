@@ -34,7 +34,7 @@ class BackupsServiceProvider extends ServiceProvider
                 'key' => $s3Bucket->access_key,
                 'secret' => $s3Bucket->secret_key,
                 'bucket' => $s3Bucket->bucket_name,
-                'region' => 'us-east-1',
+                'region' => $s3Bucket->region ?: 'us-east-1',
                 'endpoint' => $s3Bucket->endpoint,
                 'use_path_style_endpoint' => $s3Bucket->use_path_style_endpoint,
             ];
@@ -51,7 +51,7 @@ class BackupsServiceProvider extends ServiceProvider
                     'key' => $s3Bucket->access_key,
                     'secret' => $s3Bucket->secret_key,
                     'bucket' => $s3Bucket->bucket_name,
-                    'region' => 'us-east-1',
+                    'region' => $s3Bucket->region ?: 'us-east-1',
                     'endpoint' => $s3Bucket->endpoint,
                     'force_path_style' => $s3Bucket->use_path_style_endpoint,
                     'prefix' => env('RUSTIC_S3_PREFIX', 'rustic-repos/'),

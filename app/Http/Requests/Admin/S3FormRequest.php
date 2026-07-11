@@ -12,6 +12,7 @@ class S3FormRequest extends AdminFormRequest
             'access_key' => 'required|string|max:255',
             'secret_key' => 'required|string|max:255',
             'endpoint' => 'nullable|url|max:255',
+            'region' => 'nullable|string|max:64',
             'bucket_name' => 'required|string|max:255',
             'use_path_style_endpoint' => 'boolean',
             'enabled' => 'boolean',
@@ -22,6 +23,7 @@ class S3FormRequest extends AdminFormRequest
     {
         $validated = parent::validated($key, $default);
 
+        $validated['region'] = trim((string) ($validated['region'] ?? '')) ?: 'us-east-1';
         $validated['use_path_style_endpoint'] = (bool) ($validated['use_path_style_endpoint'] ?? false);
         $validated['enabled'] = (bool) ($validated['enabled'] ?? true);
 

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $access_key
  * @property string $secret_key
  * @property string|null $endpoint
+ * @property string $region
  * @property string $bucket_name
  * @property bool $use_path_style_endpoint
  * @property bool $enabled
@@ -50,6 +51,7 @@ class S3 extends Model
         'access_key',
         'secret_key',
         'endpoint',
+        'region',
         'bucket_name',
         'use_path_style_endpoint',
         'enabled',
@@ -61,6 +63,7 @@ class S3 extends Model
         'access_key' => 'required|string|max:255',
         'secret_key' => 'required|string|max:255',
         'endpoint' => 'nullable|url|max:255',
+        'region' => 'nullable|string|max:64',
         'bucket_name' => 'required|string|max:255',
         'use_path_style_endpoint' => 'boolean',
         'enabled' => 'boolean',
@@ -96,7 +99,7 @@ class S3 extends Model
             'key' => $this->access_key,
             'secret' => $this->secret_key,
             'bucket' => $this->bucket_name,
-            'region' => 'us-east-1',
+            'region' => $this->region ?: 'us-east-1',
             'endpoint' => $this->endpoint,
             'use_path_style_endpoint' => $this->use_path_style_endpoint,
         ];
@@ -111,7 +114,7 @@ class S3 extends Model
             'key' => $this->access_key,
             'secret' => $this->secret_key,
             'bucket' => $this->bucket_name,
-            'region' => 'us-east-1',
+            'region' => $this->region ?: 'us-east-1',
             'endpoint' => $this->endpoint,
             'force_path_style' => $this->use_path_style_endpoint,
             'prefix' => env('RUSTIC_S3_PREFIX', 'rustic-repos/'),

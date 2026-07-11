@@ -47,7 +47,12 @@
                     <div class="form-group">
                         <label for="endpoint" class="control-label">Endpoint</label>
                         <input type="url" name="endpoint" value="{{ old('endpoint', $s3->endpoint) }}" class="form-control" />
-                        <p class="text-muted small">The endpoint URL for the S3 service. Leave empty for AWS S3.</p>
+                        <p class="text-muted small">The endpoint URL for the S3 service, make sure to include <code>https://</code>. Leave empty for AWS S3.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="region" class="control-label">Region</label>
+                        <input type="text" name="region" value="{{ old('region', $s3->region ?: 'us-east-1') }}" class="form-control" />
+                        <p class="text-muted small">The region for the S3 service. For example, <code>us-west-004</code> on BackBlaze. Leave blank for us-east-1 on AWS</p>
                     </div>
                     <div class="form-group">
                         <label for="bucket_name" class="control-label">Bucket Name <span class="field-required"></span></label>
@@ -99,15 +104,17 @@
             access_key: $('input[name="access_key"]').val(),
             secret_key: $('input[name="secret_key"]').val(),
             endpoint: $('input[name="endpoint"]').val(),
+            region: $('input[name="region"]').val(),
             bucket_name: $('input[name="bucket_name"]').val(),
-            use_path_style_endpoint: $('input[name="use_path_style_endpoint"]').is(':checked') ? '1' : '0',
+            use_path_style_endpoint: $('#use_path_style_endpoint').is(':checked') ? '1' : '0',
         })
         .done(function (response) {
             swal({ type: 'success', title: 'Success', text: response.message });
         })
         .fail(function (xhr) {
             const response = xhr.responseJSON || {};
-            swal({ type: 'error', title: 'Connection Failed', text: response.message || 'An unexpected error occurred.' });
+            const message = response.message || xhr.responseText || `Request failed with status ${xhr.status}.`;
+            swal({ type: 'error', title: 'Connection Failed', text: message });
         })
         .always(function () {
             $button.prop('disabled', false);
