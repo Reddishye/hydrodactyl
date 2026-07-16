@@ -16,6 +16,7 @@ class BucketFormRequest extends AdminFormRequest
             'access_key' => 'required|string|max:255',
             'secret_key' => 'required|string|max:255',
             'endpoint' => 'nullable|url|max:255',
+            'region' => 'nullable|url|max:255',
             'bucket_name' => 'required|string|max:255',
             'use_path_style_endpoint' => 'boolean',
             /* 'enabled' => 'boolean', */
