@@ -3,6 +3,20 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | CDN
+    |--------------------------------------------------------------------------
+    |
+    | Information for the panel to use when contacting the CDN to confirm
+    | if panel is up to date.
+    */
+
+    'cdn' => [
+        'cache_time' => 60,
+        'url' => 'https://blueprint.zip/api/latest/hydrodactyl',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Marketplace (Plugin & Mod Installer)
     |--------------------------------------------------------------------------
     |
