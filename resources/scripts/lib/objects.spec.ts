@@ -12,19 +12,11 @@ describe('@/lib/objects.ts', () => {
             expect(isObject(null)).toBe(false);
         });
 
-        it.each([
-            undefined,
-            123,
-            'foobar',
-            () => ({}),
-            Function,
-            String(123),
-            isObject,
-            () => null,
-            [],
-            [1, 2, 3],
-        ])('should return false for %p', (value) => {
-            expect(isObject(value)).toBe(false);
-        });
+        it.each([undefined, 123, 'foobar', () => ({}), Function, String(123), isObject, () => null, [], [1, 2, 3]])(
+            'should return false for %p',
+            (value) => {
+                expect(isObject(value)).toBe(false);
+            },
+        );
     });
 });
