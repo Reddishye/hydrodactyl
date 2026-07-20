@@ -1,12 +1,11 @@
 import { CloudDownload, CloudUpload } from '@carbon/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-
+import CopyOnClick from '@/components/elements/CopyOnClick';
 import ChartBlock from '@/components/server/console/ChartBlock';
 import { useChart, useChartTickLabel } from '@/components/server/console/chart';
 import { SocketEvent } from '@/components/server/events';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-
 import { bytesToString, ip } from '@/lib/formatters';
 import { hexToRgba } from '@/lib/helpers';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
@@ -105,20 +104,22 @@ const StatGraphs = () => {
         <TooltipProvider>
             <div className='flex h-full flex-col gap-4 overflow-y-auto flex-none'>
                 <div>
-                    <div className='group p-4 justify-between relative rounded-xl border-[1px] border-[#ffffff11] bg-[#110f0d] flex gap-4 text-sm'>
+                    <div className='group p-4 justify-between relative rounded-xl border border-[#ffffff11] bg-[#110f0d] flex gap-4 text-sm'>
                         <h3 className='font-extrabold'>IP Address</h3>
-                        <div className='font-medium'>{allocation}</div>
+                        <CopyOnClick text={allocation}>
+                            <div className='font-medium'>{allocation}</div>
+                        </CopyOnClick>
                     </div>
                 </div>
                 <div>
-                    <div className='group p-4 justify-between relative rounded-xl border-[1px] border-[#ffffff11] bg-[#110f0d] flex gap-4 text-sm'>
+                    <div className='group p-4 justify-between relative rounded-xl border border-[#ffffff11] bg-[#110f0d] flex gap-4 text-sm'>
                         <h3 className='font-extrabold'>Uptime</h3>
                         <div className='font-medium'>{formatUptime(uptime)}</div>
                     </div>
                 </div>
                 {description && (
                     <div>
-                        <div className='group p-4 justify-between relative rounded-xl border-[1px] border-[#ffffff11] flex-col bg-[#110f0d] flex gap-4 text-sm'>
+                        <div className='group p-4 justify-between relative rounded-xl border border-[#ffffff11] flex-col bg-[#110f0d] flex gap-4 text-sm'>
                             <h3 className='font-extrabold'>Description</h3>
                             <div className='font-medium'>{description}</div>
                         </div>
