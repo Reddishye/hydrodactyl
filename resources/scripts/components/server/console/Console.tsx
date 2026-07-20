@@ -172,22 +172,11 @@ const Console = () => {
     }, []);
 
     useEffect(() => {
-        // Add global keydown listener
         document.addEventListener('keydown', handleGlobalKeyDown);
-
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible' && connected && instance) {
-                terminal.clear();
-                instance.send(SocketRequest.SEND_LOGS);
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
         return () => {
             document.removeEventListener('keydown', handleGlobalKeyDown);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [handleGlobalKeyDown, connected, instance, terminal]);
+    }, [handleGlobalKeyDown]);
 
     // Auto-focus input on component mount
     useEffect(() => {
@@ -229,16 +218,14 @@ const Console = () => {
                 // Add support for capturing keys
                 terminal.attachCustomKeyEventHandler((e: KeyboardEvent) => {
                     if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-                        document.execCommand('copy');
+                        const selection = terminal.getSelection();
+                        if (selection) {
+                            navigator.clipboard.writeText(selection).catch(() => {
+                                document.execCommand('copy');
+                            });
+                        }
                         return false;
                     }
-                    // } else if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                    //     e.preventDefault();
-                    //     searchBar.show();
-                    //     return false;
-                    // } else if (e.key === 'Escape') {
-                    //     searchBar.hidden();
-                    // }
                     return true;
                 });
 
