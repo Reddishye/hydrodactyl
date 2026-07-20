@@ -56,7 +56,7 @@ Route::group([
         Route::post('/delete', [Elytra\FileController::class, 'delete']);
         Route::post('/create-folder', [Elytra\FileController::class, 'create']);
         Route::post('/chmod', [Elytra\FileController::class, 'chmod']);
-        Route::post('/pull', [Elytra\FileController::class, 'pull'])->middleware(['throttle:10,5']);
+        Route::post('/pull', [Elytra\FileController::class, 'pull'])->middleware(['throttle:30,1']);
         Route::get('/upload', Elytra\FileUploadController::class);
     });
 

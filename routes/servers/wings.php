@@ -58,7 +58,7 @@ Route::group([
         Route::post('/delete', [Wings\FileController::class, 'delete']);
         Route::post('/create-folder', [Wings\FileController::class, 'create']);
         Route::post('/chmod', [Wings\FileController::class, 'chmod']);
-        Route::post('/pull', [Wings\FileController::class, 'pull'])->middleware(['throttle:10,5']);
+        Route::post('/pull', [Wings\FileController::class, 'pull'])->middleware(['throttle:30,1']);
         Route::get('/upload', Wings\FileUploadController::class);
     });
 
