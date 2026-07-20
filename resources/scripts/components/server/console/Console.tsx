@@ -55,6 +55,7 @@ const Console = () => {
     const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mcontainer@hydrodactyl~ \u001b[0m';
     const ref = useRef<HTMLDivElement>(null);
     const resizeObserverRef = useRef<ResizeObserver | null>(null);
+    const keyDownRef = useRef<((e: globalThis.KeyboardEvent) => void) | null>(null);
     const terminal = useMemo(() => new Terminal({ ...terminalProps, rows: 30 }), []);
     const fitAddon = useMemo(() => new FitAddon(), []);
     const searchAddon = useMemo(() => new SearchAddon(), []);
@@ -202,27 +203,34 @@ const Console = () => {
                 terminal.open(ref.current);
                 fitAddon.fit();
 
-                // Lock the terminal canvas. The hidden `.xterm-helper-textarea` is
-                // xterm's only keyboard entry point — disabling it (and dropping it
-                // from the tab order) means the canvas can never gain focus and no
-                // keystrokes reach xterm's input pipeline, so nothing (scroll-on-key,
-                // the copy handler below, IME, etc.) ever fires. This is on top of
-                // `disableStdin`, which only suppresses emitted data. Output rendering,
-                // mouse text-selection, and native viewport scrolling are unaffected;
-                // command input still flows through the dedicated box below.
+                // Keep textarea enabled so keyboard events reach xterm's input
+                // pipeline (required for attachCustomKeyEventHandler to fire).
+                // Drop it from tab order so focus stays on the command input.
+                // disableStdin prevents any key data from being emitted.
                 if (terminal.textarea) {
                     terminal.textarea.tabIndex = -1;
-                    terminal.textarea.disabled = true;
                 }
+
+                // Document-level Ctrl+C handler copies xterm selection.
+                // Required because disabled textarea blocks xterm's own key
+                // event pipeline on some browsers.
+                const onDocKeyDown = (e: globalThis.KeyboardEvent) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                        const selection = terminal.getSelection();
+                        if (selection) {
+                            e.preventDefault();
+                            navigator.clipboard.writeText(selection);
+                        }
+                    }
+                };
+                document.addEventListener('keydown', onDocKeyDown);
 
                 // Add support for capturing keys
                 terminal.attachCustomKeyEventHandler((e: KeyboardEvent) => {
                     if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
                         const selection = terminal.getSelection();
                         if (selection) {
-                            navigator.clipboard.writeText(selection).catch(() => {
-                                document.execCommand('copy');
-                            });
+                            navigator.clipboard.writeText(selection);
                         }
                         return false;
                     }
@@ -235,11 +243,17 @@ const Console = () => {
                 if (ref.current) {
                     resizeObserverRef.current.observe(ref.current);
                 }
+
+                keyDownRef.current = onDocKeyDown;
             }
         }
 
         // Cleanup function to dispose terminal when component unmounts
         return () => {
+            if (keyDownRef.current) {
+                document.removeEventListener('keydown', keyDownRef.current);
+                keyDownRef.current = null;
+            }
             if (terminal.element) {
                 terminal.dispose();
             }
