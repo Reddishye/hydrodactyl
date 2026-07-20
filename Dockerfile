@@ -2,12 +2,13 @@
 
 # Stage 0:
 # Build the frontend (only if not in dev mode)
-FROM --platform=$TARGETOS/$TARGETARCH node:lts-alpine AS frontend
+# Use BUILDPLATFORM so Node.js/pnpm run natively (no QEMU) —
+# output static files are platform-independent.
+FROM --platform=$BUILDPLATFORM node:lts-alpine AS frontend
 ARG DEV=false
 WORKDIR /app
 RUN if [ "$DEV" = "false" ]; then \
-    apk add --no-cache git \
-    && npm install -g corepack@latest turbo \
+    npm install -g corepack@latest turbo \
     && corepack enable \
     && echo "Building frontend"; \
     fi
