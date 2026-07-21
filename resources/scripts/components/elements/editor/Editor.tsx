@@ -121,7 +121,7 @@ export default function Editor(props: EditorProps) {
                     keybindings.of([]),
                 ],
             }),
-        [props.initialContent, props.extensions, languageSupport],
+        [props.initialContent, props.extensions],
     );
 
     useEffect(() => {
