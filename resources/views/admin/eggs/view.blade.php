@@ -77,6 +77,24 @@
                                 <p class="text-muted small">The author of this version of the Egg. Uploading a new Egg configuration from a different author will change this.</p>
                             </div>
                             <div class="form-group">
+                                <label for="pUpdateUrl" class="control-label">Update URL</label>
+                                <input type="url" id="pUpdateUrl" name="update_url" value="{{ $egg->update_url }}" class="form-control" placeholder="https://raw.githubusercontent.com/..." />
+                                <p class="text-muted small">
+                                    URL to Pelican-compatible egg JSON for auto-updates. Leave empty to disable.
+                                    Only hosts in <code>ALLOWED_EGG_HOSTS</code> env are allowed when fetching.
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox checkbox-primary no-margin-bottom">
+                                    <input id="pExcludeUpdates" name="exclude_from_updates" type="checkbox" value="1" @if($egg->exclude_from_updates) checked @endif />
+                                    <label for="pExcludeUpdates" class="strong">Exclude from auto-updates</label>
+                                    <p class="text-muted small">
+                                        If checked, this egg will be skipped by the scheduled auto-updater.
+                                        Manual checks from the panel will still work.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label for="pDockerImage" class="control-label">Docker Images <span class="field-required"></span></label>
                                 <textarea id="pDockerImages" name="docker_images" class="form-control" rows="4">{{ implode(PHP_EOL, $images) }}</textarea>
                                 <p class="text-muted small">
@@ -186,6 +204,99 @@
                     <button id="deleteButton" type="submit" name="_method" value="DELETE" class="btn btn-danger btn-sm muted muted-hover">
                         <i class="fa fa-trash-o"></i>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Auto-Update Status --}}
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Auto-Update Status</h3>
+                </div>
+                <div class="box-body">
+                    @php $hasUpdateUrl = !empty($egg->update_url); @endphp
+                    @if(!$hasUpdateUrl)
+                        <div class="callout callout-info">
+                            <p>No <code>update_url</code> configured. Set it in the Configuration section above to enable auto-updates.</p>
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="col-sm-6">
+                                @php
+                                    $hasSessionDiff = session('update_diff') && session('update_egg_id') === $egg->id;
+                                    $ovr = $egg->update_overrides ?? [];
+                                @endphp
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <div>
+                                        @if($hasSessionDiff)
+                                            <span class="label label-warning">Update Available</span>
+                                        @elseif($egg->exclude_from_updates)
+                                            <span class="label label-default">Excluded from auto-updates</span>
+                                        @elseif($egg->last_update_check_at)
+                                            <span class="label label-success">Up to Date</span>
+                                        @else
+                                            <span class="label label-info">Not Checked Yet</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Checked</label>
+                                    <p class="form-control-static">{{ $egg->last_update_check_at ? $egg->last_update_check_at->toDayDateTimeString() : '—' }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Applied</label>
+                                    <p class="form-control-static">{{ $egg->last_update_applied_at ? $egg->last_update_applied_at->toDayDateTimeString() : '—' }}</p>
+                                </div>
+                                <div class="form-group">
+                                    <form action="{{ route('admin.nests.egg.check_update', $egg->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-info btn-sm">Check for Updates</button>
+                                    </form>
+                                    @if($hasSessionDiff)
+                                        <form action="{{ route('admin.nests.egg.apply_update', $egg->id) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success btn-sm">Apply Update</button>
+                                        </form>
+                                    @endif
+                                </div>
+
+                                {{-- Override fields --}}
+                                <hr>
+                                <h5>Update Overrides</h5>
+                                <p class="text-muted small">Set these to pin values locally even when the remote egg changes them.</p>
+                                <div class="form-group">
+                                    <label for="pOvrName">Override Name</label>
+                                    <input type="text" id="pOvrName" name="update_overrides[name]" value="{{ $ovr['name'] ?? '' }}" class="form-control" placeholder="Leave empty to use remote name" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="pOvrDesc">Override Description</label>
+                                    <textarea id="pOvrDesc" name="update_overrides[description]" class="form-control" rows="2" placeholder="Leave empty to use remote description">{{ $ovr['description'] ?? '' }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pOvrUrl">Override Update URL</label>
+                                    <input type="url" id="pOvrUrl" name="update_overrides[update_url]" value="{{ $ovr['update_url'] ?? '' }}" class="form-control" placeholder="Leave empty to use remote update_url" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                @if($hasSessionDiff)
+                                    <div class="form-group">
+                                        <label>Changes Detected</label>
+                                        <pre class="pre-scrollable">{{ json_encode(session('update_diff'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                                    </div>
+                                @endif
+                                @if($egg->last_update_hash)
+                                    <div class="form-group">
+                                        <label>Content Hash</label>
+                                        <p class="form-control-static"><code>{{ $egg->last_update_hash }}</code></p>
+                                        <p class="text-muted small">SHA256 of the last fetched egg JSON content.</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

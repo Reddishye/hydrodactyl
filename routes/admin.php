@@ -92,6 +92,8 @@ Route::group(['prefix' => 'settings'], function () {
     Route::patch('/advanced', [Admin\Settings\AdvancedController::class, 'update']);
     Route::patch('/captcha', [Admin\Settings\CaptchaController::class, 'update']);
     Route::patch('/logo', [Admin\Settings\LogoController::class, 'update']);
+    Route::get('/egg-updater', [Admin\Settings\EggUpdaterController::class, 'index'])->name('admin.settings.egg-updater');
+    Route::patch('/egg-updater', [Admin\Settings\EggUpdaterController::class, 'update']);
 });
 
 /*
@@ -235,6 +237,10 @@ Route::group(['prefix' => 'nests'], function () {
     Route::post('/egg/{egg:id}/variables', [Admin\Nests\EggVariableController::class, 'store']);
 
     Route::put('/egg/{egg:id}', [Admin\Nests\EggShareController::class, 'update']);
+
+    // Egg auto-update routes
+    Route::post('/egg/{egg:id}/check-update', [Admin\Nests\EggShareController::class, 'checkUpdate'])->name('admin.nests.egg.check_update');
+    Route::post('/egg/{egg:id}/apply-update', [Admin\Nests\EggShareController::class, 'applyUpdate'])->name('admin.nests.egg.apply_update');
 
     Route::patch('/view/{nest:id}', [Admin\Nests\NestController::class, 'update']);
     Route::patch('/egg/{egg:id}', [Admin\Nests\EggController::class, 'update']);

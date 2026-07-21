@@ -56,6 +56,22 @@ class EggParserService
     }
 
     /**
+     * Parse a JSON string into an egg data array.
+     *
+     * @throws InvalidFileUploadException|\JsonException
+     */
+    public function parseJsonString(string $json): array
+    {
+        /** @var array $parsed */
+        $parsed = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        if (!in_array(Arr::get($parsed, 'meta.version') ?? '', ['PTDL_v1', 'PTDL_v2'])) {
+            throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.');
+        }
+
+        return $this->convertToV2($parsed);
+    }
+
+    /**
      * Converts a PTDL_V1 egg into the expected PTDL_V2 egg format. This just handles
      * the "docker_images" field potentially not being present, and not being in the
      * expected "key => value" format.

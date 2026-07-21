@@ -55,13 +55,7 @@ class EggImporterService
      */
     public function handleFromString(string $json_string, int $nest): Egg
     {
-        /** @var array $parsed */
-        $decoded = json_decode($json_string, true, 512, JSON_THROW_ON_ERROR);
-        if (!in_array(Arr::get($decoded, 'meta.version') ?? '', ['PTDL_v1', 'PTDL_v2'])) {
-            throw new InvalidFileUploadException('The JSON file provided is not in a format that can be recognized.');
-        }
-
-        $parsed =  $this->parser->convertToV2($decoded);
+        $parsed =  $this->parser->parseJsonString($json_string);
 
         /** @var Nest $nest */
         $nest = Nest::query()->with('eggs', 'eggs.variables')->findOrFail($nest);
