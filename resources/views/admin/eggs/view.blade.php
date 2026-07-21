@@ -284,7 +284,7 @@
                                 @if($hasSessionDiff)
                                     <div class="form-group">
                                         <label>Changes Detected</label>
-                                        <pre class="pre-scrollable">{{ json_encode(session('update_diff'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                                        <pre style="max-height:300px;overflow-y:auto;">{{ json_encode(session('update_diff'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
                                     </div>
                                 @endif
                                 @if($egg->last_update_hash)

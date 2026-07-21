@@ -223,6 +223,18 @@ return [
   |
   */
 
+  /*
+  |--------------------------------------------------------------------------
+  | Egg Updater Allowed Hosts
+  |--------------------------------------------------------------------------
+  |
+  | Comma-separated list of hosts allowed for egg update URLs.
+  | Leave empty to allow any host. Used to prevent SSRF.
+  |
+  */
+
+  'allowed_egg_hosts' => env('ALLOWED_EGG_HOSTS', ''),
+
   'aliases' => Facade::defaultAliases()->merge([
     'Alert' => Prologue\Alerts\Facades\Alert::class,
     'Carbon' => Carbon\Carbon::class,

@@ -14,7 +14,6 @@ use Pterodactyl\Http\Requests\Admin\Egg\EggImportUrlFormRequest;
 use Pterodactyl\Services\Eggs\Sharing\EggUpdateImporterService;
 use Pterodactyl\Services\Eggs\EggUpdaterService;
 use Pterodactyl\Exceptions\Model\InvalidFileUploadException;
-use Exception;
 
 class EggShareController extends Controller
 {

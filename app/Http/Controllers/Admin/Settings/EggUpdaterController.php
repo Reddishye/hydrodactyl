@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Models\Egg;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
 use Pterodactyl\Services\Eggs\EggUpdaterService;
 
@@ -26,8 +27,12 @@ class EggUpdaterController extends Controller
             'frequency' => $this->settings->get('egg-updater:frequency', 'manual'),
             'auto_apply' => $this->settings->get('egg-updater:auto-apply', '0'),
             'notify' => $this->settings->get('egg-updater:notify', '0'),
+            'eggs' => Egg::query()
+                ->whereNotNull('update_url')
+                ->where('update_url', '!=', '')
+                ->get(),
             'unallowedEggs' => $this->updaterService->getDisallowedUrlEggs(),
-            'allowedHosts' => env('ALLOWED_EGG_HOSTS', ''),
+            'allowedHosts' => config('app.allowed_egg_hosts', ''),
         ]);
     }
 

@@ -71,14 +71,14 @@ class EggUpdaterServiceTest extends TestCase
 
     public function test_check_returns_error_when_host_disallowed(): void
     {
-        putenv('ALLOWED_EGG_HOSTS=allowed.com');
+        config(['app.allowed_egg_hosts' => 'allowed.com']);
         $egg = Egg::factory()->make(['update_url' => 'https://evil.com/egg.json', 'id' => 1]);
 
         $result = $this->service->check($egg);
 
         $this->assertSame('error', $result['status']);
         $this->assertStringContainsString('ALLOWED_EGG_HOSTS', $result['error']);
-        putenv('ALLOWED_EGG_HOSTS');
+        config(['app.allowed_egg_hosts' => '']);
     }
 
     public function test_check_returns_up_to_date_on_304(): void
@@ -253,7 +253,7 @@ class EggUpdaterServiceTest extends TestCase
 
     public function test_check_rejects_disallowed_host(): void
     {
-        putenv('ALLOWED_EGG_HOSTS=good.com');
+        config(['app.allowed_egg_hosts' => 'good.com']);
 
         $egg = new Egg(['update_url' => 'https://evil.com/egg.json', 'id' => 1]);
 
@@ -262,7 +262,7 @@ class EggUpdaterServiceTest extends TestCase
         $this->assertSame('error', $result['status']);
         $this->assertStringContainsString('ALLOWED_EGG_HOSTS', $result['error']);
 
-        putenv('ALLOWED_EGG_HOSTS');
+        config(['app.allowed_egg_hosts' => '']);
     }
 
     public function test_check_all_returns_empty_when_disabled(): void
@@ -288,19 +288,19 @@ class EggUpdaterServiceTest extends TestCase
 
     public function test_apply_throws_on_disallowed_host(): void
     {
-        putenv('ALLOWED_EGG_HOSTS=good.com');
+        config(['app.allowed_egg_hosts' => 'good.com']);
         $egg = Egg::factory()->make(['update_url' => 'https://evil.com/egg.json', 'id' => 1]);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('ALLOWED_EGG_HOSTS');
 
         $this->service->apply($egg);
-        putenv('ALLOWED_EGG_HOSTS');
+        config(['app.allowed_egg_hosts' => '']);
     }
 
     public function test_validate_url_rejects_invalid_scheme(): void
     {
-        putenv('ALLOWED_EGG_HOSTS=');
+        config(['app.allowed_egg_hosts' => '']);
         $egg = new Egg(['update_url' => 'ftp://example.com/egg.json', 'id' => 1]);
 
         Http::fake();

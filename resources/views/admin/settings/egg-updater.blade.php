@@ -18,7 +18,6 @@
   @yield('settings::nav')
 
   {{-- ALLOWED_EGG_HOSTS warning --}}
-  @php $allowedHosts = env('ALLOWED_EGG_HOSTS', ''); @endphp
   @if(!empty($allowedHosts) && $unallowedEggs->isNotEmpty())
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
@@ -141,11 +140,7 @@
           <h3 class="box-title">Eggs with update_url</h3>
         </div>
         <div class="box-body table-responsive no-padding">
-          @php
-            $eggs = \Pterodactyl\Models\Egg::whereNotNull('update_url')
-              ->where('update_url', '!=', '')
-              ->get();
-          @endphp
+          @php /* $eggs passed from controller */ @endphp
           @if($eggs->isEmpty())
             <div class="callout callout-info" style="margin:16px;">
               <p>No eggs have an <code>update_url</code> configured. Configure it in the egg settings to enable auto-updates.</p>
@@ -164,7 +159,7 @@
                 <tr>
                   <td><code>{{ $egg->id }}</code></td>
                   <td><a href="{{ route('admin.nests.egg.view', $egg->id) }}">{{ $egg->name }}</a></td>
-                  <td><code>{{ \Illuminate\Support\Str::limit($egg->update_url, 40) }}</code></td>
+                  <td><code>{{ \Str::limit($egg->update_url, 40) }}</code></td>
                   <td>
                     @if($egg->exclude_from_updates)
                       <span class="label label-default">Excluded</span>

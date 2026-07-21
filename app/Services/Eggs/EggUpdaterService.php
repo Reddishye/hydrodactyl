@@ -3,7 +3,6 @@
 namespace Pterodactyl\Services\Eggs;
 
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Pterodactyl\Models\Egg;
 use Pterodactyl\Models\EggVariable;
 use Illuminate\Support\Collection;
@@ -31,7 +30,6 @@ class EggUpdaterService
     {
         $allowedHosts = $this->getAllowedHosts();
         if (empty($allowedHosts)) {
-            // No restriction — everything allowed
             return collect();
         }
 
@@ -61,7 +59,8 @@ class EggUpdaterService
             ->whereNotNull('update_url')
             ->where('update_url', '!=', '')
             ->where('exclude_from_updates', false)
-            ->get();
+            ->get()
+            ->filter(fn (Egg $egg) => $this->isUrlAllowed($egg->update_url));
 
         return $eggs->map(fn (Egg $egg) => $this->check($egg));
     }
@@ -261,7 +260,7 @@ class EggUpdaterService
 
         foreach ($fields as $eggField => $parsedKey) {
             $current = $egg->$eggField;
-            $incoming = Arr::get($parsed, $parsedKey);
+            $incoming = data_get($parsed, $parsedKey);
 
             if ($eggField === 'features' || $eggField === 'docker_images') {
                 $current = $this->sortedJson($current);
@@ -313,10 +312,12 @@ class EggUpdaterService
      */
     private function sortedJson(mixed $value): ?string
     {
-        if (empty($value)) {
+        if (is_null($value)) {
             return null;
         }
-        ksort($value);
+        if (is_array($value)) {
+            ksort($value);
+        }
         return json_encode($value);
     }
 
@@ -339,7 +340,7 @@ class EggUpdaterService
      */
     private function getAllowedHosts(): array
     {
-        $raw = env('ALLOWED_EGG_HOSTS', '');
+        $raw = config('app.allowed_egg_hosts', '');
         if (empty($raw)) {
             return [];
         }
