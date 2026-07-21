@@ -12,8 +12,8 @@ use Pterodactyl\Services\Eggs\Sharing\EggImporterService;
 use Pterodactyl\Http\Requests\Admin\Egg\EggImportFormRequest;
 use Pterodactyl\Http\Requests\Admin\Egg\EggImportUrlFormRequest;
 use Pterodactyl\Services\Eggs\Sharing\EggUpdateImporterService;
+use Pterodactyl\Services\Eggs\EggUpdaterService;
 use Pterodactyl\Exceptions\Model\InvalidFileUploadException;
-use Exception;
 
 class EggShareController extends Controller
 {
@@ -25,6 +25,7 @@ class EggShareController extends Controller
         protected EggExporterService $exporterService,
         protected EggImporterService $importerService,
         protected EggUpdateImporterService $updateImporterService,
+        protected EggUpdaterService $updaterService,
     ) {}
 
     /**
@@ -114,5 +115,61 @@ class EggShareController extends Controller
         $this->alert->success(trans('admin/nests.eggs.notices.updated_via_import'))->flash();
 
         return redirect()->route('admin.nests.egg.view', ['egg' => $egg]);
+    }
+
+    /**
+     * Check an egg for updates from its update_url.
+     */
+    public function checkUpdate(Egg $egg): RedirectResponse
+    {
+        $result = $this->updaterService->check($egg);
+
+        if ($result['status'] === 'update_available') {
+            $names = array_keys($result['diff']);
+            $this->alert->warning(trans('admin/nests.eggs.notices.update_available', [
+                'name' => $result['egg']->name,
+                'changes' => implode(', ', $names),
+            ]))->flash();
+
+            return back()->with('update_diff', $result['diff'])->with('update_egg_id', $result['egg']->id);
+        }
+
+        if ($result['status'] === 'up_to_date') {
+            $this->alert->success(trans('admin/nests.eggs.notices.update_no_changes', [
+                'name' => $result['egg']->name,
+            ]))->flash();
+
+            return back();
+        }
+
+        $this->alert->danger(trans('admin/nests.eggs.notices.update_check_failed', [
+            'name' => $result['egg']->name,
+            'error' => $result['error'] ?? 'Unknown error',
+        ]))->flash();
+
+        return back();
+    }
+
+    /**
+     * Apply an available update to an egg.
+     *
+     * @throws \Throwable
+     */
+    public function applyUpdate(Egg $egg): RedirectResponse
+    {
+        try {
+            $this->updaterService->apply($egg);
+            $this->alert->success(trans('admin/nests.eggs.notices.update_applied', [
+                'name' => $egg->name,
+                'url' => $egg->update_url,
+            ]))->flash();
+        } catch (\Throwable $e) {
+            $this->alert->danger(trans('admin/nests.eggs.notices.update_check_failed', [
+                'name' => $egg->name,
+                'error' => $e->getMessage(),
+            ]))->flash();
+        }
+
+        return redirect()->route('admin.nests.egg.view', $egg->id);
     }
 }

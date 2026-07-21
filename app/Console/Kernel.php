@@ -40,5 +40,8 @@ class Kernel extends ConsoleKernel
         if (config('activity.prune_days')) {
             $schedule->command(PruneCommand::class, ['--model' => [ActivityLog::class]])->daily();
         }
+
+        // Egg auto-updater — runs daily, command itself checks settings for frequency gating
+        $schedule->command('egg:check-updates')->dailyAt('04:00')->withoutOverlapping();
     }
 }

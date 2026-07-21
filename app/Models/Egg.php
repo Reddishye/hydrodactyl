@@ -17,6 +17,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $docker_image -- deprecated, use $docker_images
  * @property array<string, string> $docker_images
  * @property string $update_url
+ * @property string|null $last_update_hash
+ * @property string|null $last_etag
+ * @property string|null $last_modified
+ * @property \Carbon\Carbon|null $last_update_check_at
+ * @property \Carbon\Carbon|null $last_update_applied_at
+ * @property bool $exclude_from_updates
+ * @property array|null $update_overrides
  * @property bool $force_outgoing_ip
  * @property array|null $file_denylist
  * @property string|null $config_files
@@ -100,6 +107,12 @@ class Egg extends Model
         'script_entry',
         'script_container',
         'copy_script_from',
+        'update_url',
+        'exclude_from_updates',
+        'update_overrides',
+        'last_update_hash',
+        'last_etag',
+        'last_modified',
     ];
 
     /**
@@ -114,6 +127,10 @@ class Egg extends Model
         'features' => 'array',
         'docker_images' => 'array',
         'file_denylist' => 'array',
+        'exclude_from_updates' => 'boolean',
+        'update_overrides' => 'array',
+        'last_update_check_at' => 'datetime',
+        'last_update_applied_at' => 'datetime',
     ];
 
     public static array $validationRules = [
@@ -133,8 +150,12 @@ class Egg extends Model
         'config_startup' => 'required_without:config_from|nullable|json',
         'config_logs' => 'required_without:config_from|nullable|json',
         'config_files' => 'required_without:config_from|nullable|json',
-        'update_url' => 'sometimes|nullable|string',
+        'update_url' => 'sometimes|nullable|string|max:512',
         'force_outgoing_ip' => 'sometimes|boolean',
+        'exclude_from_updates' => 'sometimes|boolean',
+        'last_update_hash' => 'sometimes|nullable|string|max:64',
+        'last_etag' => 'sometimes|nullable|string|max:255',
+        'last_modified' => 'sometimes|nullable|string|max:255',
     ];
 
     protected $attributes = [

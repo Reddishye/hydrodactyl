@@ -13,12 +13,15 @@ class AddNullableFieldLastrun extends Migration
   {
     $table = DB::getQueryGrammar()->wrapTable('tasks');
 
-    if (DB::getDriverName() === 'pgsql') {
-      // PostgreSQL-specific syntax
-      DB::statement('ALTER TABLE ' . $table . ' ALTER COLUMN last_run DROP NOT NULL;');
-    } else {
-      // MySQL/MariaDB-specific syntax
-      DB::statement('ALTER TABLE ' . $table . ' CHANGE `last_run` `last_run` TIMESTAMP NULL;');
+    switch (DB::getDriverName()) {
+      case 'pgsql':
+        // PostgreSQL-specific syntax
+        DB::statement('ALTER TABLE ' . $table . ' ALTER COLUMN last_run DROP NOT NULL;');
+        break;
+      default: // MySQL/MariaDB
+        // MySQL/MariaDB-specific syntax
+        DB::statement('ALTER TABLE ' . $table . ' CHANGE `last_run` `last_run` TIMESTAMP NULL;');
+        break;
     }
   }
 
@@ -29,12 +32,15 @@ class AddNullableFieldLastrun extends Migration
   {
     $table = DB::getQueryGrammar()->wrapTable('tasks');
 
-    if (DB::getDriverName() === 'pgsql') {
-      // PostgreSQL-specific syntax
-      DB::statement('ALTER TABLE ' . $table . ' ALTER COLUMN last_run SET NOT NULL;');
-    } else {
-      // MySQL/MariaDB-specific syntax
-      DB::statement('ALTER TABLE ' . $table . ' CHANGE `last_run` `last_run` TIMESTAMP;');
+    switch (DB::getDriverName()) {
+      case 'pgsql':
+        // PostgreSQL-specific syntax
+        DB::statement('ALTER TABLE ' . $table . ' ALTER COLUMN last_run SET NOT NULL;');
+        break;
+      default: // MySQL/MariaDB
+        // MySQL/MariaDB-specific syntax
+        DB::statement('ALTER TABLE ' . $table . ' CHANGE `last_run` `last_run` TIMESTAMP;');
+        break;
     }
   }
 }

@@ -11,6 +11,7 @@
                     <li @if($activeTab === 'captcha')class="active"@endif><a href="{{ route('admin.settings.captcha') }}">Captcha</a></li>
                     <li @if($activeTab === 'domains')class="active"@endif><a href="{{ route('admin.settings.domains.index') }}">Domains</a></li>
                     <li @if($activeTab === 'logo')class="active"@endif><a href="{{ route('admin.settings.logo') }}">Branding</a></li>
+                    <li @if($activeTab === 'egg-updater')class="active"@endif><a href="{{ route('admin.settings.egg-updater') }}">Egg Updater</a></li>
                     <li @if($activeTab === 'advanced')class="active"@endif><a href="{{ route('admin.settings.advanced') }}">Advanced</a></li>
                 </ul>
             </div>

@@ -21,6 +21,12 @@ class EggFormRequest extends AdminFormRequest
             'config_startup' => 'required_without:config_from|nullable|json',
             'config_logs' => 'required_without:config_from|nullable|json',
             'config_files' => 'required_without:config_from|nullable|json',
+            'update_url' => 'sometimes|nullable|string|max:512',
+            'exclude_from_updates' => 'sometimes|boolean',
+            'update_overrides' => 'sometimes|array',
+            'update_overrides.name' => 'nullable|string|max:191',
+            'update_overrides.description' => 'nullable|string',
+            'update_overrides.update_url' => 'nullable|string|max:512',
         ];
 
         if ($this->method() === 'POST') {
@@ -42,8 +48,10 @@ class EggFormRequest extends AdminFormRequest
         $data = parent::validated();
 
         return array_merge($data, [
-            'force_outgoing_ip' => array_get($data, 'force_outgoing_ip', false),
-            'features' => array_get($data, 'features', []),
+            'force_outgoing_ip' => $data['force_outgoing_ip'] ?? false,
+            'features' => $data['features'] ?? [],
+            'exclude_from_updates' => $data['exclude_from_updates'] ?? false,
+            'update_overrides' => $data['update_overrides'] ?? [],
         ]);
     }
 }
