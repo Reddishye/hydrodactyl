@@ -110,6 +110,7 @@ export default function Editor(props: EditorProps) {
 
     const [languageSupport, setLanguageSupport] = useState<LanguageSupport>();
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: languageSupport excluded intentionally
     const createEditorState = useCallback(
         () =>
             EditorState.create({
@@ -121,7 +122,7 @@ export default function Editor(props: EditorProps) {
                     keybindings.of([]),
                 ],
             }),
-        [props.initialContent, props.extensions, languageSupport],
+        [props.initialContent, props.extensions, languageConfig, keybindings],
     );
 
     useEffect(() => {
