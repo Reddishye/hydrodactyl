@@ -14,6 +14,7 @@ make dev
 | Mailpit UI | http://localhost:8025                               |
 | MinIO UI   | http://localhost:9001  (minioadmin / minioadmin)    |
 | Elytra     | port 8080 (daemon), 2022 (sftp)                    |
+| Vite HMR   | http://localhost:5173                               |
 
 Login: **admin / admin** (root admin user).
 
@@ -54,7 +55,7 @@ make nuke       # Full reset: stop + delete srv/ + vendor cache
 - Panel code is bind-mounted from the repo root → changes are live.
 - DB data persists in `srv/database/`.
 - Daemon config lives in `srv/pterodactyl/config/` (shared with Elytra container).
-- Frontend HMR: run `pnpm run dev` on the host (Node 22+ required).
+- Frontend HMR: auto-started inside the container (`pnpm run dev --host`). Hot reload at http://localhost:5173.
 
 ### Troubleshooting
 
