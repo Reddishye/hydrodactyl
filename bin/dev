@@ -94,11 +94,16 @@ for i in $(seq 1 120); do
   sleep 1
 done
 
+# 6. The entrypoint writes elytra config.yml to the shared volume during seeding.
+#    Restart elytra so it picks up the fresh config.
+log "Restarting elytra to pick up daemon config"
+$COMPOSE restart elytra
+
 cat <<EOF
 
 $(printf '\033[1;32m')✔ hydrodactyl dev stack is up$(printf '\033[0m')
 
-  Panel       http://localhost:${PANEL_PORT}          (login: dev / dev)
+  Panel       http://localhost:${PANEL_PORT}          (login: admin / admin)
   Mailpit UI  http://localhost:8025
   MinIO UI    http://localhost:9001           (minioadmin / minioadmin)
   MariaDB     localhost:3306  (unexposed by default; see note below)
