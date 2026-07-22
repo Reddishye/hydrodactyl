@@ -258,16 +258,18 @@ const DashboardContainer = () => {
                             <div
                                 className={`text-center text-sm text-zinc-400 absolute w-full left-1/2 -translate-x-1/2`}
                             >
-                                <p className='max-w-sm mx-auto mb-5'>
-                                    {ownerFilter === 'admin-all'
-                                        ? 'There are no other servers to display.'
-                                        : ownerFilter === 'all'
-                                          ? 'No Server Shared With your Account'
-                                          : 'There are no servers associated with your account.'}
-                                </p>
                                 <h3 className='text-lg font-medium text-zinc-200 mb-2'>
-                                    {ownerFilter === 'admin-all' ? 'No other servers found' : 'No servers found'}
+                                    {ownerFilter === 'admin-all'
+                                        ? 'The instance currently holds no servers.'
+                                        : ownerFilter === 'all'
+                                          ? 'No servers have been shared or assigned to you.'
+                                          : ownerFilter === 'shared'
+                                            ? 'No servers have been shared with you.'
+                                            : 'There are no servers associated with your account.'}
                                 </h3>
+                                <p className='max-w-sm mx-auto mb-5'>
+                                    You can change the current filters at the top of the page.
+                                </p>
                             </div>
                         )
                     }
