@@ -29,8 +29,13 @@ if [ -z "$APP_KEY" ] || [ -z "$HASHIDS_LENGTH" ] || [ -z "$HASHIDS_SALT" ]; then
   fi
 
   # Replace .env in container with our external .env file
-  rm -f /app/.env
-  ln -s /app/var/.env /app/
+  # In dev mode (HYDRODACTYL_DOCKER_DEV=true), skip symlink:
+  #   - env_file in docker-compose.develop.yml already loads .env
+  #   - the symlink would corrupt the host .env via bind mount
+  if [ "$HYDRODACTYL_DOCKER_DEV" != "true" ]; then
+    rm -f /app/.env
+    ln -s /app/var/.env /app/
+  fi
 
   # Use a subshell to avoid polluting the global environment
   (

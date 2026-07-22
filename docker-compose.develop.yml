@@ -55,8 +55,11 @@ services:
                 DEV: "true"
         image: hydrodactyl:develop
         restart: always
+        env_file:
+            - path: .env
+              required: false
         ports:
-            - '3000:80'
+            - '${PANEL_PORT:-3000}:80'
             # - '443:443'
         links:
             - database
@@ -95,7 +98,7 @@ services:
             WINGS_INTERNAL_IP: 'elytra'
             WINGS_DIR: '${PWD}/srv/'
             HYDRODACTYL_DOCKER_DEV: 'true'
-            MAIL_HOST: 'mailhog'
+            MAIL_HOST: 'mailpit'
             MAIL_PORT: 1025
             MAIL_DRIVER: 'smtp'
             APP_BACKUP_DRIVER: 's3'
