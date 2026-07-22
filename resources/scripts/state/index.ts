@@ -22,4 +22,8 @@ const state: ApplicationStore = {
     progress,
 };
 
-export const store = createStore(state);
+export const store = createStore(state, {
+    // Enable Redux DevTools in dev mode for easy debugging
+    // ponytail: Remove devTools option or gate behind import.meta.env.PROD when shipping
+    devTools: import.meta.env.DEV,
+});
