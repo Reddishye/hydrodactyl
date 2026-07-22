@@ -22,6 +22,17 @@ if [ ! -f .env ]; then
   cp .env.example .env
 fi
 
+# 2a. Ensure APP_KEY is set before starting containers.
+# The entrypoint generates it inside a subshell but the parent process
+# (migrate --seed) won't see it. Pass it via compose env block instead.
+APP_KEY_CURRENT="$(grep -E '^APP_KEY=' .env 2>/dev/null | cut -d= -f2- | tail -1 || true)"
+if [ -z "$APP_KEY_CURRENT" ]; then
+  log "Generating APP_KEY for .env"
+  GENERATED="base64:$(openssl rand -base64 32 | tr -d '\n')"
+  echo "APP_KEY=${GENERATED}" >> .env
+  log "APP_KEY set."
+fi
+
 # 2b. Port-collision guard for PANEL_PORT (default 3000).
 # If something else owns the port, bump to the next free one and persist to .env.
 PANEL_PORT="${PANEL_PORT:-$(grep -E '^PANEL_PORT=' .env 2>/dev/null | cut -d= -f2 | tail -1 || true)}"
