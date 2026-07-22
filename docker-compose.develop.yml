@@ -95,7 +95,7 @@ services:
             WINGS_INTERNAL_IP: 'elytra'
             WINGS_DIR: '${PWD}/srv/'
             HYDRODACTYL_DOCKER_DEV: 'true'
-            MAIL_HOST: 'mailhog'
+            MAIL_HOST: 'mailpit'
             MAIL_PORT: 1025
             MAIL_DRIVER: 'smtp'
             APP_BACKUP_DRIVER: 's3'
