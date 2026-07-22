@@ -68,8 +68,10 @@ backup: ## snapshot srv/ + .env to .dev-backup-<ts>.tar.gz
 	tar czf .dev-backup-$(shell date +%Y%m%d-%H%M%S).tar.gz srv .env 2>/dev/null || true
 
 nuke: ## stop stack and WIPE srv/ + vendor cache (destructive)
-	$(COMPOSE) down
-	rm -rf srv vendor
+	$(COMPOSE) down -v
+	# Docker containers (minio, mysql) may create files as root; fallback to sudo
+	rm -rf srv 2>/dev/null || sudo rm -rf srv
+	rm -rf vendor 2>/dev/null || true
 	@echo "Run 'make dev' to rebuild from scratch."
 
 prune: ## docker system prune (frees disk, keeps volumes)
