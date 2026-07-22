@@ -49,12 +49,14 @@
         "webmozart/assert": "~1.11.0"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^4.4",
         "barryvdh/laravel-ide-helper": "^3.7",
         "fakerphp/faker": "~1.23.1",
         "friendsofphp/php-cs-fixer": "^3.64",
         "itsgoingd/clockwork": "~5.2.2",
         "larastan/larastan": "^3.8",
         "laravel/boost": "^2.4",
+        "laravel/telescope": "^5.21",
         "mockery/mockery": "~1.6.12",
         "nunomaduro/collision": "^8.6",
         "phpstan/phpstan": "^2.1",
