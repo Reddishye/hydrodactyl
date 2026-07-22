@@ -46,6 +46,13 @@ RUN apk add --no-cache \
     tar unzip certbot certbot-nginx mysql-client postgresql18-client \
     && ln -s /bin/ash /bin/bash
 
+# In dev mode, also install Node + pnpm so `make fe-build` works inside the panel container
+RUN if [ "$DEV" = "true" ]; then \
+    apk add --no-cache nodejs npm \
+    && npm install -g pnpm@11.3.0 \
+    && pnpm config set store-dir /tmp/.pnpm-store; \
+    fi
+
 # Copy frontend build
 COPY . ./
 RUN if [ "$DEV" = "false" ]; then \
