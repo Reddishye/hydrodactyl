@@ -24,7 +24,7 @@ fi
 
 # 2b. Port-collision guard for PANEL_PORT (default 3000).
 # If something else owns the port, bump to the next free one and persist to .env.
-PANEL_PORT="${PANEL_PORT:-$(grep -E '^PANEL_PORT=' .env 2>/dev/null | cut -d= -f2 || true)}"
+PANEL_PORT="${PANEL_PORT:-$(grep -E '^PANEL_PORT=' .env 2>/dev/null | cut -d= -f2 | tail -1 || true)}"
 PANEL_PORT="${PANEL_PORT:-3000}"
 
 pick_free_port() {
@@ -44,7 +44,7 @@ if ss -ltn 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${PANEL_PORT}\$"; then
   warn "Port ${PANEL_PORT} already in use; switching PANEL_PORT=${FREE_PORT}"
   # Persist for next runs.
   if grep -qE '^PANEL_PORT=' .env; then
-    sed -i "s/^PANEL_PORT=.*/PANEL_PORT=${FREE_PORT}/" .env
+    sed -i "/^PANEL_PORT=/d" .env && echo "PANEL_PORT=${FREE_PORT}" >> .env
   else
     echo "PANEL_PORT=${FREE_PORT}" >> .env
   fi
@@ -81,20 +81,39 @@ fi
 log "Starting stack (panel, db, cache, mailpit, minio, elytra)"
 $COMPOSE up -d
 
-# 5. Wait for panel to be reachable
-log "Waiting for panel http://localhost:${PANEL_PORT} ..."
+# 5. Wait for panel container to be ready (nginx/PHP accepting connections)
+log "Waiting for panel at http://localhost:${PANEL_PORT} ..."
+REQUEST_COUNT=0
 for i in $(seq 1 120); do
-  if curl -fsS -o /dev/null -w '%{http_code}' "http://localhost:${PANEL_PORT}/" 2>/dev/null | grep -qE '^(2|3)[0-9][0-9]$'; then
-    log "Panel is up."
-    break
+  HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:${PANEL_PORT}/" 2>/dev/null || echo "000")
+  if [ "$HTTP_CODE" != "000" ]; then
+    REQUEST_COUNT=$((REQUEST_COUNT + 1))
+    if [ "$REQUEST_COUNT" -ge 3 ]; then
+      log "Panel is up (responding after entrypoint)."
+      break
+    fi
   fi
   if [ "$i" -eq 120 ]; then
     warn "Panel did not respond in 120s. Tail: $COMPOSE logs --tail=50 panel"
   fi
-  sleep 1
+  sleep 2
 done
 
-# 6. The entrypoint writes elytra config.yml to the shared volume during seeding.
+# 6. Start Vite dev server for HMR (if not already running)
+if ! $COMPOSE exec -T panel sh -c 'test -f /app/public/hot' 2>/dev/null; then
+  log "Starting Vite dev server (HMR) inside panel container..."
+  $COMPOSE exec -d panel pnpm run dev -- --host 2>/dev/null || true
+  # Give Vite a moment to boot
+  for i in $(seq 1 15); do
+    if $COMPOSE exec -T panel sh -c 'test -f /app/public/hot' 2>/dev/null; then
+      log "Vite dev server ready."
+      break
+    fi
+    sleep 1
+  done
+fi
+
+# 7. The entrypoint writes elytra config.yml to the shared volume during seeding.
 #    Restart elytra so it picks up the fresh config.
 log "Restarting elytra to pick up daemon config"
 $COMPOSE restart elytra

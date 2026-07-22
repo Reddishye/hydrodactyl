@@ -60,6 +60,7 @@ services:
               required: false
         ports:
             - '${PANEL_PORT:-3000}:80'
+            - '5173:5173'
             # - '443:443'
         links:
             - database
@@ -98,6 +99,7 @@ services:
             WINGS_INTERNAL_IP: 'elytra'
             WINGS_DIR: '${PWD}/srv/'
             HYDRODACTYL_DOCKER_DEV: 'true'
+            APP_KEY: '${APP_KEY}'
             MAIL_HOST: 'mailpit'
             MAIL_PORT: 1025
             MAIL_DRIVER: 'smtp'
