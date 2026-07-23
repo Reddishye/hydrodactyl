@@ -79,12 +79,15 @@ class EggUpdaterController extends Controller
             $errors[] = 'A cron expression is required when the auto-updater is enabled.';
         } elseif ($frequency !== '' && !CronExpression::isValidExpression($frequency)) {
             $errors[] = 'Invalid cron expression.';
-            $frequency = '';
+            $frequency = $this->settings->get('egg-updater:frequency', '');
         }
 
         $this->settings->set('egg-updater:enabled', $enabled);
         $this->settings->set('egg-updater:auto-apply', $autoApply);
-        $this->settings->set('egg-updater:frequency', $frequency);
+
+        if (empty($errors)) {
+            $this->settings->set('egg-updater:frequency', $frequency);
+        }
 
         if (!empty($errors)) {
             $this->alert->warning(implode(' ', $errors))->flash();
