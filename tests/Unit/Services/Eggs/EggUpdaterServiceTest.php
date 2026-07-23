@@ -304,6 +304,93 @@ class EggUpdaterServiceTest extends TestCase
         config(['app.allowed_egg_hosts' => '']);
     }
 
+    public function test_check_returns_update_available_on_first_check_with_diff(): void
+    {
+        $body = json_encode($this->sampleEggJson);
+
+        $partial = \Mockery::mock(Egg::class)->makePartial();
+        $partial->forceFill([
+            'update_url' => 'https://example.com/egg.json',
+            'id' => 1,
+            'name' => 'Old Egg Name',
+            'description' => 'Old description',
+            'startup' => 'old command',
+            'features' => null,
+            'docker_images' => ['old/image:latest' => 'old/image:latest'],
+            'config_files' => null,
+            'config_startup' => null,
+            'config_logs' => null,
+            'config_stop' => null,
+            'script_install' => null,
+            'script_entry' => null,
+            'script_container' => null,
+            'script_is_privileged' => null,
+        ]);
+
+        $partial->setRelation('variables', collect());
+        $partial->shouldReceive('save')->once()->andReturn(true);
+
+        $this->parser->shouldReceive('parseJsonString')
+            ->once()
+            ->with($body)
+            ->andReturn($this->sampleEggJson);
+
+        Http::fake([
+            'example.com/*' => Http::response($body, 200),
+        ]);
+
+        $result = $this->service->check($partial);
+
+        $this->assertSame('update_available', $result['status']);
+        $this->assertArrayHasKey('name', $result['diff']);
+    }
+
+    public function test_check_returns_pending_update_on_recheck_when_not_applied(): void
+    {
+        $body = json_encode($this->sampleEggJson);
+        $sameHash = hash('sha256', $body);
+
+        $partial = \Mockery::mock(Egg::class)->makePartial();
+        $partial->forceFill([
+            'update_url' => 'https://example.com/egg.json',
+            'id' => 1,
+            'last_update_hash' => $sameHash,
+            'applied_update_hash' => hash('sha256', 'old-baseline'),
+        ]);
+        $partial->shouldReceive('save')->once()->andReturn(true);
+
+        Http::fake([
+            'example.com/*' => Http::response($body, 200),
+        ]);
+
+        $result = $this->service->check($partial);
+
+        $this->assertSame('update_available', $result['status']);
+    }
+
+    public function test_check_returns_up_to_date_on_recheck_after_apply(): void
+    {
+        $body = json_encode($this->sampleEggJson);
+        $sameHash = hash('sha256', $body);
+
+        $partial = \Mockery::mock(Egg::class)->makePartial();
+        $partial->forceFill([
+            'update_url' => 'https://example.com/egg.json',
+            'id' => 1,
+            'last_update_hash' => $sameHash,
+            'applied_update_hash' => $sameHash,
+        ]);
+        $partial->shouldReceive('save')->once()->andReturn(true);
+
+        Http::fake([
+            'example.com/*' => Http::response($body, 200),
+        ]);
+
+        $result = $this->service->check($partial);
+
+        $this->assertSame('up_to_date', $result['status']);
+    }
+
     public function test_validate_url_rejects_invalid_scheme(): void
     {
         config(['app.allowed_egg_hosts' => '']);
