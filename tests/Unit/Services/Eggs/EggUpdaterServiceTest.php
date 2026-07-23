@@ -129,9 +129,11 @@ class EggUpdaterServiceTest extends TestCase
     public function test_check_returns_up_to_date_when_hash_matches(): void
     {
         $partial = \Mockery::mock(Egg::class)->makePartial();
+        $sameHash = hash('sha256', 'same-content');
         $partial->forceFill([
             'update_url' => 'https://example.com/egg.json',
-            'last_update_hash' => hash('sha256', 'same-content'),
+            'last_update_hash' => $sameHash,
+            'applied_update_hash' => $sameHash,
             'id' => 1,
         ]);
         $partial->shouldReceive('save')->once()->andReturn(true);

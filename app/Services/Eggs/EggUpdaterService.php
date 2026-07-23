@@ -111,12 +111,11 @@ class EggUpdaterService
                 ->get($url);
 
             if ($response->status() === 304) {
-                // Remote hasn't changed since last check. But there may be a
-                // pending update the user never applied (applied_update_hash
-                // may still differ from last_update_hash from a prior check).
+                // Remote hasn't changed since last check. Decide status from
+                // the pending state (applied vs last-seen hash).
                 $this->persistUpdateMeta($egg, ['last_update_error' => null]);
-                $pending = $egg->applied_update_hash && $egg->last_update_hash
-                    && $egg->applied_update_hash !== $egg->last_update_hash;
+                $pending = ($egg->last_update_hash !== null)
+                    && ($egg->applied_update_hash !== $egg->last_update_hash);
                 $result['status'] = $pending ? 'update_available' : 'up_to_date';
 
                 return $result;
@@ -133,40 +132,22 @@ class EggUpdaterService
             $body = $response->body();
             $hash = hash('sha256', $body);
 
-            // ponytail: status is decided solely by comparing the remote hash
-            // against applied_update_hash (the hash of the last applied remote
-            // body). last_update_hash is always refreshed so the "latest seen"
-            // value is persisted, but it never drives the status decision —
-            // that was the original bug (a seen-but-not-applied hash flipping
-            // status to up_to_date on the next reload).
-            if ($egg->applied_update_hash === null) {
-                // First check or never applied: treat current remote as the
-                // applied baseline so update_available only fires once the
-                // remote actually changes from this point forward.
-                $this->persistUpdateMeta($egg, [
-                    'applied_update_hash' => $hash,
-                    'last_update_hash' => $hash,
-                    'last_etag' => $response->header('ETag'),
-                    'last_modified' => $response->header('Last-Modified'),
-                    'last_update_error' => null,
-                ]);
-                $result['status'] = 'up_to_date';
+            // Status is driven by comparing the remote hash against
+            // applied_update_hash. A pending update exists whenever
+            // last_update_hash !== applied_update_hash (including when
+            // one is null and the other is set).
+            $pending = ($egg->last_update_hash !== null)
+                && ($egg->applied_update_hash !== $egg->last_update_hash);
+
+            // Remote hasn't changed since last check: decide from pending state
+            if ($hash === $egg->last_update_hash) {
+                $this->persistUpdateMeta($egg, ['last_update_error' => null]);
+                $result['status'] = $pending ? 'update_available' : 'up_to_date';
 
                 return $result;
             }
 
-            if ($hash === $egg->applied_update_hash) {
-                $this->persistUpdateMeta($egg, [
-                    'last_update_hash' => $hash,
-                    'last_etag' => $response->header('ETag'),
-                    'last_modified' => $response->header('Last-Modified'),
-                    'last_update_error' => null,
-                ]);
-                $result['status'] = 'up_to_date';
-
-                return $result;
-            }
-
+            // Remote content changed or first check ever: parse and diff
             try {
                 $parsed = $this->parser->parseJsonString($body);
             } catch (\JsonException $e) {
@@ -184,6 +165,23 @@ class EggUpdaterService
             }
             $diff = $this->computeDiff($egg, $parsed);
 
+            if (empty($diff)) {
+                // Remote content matches local egg: mark both hashes in sync
+                $this->persistUpdateMeta($egg, [
+                    'applied_update_hash' => $hash,
+                    'last_update_hash' => $hash,
+                    'last_etag' => $response->header('ETag'),
+                    'last_modified' => $response->header('Last-Modified'),
+                    'last_update_error' => null,
+                ]);
+                $result['status'] = 'up_to_date';
+
+                return $result;
+            }
+
+            // Remote is genuinely newer or different: persist the new hash
+            // but leave applied_update_hash untouched (null on first check,
+            // or old value from a previous apply).
             $this->persistUpdateMeta($egg, [
                 'last_update_hash' => $hash,
                 'last_etag' => $response->header('ETag'),
@@ -196,7 +194,6 @@ class EggUpdaterService
             $result['diff'] = $diff;
             $result['parsed'] = $parsed;
 
-            // update_available already saved above with error=null
             return $result;
         } catch (\RuntimeException $e) {
             // Controlled exceptions (e.g. invalid URL) surface the message to callers,
