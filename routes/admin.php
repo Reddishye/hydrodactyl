@@ -93,7 +93,11 @@ Route::group(['prefix' => 'settings'], function () {
     Route::patch('/captcha', [Admin\Settings\CaptchaController::class, 'update']);
     Route::patch('/logo', [Admin\Settings\LogoController::class, 'update']);
     Route::get('/egg-updater', [Admin\Settings\EggUpdaterController::class, 'index'])->name('admin.settings.egg-updater');
-    Route::patch('/egg-updater', [Admin\Settings\EggUpdaterController::class, 'update']);
+    Route::patch('/egg-updater', [Admin\Settings\EggUpdaterController::class, 'update'])->name('admin.settings.egg-updater.update');
+    Route::post('/egg-updater/check-all', [Admin\Settings\EggUpdaterController::class, 'checkAll'])->name('admin.settings.egg-updater.check-all');
+    Route::post('/egg-updater/{egg:id}/check', [Admin\Settings\EggUpdaterController::class, 'check'])->name('admin.settings.egg-updater.check');
+    Route::post('/egg-updater/{egg:id}/apply', [Admin\Settings\EggUpdaterController::class, 'apply'])->name('admin.settings.egg-updater.apply');
+    Route::post('/egg-updater/{egg:id}/toggle-exclude', [Admin\Settings\EggUpdaterController::class, 'toggleExclude'])->name('admin.settings.egg-updater.toggle-exclude');
 });
 
 /*

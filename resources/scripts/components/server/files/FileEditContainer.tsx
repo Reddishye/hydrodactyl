@@ -82,9 +82,10 @@ const FileEditContainer = () => {
             clearFlashes('files:view');
             if (fetchFileContent) {
                 fetchFileContent()
-                    .then((content) => saveFileContents(uuid, name ?? filename, content))
-                    .then(() => {
+                    .then((content) => saveFileContents(uuid, name ?? filename, content).then(() => content))
+                    .then((savedContent) => {
                         toast.success(`Saved ${name ?? filename}!`);
+                        setContent(savedContent);
                         if (name) {
                             navigate(`/server/${id}/files/edit/${encodePathSegments(name)}`);
                         }

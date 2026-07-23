@@ -140,3 +140,24 @@ Route::group(['prefix' => '/nests'], function () {
         Route::get('/{egg:id}', [Application\Nests\EggController::class, 'view'])->name('api.application.nests.eggs.view');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Egg Updater Controller Routes
+|--------------------------------------------------------------------------
+|
+| Endpoint: /api/application/egg-updater
+| Endpoint: /api/application/eggs/{egg}
+|
+*/
+Route::prefix('/egg-updater')->group(function () {
+    Route::get('/', [Application\EggUpdaterController::class, 'settings'])->name('api.application.egg-updater.settings');
+    Route::patch('/', [Application\EggUpdaterController::class, 'updateSettings'])->name('api.application.egg-updater.update');
+    Route::post('/check-all', [Application\EggUpdaterController::class, 'checkAll'])->name('api.application.egg-updater.check-all');
+});
+
+Route::prefix('/eggs/{egg:id}')->group(function () {
+    Route::post('/check', [Application\EggUpdaterController::class, 'check'])->name('api.application.eggs.check');
+    Route::post('/apply', [Application\EggUpdaterController::class, 'apply'])->name('api.application.eggs.apply');
+    Route::post('/toggle-exclude', [Application\EggUpdaterController::class, 'toggleExclude'])->name('api.application.eggs.toggle-exclude');
+});

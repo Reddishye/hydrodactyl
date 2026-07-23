@@ -26,31 +26,7 @@
         </div>
     </div>
 </div>
-<form action="{{ route('admin.nests.egg.view', $egg->id) }}" enctype="multipart/form-data" method="POST">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box box-danger">
-                <div class="box-body">
-                    <div class="row">
-                        <div class="col-xs-8">
-                            <div class="form-group no-margin-bottom">
-                                <label for="pName" class="control-label">Egg File</label>
-                                <div>
-                                    <input type="file" name="import_file" class="form-control" style="border: 0;margin-left:-10px;" />
-                                    <p class="text-muted small no-margin-bottom">If you would like to replace settings for this Egg by uploading a new JSON file, simply select it here and press "Update Egg". This will not change any existing startup strings or Docker images for existing servers.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-4">
-                            {!! csrf_field() !!}
-                            <button type="submit" name="_method" value="PUT" class="btn btn-sm btn-danger pull-right">Update Egg</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
+{{-- (manual upload moved to Updates section below) --}}
 <form action="{{ route('admin.nests.egg.view', $egg->id) }}" method="POST">
     <div class="row">
         <div class="col-xs-12">
@@ -208,105 +184,131 @@
             </div>
         </div>
     </div>
-    {{-- Auto-Update Status --}}
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Auto-Update Status</h3>
+</form>
+{{-- Updates --}}
+@php
+    $hasUpdateUrl = !empty($egg->update_url);
+    $hasUpdate = $egg->last_update_hash && $egg->applied_update_hash && $egg->last_update_hash !== $egg->applied_update_hash;
+    $ovr = $egg->update_overrides ?? [];
+    $initialStatus = $egg->exclude_from_updates ? ['label' => 'default', 'text' => 'Excluded']
+        : ($egg->last_update_error ? ['label' => 'danger', 'text' => 'Error']
+        : ($hasUpdate ? ['label' => 'warning', 'text' => 'Update Available']
+        : ($egg->last_update_check_at ? ['label' => 'success', 'text' => 'Up to Date']
+        : ['label' => 'info', 'text' => 'Not Checked'])));
+@endphp
+<div class="row" id="eggUpdates">
+    <div class="col-xs-12">
+        <div class="box box-solid">
+            <div class="box-header with-border">
+                <h3 class="box-title">Updates</h3>
+                <div class="box-tools pull-right">
+                    <span id="updateStatusBadge" class="label label-{{ $initialStatus['label'] }}">{{ $initialStatus['text'] }}</span>
                 </div>
-                <div class="box-body">
-                    @php $hasUpdateUrl = !empty($egg->update_url); @endphp
-                    @if(!$hasUpdateUrl)
-                        <div class="callout callout-info">
-                            <p>No <code>update_url</code> configured. Set it in the Configuration section above to enable auto-updates.</p>
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    {{-- LEFT: Manual Update + Overrides --}}
+                    <div class="col-sm-6">
+                        {{-- Manual Upload --}}
+                        <div class="form-group" style="margin-bottom:8px;">
+                            <label class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Manual Update</label>
+                            <p class="text-muted small" style="margin-bottom:8px;">Upload a new egg JSON to replace settings. Existing servers are not affected.</p>
+                            <form id="manualUpdateForm" data-url="{{ route('admin.nests.egg.view', $egg->id) }}">
+                                @csrf
+                                <input type="hidden" name="_method" value="PUT">
+                                <div class="input-group input-group-sm">
+                                    <input type="file" name="import_file" class="form-control" style="padding:3px 6px;height:auto;">
+                                    <span class="input-group-btn">
+                                        <button id="btnManualUpdate" type="button" class="btn btn-danger btn-flat"><i class="fa fa-upload"></i> Update</button>
+                                    </span>
+                                </div>
+                            </form>
                         </div>
-                    @else
-                        <div class="row">
-                            <div class="col-sm-6">
-                                @php
-                                    $hasSessionDiff = session('update_diff') && session('update_egg_id') === $egg->id;
-                                    $ovr = $egg->update_overrides ?? [];
-                                @endphp
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <div>
-                                        @if($hasSessionDiff)
-                                            <span class="label label-warning">Update Available</span>
-                                        @elseif($egg->exclude_from_updates)
-                                            <span class="label label-default">Excluded from auto-updates</span>
-                                        @elseif($egg->last_update_check_at)
-                                            <span class="label label-success">Up to Date</span>
-                                        @else
-                                            <span class="label label-info">Not Checked Yet</span>
-                                        @endif
+                        @if($hasUpdateUrl)
+                        <hr style="margin:12px 0;">
+                        {{-- Overrides --}}
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="text-muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Overrides</label>
+                            <p class="text-muted small" style="margin-bottom:8px;">Pin local values that persist across remote updates.</p>
+                            <form id="overrideForm" data-url="{{ route('admin.nests.egg.view', $egg->id) }}">
+                                @csrf
+                                <input type="hidden" name="_method" value="PATCH">
+                                <div class="row">
+                                    <div class="col-xs-6" style="padding-right:4px;">
+                                        <input type="text" id="pOvrName" name="update_overrides[name]" value="{{ $ovr['name'] ?? '' }}" class="form-control input-sm" placeholder="Override name">
+                                    </div>
+                                    <div class="col-xs-6" style="padding-left:4px;">
+                                        <input type="text" id="pOvrDesc" name="update_overrides[description]" value="{{ $ovr['description'] ?? '' }}" class="form-control input-sm" placeholder="Override description">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Last Checked</label>
-                                    <p class="form-control-static">{{ $egg->last_update_check_at ? $egg->last_update_check_at->toDayDateTimeString() : '—' }}</p>
+                                <div class="input-group input-group-sm" style="margin-top:6px;">
+                                    <input type="url" id="pOvrUrl" name="update_overrides[update_url]" value="{{ $ovr['update_url'] ?? '' }}" class="form-control" placeholder="Override update URL">
+                                    <span class="input-group-btn">
+                                        <button id="btnSaveOverrides" type="button" class="btn btn-primary btn-flat"><i class="fa fa-save"></i> Save</button>
+                                    </span>
                                 </div>
-                                <div class="form-group">
-                                    <label>Last Applied</label>
-                                    <p class="form-control-static">{{ $egg->last_update_applied_at ? $egg->last_update_applied_at->toDayDateTimeString() : '—' }}</p>
-                                </div>
-                                <div class="form-group">
-                                    <form action="{{ route('admin.nests.egg.check_update', $egg->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <button type="submit" class="btn btn-info btn-sm">Check for Updates</button>
-                                    </form>
-                                    @if($hasSessionDiff)
-                                        <form action="{{ route('admin.nests.egg.apply_update', $egg->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success btn-sm">Apply Update</button>
-                                        </form>
-                                    @endif
-                                </div>
+                            </form>
+                        </div>
+                        @endif
+                    </div>
 
-                                {{-- Override fields --}}
-                                <hr>
-                                <h5>Update Overrides</h5>
-                                <p class="text-muted small">Set these to pin values locally even when the remote egg changes them.</p>
-                                <div class="form-group">
-                                    <label for="pOvrName">Override Name</label>
-                                    <input type="text" id="pOvrName" name="update_overrides[name]" value="{{ $ovr['name'] ?? '' }}" class="form-control" placeholder="Leave empty to use remote name" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="pOvrDesc">Override Description</label>
-                                    <textarea id="pOvrDesc" name="update_overrides[description]" class="form-control" rows="2" placeholder="Leave empty to use remote description">{{ $ovr['description'] ?? '' }}</textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="pOvrUrl">Override Update URL</label>
-                                    <input type="url" id="pOvrUrl" name="update_overrides[update_url]" value="{{ $ovr['update_url'] ?? '' }}" class="form-control" placeholder="Leave empty to use remote update_url" />
-                                </div>
+                    {{-- RIGHT: Status + Actions --}}
+                    <div class="col-sm-6">
+                        @if($hasUpdateUrl)
+                        <div class="row" style="margin-bottom:10px;">
+                            <div class="col-xs-6">
+                                <label class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;">Last Checked</label>
+                                <p class="form-control-static" id="updateLastChecked" style="padding-top:0;margin-bottom:0;font-size:13px;">{{ $egg->last_update_check_at ? $egg->last_update_check_at->toDayDateTimeString() : '—' }}</p>
                             </div>
-                            <div class="col-sm-6">
-                                @if($hasSessionDiff)
-                                    <div class="form-group">
-                                        <label>Changes Detected</label>
-                                        <pre style="max-height:300px;overflow-y:auto;">{{ json_encode(session('update_diff'), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
-                                    </div>
-                                @endif
-                                @if($egg->last_update_hash)
-                                    <div class="form-group">
-                                        <label>Content Hash</label>
-                                        <p class="form-control-static"><code>{{ $egg->last_update_hash }}</code></p>
-                                        <p class="text-muted small">SHA256 of the last fetched egg JSON content.</p>
-                                    </div>
-                                @endif
+                            <div class="col-xs-6">
+                                <label class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;">Last Applied</label>
+                                <p class="form-control-static" id="updateLastApplied" style="padding-top:0;margin-bottom:0;font-size:13px;">{{ $egg->last_update_applied_at ? $egg->last_update_applied_at->toDayDateTimeString() : '—' }}</p>
                             </div>
                         </div>
-                    @endif
+                        <div class="btn-group btn-group-justified" role="group" id="updateActions" style="margin-bottom:12px;">
+                            <a class="btn btn-info btn-sm" id="btnCheckUpdate" data-url="{{ route('admin.nests.egg.check_update', $egg->id) }}">
+                                <i class="fa fa-refresh"></i> Check
+                            </a>
+                            @if($hasUpdate)
+                            <a class="btn btn-success btn-sm" id="btnApplyUpdate" data-url="{{ route('admin.nests.egg.apply_update', $egg->id) }}">
+                                <i class="fa fa-cloud-download"></i> Apply
+                            </a>
+                            @endif
+                        </div>
+                        <div id="updateInfo">
+                            @if($egg->last_update_error)
+                            <div class="callout callout-danger" style="margin-bottom:8px;padding:6px 10px;font-size:12px;">
+                                <i class="fa fa-exclamation-circle"></i>
+                                {{ $egg->last_update_error }}
+                            </div>
+                            @endif
+                            @if($egg->last_update_hash)
+                            <div class="form-group" style="margin-bottom:6px;">
+                                <label class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;">Content Hash</label>
+                                <p class="form-control-static" style="padding-top:0;margin-bottom:0;"><code style="font-size:11px;">{{ $egg->last_update_hash }}</code></p>
+                            </div>
+                            @endif
+                            <div id="updateDiffArea">
+                            </div>
+                        </div>
+                        @else
+                        <div class="callout callout-info" style="margin-bottom:0;">
+                            <p style="margin-bottom:4px;">No <code>update_url</code> set.</p>
+                            <p class="small" style="margin-bottom:0;">Configure it above, or use <strong>Manual Update</strong> to upload an egg JSON directly.</p>
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</form>
+</div>
 @endsection
 
 @section('footer-scripts')
     @parent
     <script>
+    // Existing handlers
     $('#pConfigFrom').select2();
     $('#deleteButton').on('mouseenter', function (event) {
         $(this).find('i').html(' Delete Egg');
@@ -329,5 +331,131 @@
         selectOnClose: false,
         tokenSeparators: [',', ' '],
     });
+
+    // Updates AJAX
+    (function() {
+        var $updates = $('#eggUpdates');
+        if (!$updates.length) return;
+
+        var EGG_ID = @json($egg->id);
+        var VIEW_URL = @json(route('admin.nests.egg.view', $egg->id));
+        var CHECK_URL = @json(route('admin.nests.egg.check_update', $egg->id));
+        var APPLY_URL = @json(route('admin.nests.egg.apply_update', $egg->id));
+
+        var $badge = $('#updateStatusBadge');
+        var $lastChecked = $('#updateLastChecked');
+        var $lastApplied = $('#updateLastApplied');
+        var $diffArea = $('#updateDiffArea');
+        var $actions = $('#updateActions');
+        var $updateInfo = $('#updateInfo');
+        var $overrideForm = $('#overrideForm');
+        var $manualForm = $('#manualUpdateForm');
+
+        function token() {
+            return $('meta[name="csrf-token"]').attr('content') || $('[name="_token"]').first().val();
+        }
+
+        function loading(btn, on) {
+            var $b = $(btn); if (!$b.length) return;
+            if (on) { $b.data('html', $b.html()).prop('disabled', true).find('i').attr('class', 'fa fa-spinner fa-spin'); }
+            else { $b.html($b.data('html')).prop('disabled', false); }
+        }
+
+        function badge(type, text) {
+            if (!$badge.length) return;
+            var cls = {success:'label-success', warning:'label-warning', danger:'label-danger', info:'label-info', default:'label-default'};
+            $badge.attr('class', 'label ' + (cls[type]||'label-info')).text(text);
+        }
+
+        function notify(msg, type) {
+            var cls = type === 'error' ? 'alert-danger' : type === 'success' ? 'alert-success' : type === 'warning' ? 'alert-warning' : 'alert-info';
+            var $a = $('<div class="alert ' + cls + ' alert-dismissible" style="margin:0 0 10px 0;padding:8px 12px;font-size:13px;"><button type="button" class="close" data-dismiss="alert">&times;</button>' + $('<span>').text(msg).html() + '</div>');
+            $updates.find('.box-body > .row').first().before($a);
+            setTimeout(function() { $a.alert('close'); }, 5000);
+        }
+
+        // --- Manual Upload ---
+        $manualForm.length && $('#btnManualUpdate').on('click', function() {
+            var file = $manualForm.find('[name="import_file"]')[0];
+            if (!file || !file.files || !file.files[0]) { notify('Select a file first.', 'error'); return; }
+            loading(this, true);
+            var fd = new FormData($manualForm[0]);
+            fd.append('_method', 'PUT');
+            $.ajax({url: VIEW_URL, method: 'POST', data: fd, processData: false, contentType: false})
+                .done(function(r) { notify(r.message || 'Egg updated.', 'success'); })
+                .fail(function(xhr) { notify((xhr.responseJSON&&xhr.responseJSON.message)||'Upload failed.', 'error'); })
+                .always(function() { loading($('#btnManualUpdate'), false); });
+        });
+
+        // --- Check Updates ---
+        var $btnCheck = $('#btnCheckUpdate');
+        $btnCheck.length && $btnCheck.on('click', function() {
+            loading(this, true);
+            badge('info', 'Checking...');
+            $diffArea.empty();
+
+            $.post(CHECK_URL, {_token: token()})
+                .done(function(r) {
+                    $updateInfo.find('.callout-danger').remove(); // clear persistent error
+                    if (r.status === 'update_available') {
+                        badge('warning', 'Update Available');
+                        notify(r.message, 'warning');
+                        $diffArea.html('<div class="form-group" style="margin-bottom:0;"><label class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;">Changes Detected</label><pre style="max-height:180px;overflow-y:auto;font-size:11px;margin-bottom:0;">' + $('<span>').text(JSON.stringify(r.diff, null, 4)).html() + '</pre></div>');
+                        if (!$('#btnApplyUpdate').length) {
+                            $actions.append('<a class="btn btn-success btn-sm" id="btnApplyUpdate" data-url="' + APPLY_URL + '"><i class="fa fa-cloud-download"></i> Apply</a>');
+                        }
+                    } else if (r.status === 'up_to_date') {
+                        badge('success', 'Up to Date');
+                        notify(r.message, 'success');
+                    } else {
+                        badge('danger', 'Error');
+                        notify(r.message, 'error');
+                        // show persistent error inline
+                        $updateInfo.prepend('<div class="callout callout-danger" style="margin-bottom:8px;padding:6px 10px;font-size:12px;"><i class="fa fa-exclamation-circle"></i> ' + $('<span>').text(r.error || r.message).html() + '</div>');
+                    }
+                    $lastChecked.text(new Date().toLocaleString());
+                })
+                .fail(function(xhr) {
+                    badge('danger', 'Error');
+                    var errMsg = (xhr.responseJSON&&xhr.responseJSON.message)||'Check failed.';
+                    notify(errMsg, 'error');
+                    $updateInfo.prepend('<div class="callout callout-danger" style="margin-bottom:8px;padding:6px 10px;font-size:12px;"><i class="fa fa-exclamation-circle"></i> ' + $('<span>').text(errMsg).html() + '</div>');
+                })
+                .always(function() { loading($btnCheck, false); });
+        });
+
+        // --- Apply Update ---
+        function bindApply() {
+            var $btn = $('#btnApplyUpdate');
+            if (!$btn.length) return;
+            $btn.off('click').on('click', function() {
+                loading(this, true);
+                $.post($(this).data('url') || APPLY_URL, {_token: token()})
+                    .done(function(r) {
+                        if (r.status === 'applied') {
+                            badge('success', 'Up to Date');
+                            notify(r.message, 'success');
+                            $lastApplied.text(new Date().toLocaleString());
+                            $diffArea.empty();
+                            $('#btnApplyUpdate').remove();
+                        } else { notify(r.message, 'error'); }
+                    })
+                    .fail(function(xhr) { notify((xhr.responseJSON&&xhr.responseJSON.message)||'Apply failed.', 'error'); })
+                    .always(function() { loading($('#btnApplyUpdate'), false); });
+            });
+        }
+        bindApply();
+        // Re-bind when check adds a new Apply button
+        $actions.length && new MutationObserver(function() { bindApply(); }).observe($actions[0], {childList: true});
+
+        // --- Save Overrides ---
+        $overrideForm.length && $('#btnSaveOverrides').on('click', function() {
+            loading(this, true);
+            $.post(VIEW_URL, $overrideForm.serialize())
+                .done(function() { notify('Overrides saved.', 'success'); })
+                .fail(function(xhr) { notify((xhr.responseJSON&&xhr.responseJSON.message)||'Failed.', 'error'); })
+                .always(function() { loading($('#btnSaveOverrides'), false); });
+        });
+    })();
     </script>
 @endsection

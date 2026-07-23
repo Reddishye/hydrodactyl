@@ -4,22 +4,21 @@ namespace Pterodactyl\Services\Eggs;
 
 use Carbon\Carbon;
 use Pterodactyl\Models\Egg;
-use Pterodactyl\Models\EggVariable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Database\ConnectionInterface;
+use Pterodactyl\Exceptions\Service\InvalidFileUploadException;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
 
 class EggUpdaterService
 {
-    private const SETTINGS_PREFIX = 'egg-updater:';
-
     public function __construct(
         protected ConnectionInterface $connection,
         protected EggParserService $parser,
         protected SettingsRepositoryInterface $settings,
-    ) {}
+    ) {
+    }
 
     /**
      * Get eggs with disallowed update URLs per ALLOWED_EGG_HOSTS.
@@ -40,6 +39,7 @@ class EggUpdaterService
 
         return $eggs->filter(function (Egg $egg) use ($allowedHosts) {
             $host = parse_url($egg->update_url, PHP_URL_HOST);
+
             return $host === false || $host === null || !in_array($host, $allowedHosts, true);
         })->values();
     }
@@ -51,7 +51,7 @@ class EggUpdaterService
      */
     public function checkAll(): Collection
     {
-        if (!filter_var($this->settings->get(self::SETTINGS_PREFIX . 'enabled', false), FILTER_VALIDATE_BOOLEAN)) {
+        if ($this->settings->get('egg-updater:enabled', false) !== '1') {
             return collect();
         }
 
@@ -84,11 +84,15 @@ class EggUpdaterService
             $url = $egg->update_url;
             if (empty($url)) {
                 $result['error'] = 'No update URL configured';
+                $this->persistUpdateMeta($egg, ['last_update_error' => $result['error']]);
+
                 return $result;
             }
 
             if (!$this->isUrlAllowed($url)) {
                 $result['error'] = 'Update URL host is not in ALLOWED_EGG_HOSTS';
+                $this->persistUpdateMeta($egg, ['last_update_error' => $result['error']]);
+
                 return $result;
             }
 
@@ -107,44 +111,83 @@ class EggUpdaterService
                 ->get($url);
 
             if ($response->status() === 304) {
-                $egg->forceFill(['last_update_check_at' => Carbon::now()])->save();
-                $result['status'] = 'up_to_date';
+                // Remote hasn't changed since last check. Decide status from
+                // the pending state (applied vs last-seen hash).
+                $this->persistUpdateMeta($egg, ['last_update_error' => null]);
+                $pending = ($egg->last_update_hash !== null)
+                    && ($egg->applied_update_hash !== $egg->last_update_hash);
+                $result['status'] = $pending ? 'update_available' : 'up_to_date';
+
                 return $result;
             }
 
             if ($response->failed()) {
                 $result['error'] = "HTTP {$response->status()}: {$response->reason()}";
                 Log::warning('Egg update check failed', ['egg_id' => $egg->id, 'error' => $result['error']]);
+                $this->persistUpdateMeta($egg, ['last_update_error' => $result['error']]);
+
                 return $result;
             }
 
             $body = $response->body();
             $hash = hash('sha256', $body);
 
+            // Status is driven by comparing the remote hash against
+            // applied_update_hash. A pending update exists whenever
+            // last_update_hash !== applied_update_hash (including when
+            // one is null and the other is set).
+            $pending = ($egg->last_update_hash !== null)
+                && ($egg->applied_update_hash !== $egg->last_update_hash);
+
+            // Remote hasn't changed since last check: decide from pending state
             if ($hash === $egg->last_update_hash) {
-                $egg->forceFill([
-                    'last_update_check_at' => Carbon::now(),
-                    'last_etag' => $response->header('ETag'),
-                    'last_modified' => $response->header('Last-Modified'),
-                ])->save();
-                $result['status'] = 'up_to_date';
+                $this->persistUpdateMeta($egg, ['last_update_error' => null]);
+                $result['status'] = $pending ? 'update_available' : 'up_to_date';
+
                 return $result;
             }
 
-            $parsed = $this->parser->parseJsonString($body);
+            // Remote content changed or first check ever: parse and diff
+            try {
+                $parsed = $this->parser->parseJsonString($body);
+            } catch (\JsonException $e) {
+                $result['error'] = 'Invalid JSON response from update URL: the remote source did not return valid egg data.';
+                Log::warning('Egg update check: invalid JSON', ['egg_id' => $egg->id, 'url' => $url, 'body_preview' => substr($body, 0, 200)]);
+                $this->persistUpdateMeta($egg, ['last_update_error' => 'Update check failed']);
+
+                return $result;
+            } catch (InvalidFileUploadException $e) {
+                $result['error'] = 'Invalid egg format - the remote source returned valid JSON but missing PTDL_v1/PTDL_v2 meta.version.';
+                Log::warning('Egg update check: invalid format', ['egg_id' => $egg->id, 'url' => $url]);
+                $this->persistUpdateMeta($egg, ['last_update_error' => 'Update check failed']);
+
+                return $result;
+            }
             $diff = $this->computeDiff($egg, $parsed);
 
-            $egg->forceFill([
+            if (empty($diff)) {
+                // Remote content matches local egg: mark both hashes in sync
+                $this->persistUpdateMeta($egg, [
+                    'applied_update_hash' => $hash,
+                    'last_update_hash' => $hash,
+                    'last_etag' => $response->header('ETag'),
+                    'last_modified' => $response->header('Last-Modified'),
+                    'last_update_error' => null,
+                ]);
+                $result['status'] = 'up_to_date';
+
+                return $result;
+            }
+
+            // Remote is genuinely newer or different: persist the new hash
+            // but leave applied_update_hash untouched (null on first check,
+            // or old value from a previous apply).
+            $this->persistUpdateMeta($egg, [
                 'last_update_hash' => $hash,
                 'last_etag' => $response->header('ETag'),
                 'last_modified' => $response->header('Last-Modified'),
-                'last_update_check_at' => Carbon::now(),
-            ])->save();
-
-            if (empty($diff)) {
-                $result['status'] = 'up_to_date';
-                return $result;
-            }
+                'last_update_error' => null,
+            ]);
 
             Log::info('Egg update available', ['egg_id' => $egg->id, 'diff' => $diff]);
             $result['status'] = 'update_available';
@@ -152,10 +195,42 @@ class EggUpdaterService
             $result['parsed'] = $parsed;
 
             return $result;
-        } catch (\Throwable $e) {
+        } catch (\RuntimeException $e) {
+            // Controlled exceptions (e.g. invalid URL) surface the message to callers,
+            // but never persist raw exception text to the DB column.
             $result['error'] = $e->getMessage();
-            Log::warning('Egg update check exception', ['egg_id' => $egg->id, 'error' => $e->getMessage()]);
+            Log::warning('Egg update check exception', ['egg_id' => $egg->id, 'error' => $e->getMessage(), 'exception' => $e]);
+            $this->persistUpdateMeta($egg, ['last_update_error' => 'Update check failed']);
+
             return $result;
+        } catch (\Throwable $e) {
+            // Unexpected exceptions: log full details, but never leak raw messages to the
+            // frontend JSON response or to the persisted last_update_error column.
+            $result['error'] = 'Update check failed';
+            Log::warning('Egg update check exception', ['egg_id' => $egg->id, 'error' => $e->getMessage(), 'exception' => $e]);
+            $this->persistUpdateMeta($egg, ['last_update_error' => 'Update check failed']);
+
+            return $result;
+        }
+    }
+
+    /**
+     * Best-effort persist of update-check metadata. Never throws: a failed
+     * metadata write (e.g. validation on an incomplete egg in unit tests)
+     * must never corrupt the caller-facing result/error message that was
+     * already set. The DB column always stores a generic message; the full
+     * exception, when present, is captured via Log::warning instead.
+     *
+     * @param array<string, mixed> $attributes
+     */
+    private function persistUpdateMeta(Egg $egg, array $attributes): void
+    {
+        $attributes['last_update_check_at'] = Carbon::now();
+
+        try {
+            $egg->forceFill($attributes)->save();
+        } catch (\Throwable $e) {
+            Log::warning('Egg update meta persist failed', ['egg_id' => $egg->id ?? null, 'error' => $e->getMessage(), 'exception' => $e]);
         }
     }
 
@@ -166,6 +241,10 @@ class EggUpdaterService
      */
     public function apply(Egg $egg): Egg
     {
+        if ($egg->exclude_from_updates) {
+            throw new \RuntimeException('Egg is excluded from updates.');
+        }
+
         $url = $egg->update_url;
         if (empty($url)) {
             throw new \RuntimeException('No update URL configured for this egg.');
@@ -197,8 +276,10 @@ class EggUpdaterService
                 'description' => $overrideDesc ?? $egg->description,
                 'update_url' => $overrideUrl ?? $egg->update_url,
                 'last_update_hash' => $hash,
+                'applied_update_hash' => $hash,
                 'last_etag' => null,
                 'last_modified' => null,
+                'last_update_error' => null,
                 'last_update_applied_at' => Carbon::now(),
                 'last_update_check_at' => Carbon::now(),
                 'exclude_from_updates' => $egg->exclude_from_updates,
@@ -318,7 +399,9 @@ class EggUpdaterService
         if (is_array($value)) {
             ksort($value);
         }
-        return json_encode($value);
+        $encoded = json_encode($value);
+
+        return $encoded === false ? null : $encoded;
     }
 
     /**
@@ -332,6 +415,7 @@ class EggUpdaterService
         }
 
         $host = parse_url($url, PHP_URL_HOST);
+
         return $host !== false && $host !== null && in_array($host, $allowedHosts, true);
     }
 

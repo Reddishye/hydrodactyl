@@ -30,6 +30,7 @@ public/assets/manifest.json
 # For local development with docker
 docker-compose.yml
 local_docker
+storage/database/
 /srv
 /var
 /data
@@ -59,3 +60,6 @@ nix/docker/maria/mariadb_data/
 nix/mariadb/
 mariadb_data/
 .env.lerd_override
+
+# Omo shit
+.omo/

@@ -126,7 +126,11 @@ export default defineConfig({
 
     server: {
         host: true,
-        hmr: { host: 'localhost' },
+        cors: {
+            origin: /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+            credentials: true,
+        },
+        hmr: { host: 'localhost', protocol: 'ws' },
         warmup: {
             clientFiles: [
                 'resources/scripts/index.tsx',

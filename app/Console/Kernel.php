@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
             $schedule->command(PruneCommand::class, ['--model' => [ActivityLog::class]])->daily();
         }
 
-        // Egg auto-updater — runs daily, command itself checks settings for frequency gating
-        $schedule->command('egg:check-updates')->dailyAt('04:00')->withoutOverlapping();
+        // Egg auto-updater — runs every 6h, command gates on enabled + frequency settings
+        $schedule->command('egg:check-updates')->everySixHours()->withoutOverlapping();
     }
 }

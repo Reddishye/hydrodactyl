@@ -2,21 +2,25 @@
 
 namespace Pterodactyl\Console\Commands\Eggs;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Pterodactyl\Models\Egg;
 use Pterodactyl\Services\Eggs\EggUpdaterService;
+use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
 
 class CheckEggUpdatesCommand extends Command
 {
     protected $signature = 'egg:check-updates
         {--apply : Apply updates automatically (overrides settings)}
         {--egg= : Check specific egg ID only}
-        {--dry-run : Preview only, no changes applied}
-        {--notify : Flash admin notification if updates found}';
+        {--dry-run : Preview only, no changes applied}';
 
     protected $description = 'Check all eggs with update_url for available updates';
 
-    public function __construct(protected EggUpdaterService $updaterService)
-    {
+    public function __construct(
+        protected EggUpdaterService $updaterService,
+        protected SettingsRepositoryInterface $settings,
+    ) {
         parent::__construct();
     }
 
@@ -31,8 +35,42 @@ class CheckEggUpdatesCommand extends Command
             $apply = false;
         }
 
+        if (!$eggId) {
+            $enabled = filter_var($this->settings->get('egg-updater:enabled', false), FILTER_VALIDATE_BOOLEAN);
+            if (!$enabled) {
+                $this->info('Egg updater is disabled via settings. Skipping.');
+                return static::SUCCESS;
+            }
+
+            $frequencyHours = match ($this->settings->get('egg-updater:frequency', 'daily')) {
+                'every_6_hours' => 6,
+                'every_12_hours' => 12,
+                default => 24,
+            };
+
+            $oldestCheck = Egg::whereNotNull('update_url')
+                ->where('update_url', '!=', '')
+                ->where('exclude_from_updates', false)
+                ->min('last_update_check_at');
+
+            if ($oldestCheck !== null) {
+                $hoursSinceOldest = Carbon::now()->diffInHours($oldestCheck, false);
+                if ($hoursSinceOldest < $frequencyHours) {
+                    $this->info("Frequency: every {$frequencyHours}h. Last check was " . round($hoursSinceOldest) . "h ago. Next check due in " . ($frequencyHours - round($hoursSinceOldest)) . 'h. Skipping.');
+                    return static::SUCCESS;
+                }
+            }
+
+            if (!$apply) {
+                $autoApply = filter_var($this->settings->get('egg-updater:auto-apply', false), FILTER_VALIDATE_BOOLEAN);
+                if ($autoApply) {
+                    $apply = true;
+                }
+            }
+        }
+
         if ($eggId) {
-            $egg = \Pterodactyl\Models\Egg::find($eggId);
+            $egg = Egg::find($eggId);
             if (!$egg) {
                 $this->error("Egg with ID {$eggId} not found.");
                 return static::FAILURE;
@@ -70,7 +108,6 @@ class CheckEggUpdatesCommand extends Command
 
             if ($result['status'] === 'update_available') {
                 $hasUpdates = true;
-                // Apply if flag is set and not dry-run
                 if ($apply && !$dryRun) {
                     try {
                         $this->updaterService->apply($egg);
@@ -95,11 +132,6 @@ class CheckEggUpdatesCommand extends Command
 
         if ($hasUpdates && !$apply && !$dryRun) {
             $this->warn('Updates available. Run with --apply to apply, or use admin panel.');
-        }
-
-        if ($hasUpdates && $this->option('notify')) {
-            // ponytail: admin notifications via alert system (future)
-            $this->info('Notification flag set — admin alerts TBD.');
         }
 
         return $errors ? static::FAILURE : static::SUCCESS;
