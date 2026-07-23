@@ -166,6 +166,10 @@ class EggUpdaterServiceTest extends TestCase
             'script_entry' => null,
             'script_container' => null,
             'script_is_privileged' => null,
+            // ponytail: a baseline hash distinct from the remote body's hash so
+            // the check reports update_available instead of treating this as the
+            // first-ever baseline check.
+            'applied_update_hash' => hash('sha256', 'previously-applied-baseline'),
         ]);
 
         // Egg has a ->variables relation that returns empty collection

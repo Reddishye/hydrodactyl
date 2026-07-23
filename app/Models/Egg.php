@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $last_modified
  * @property \Carbon\Carbon|null $last_update_check_at
  * @property \Carbon\Carbon|null $last_update_applied_at
+ * @property string|null $last_update_error
+ * @property string|null $applied_update_hash
  * @property bool $exclude_from_updates
  * @property array|null $update_overrides
  * @property bool $force_outgoing_ip
@@ -113,6 +115,8 @@ class Egg extends Model
         'last_update_hash',
         'last_etag',
         'last_modified',
+        'last_update_error',
+        'applied_update_hash',
     ];
 
     /**
@@ -131,6 +135,7 @@ class Egg extends Model
         'update_overrides' => 'array',
         'last_update_check_at' => 'datetime',
         'last_update_applied_at' => 'datetime',
+        'last_update_error' => 'string',
     ];
 
     public static array $validationRules = [
@@ -156,6 +161,7 @@ class Egg extends Model
         'last_update_hash' => 'sometimes|nullable|string|max:64',
         'last_etag' => 'sometimes|nullable|string|max:255',
         'last_modified' => 'sometimes|nullable|string|max:255',
+        'last_update_error' => 'sometimes|nullable|string',
     ];
 
     protected $attributes = [

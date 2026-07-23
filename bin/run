@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# bin/run — run commands inside the panel container
+# Usage: ./bin/run artisan migrate
+#        ./bin/run artisan migrate --seed
+#        ./bin/run composer require foo/bar
+#        ./bin/run pnpm add lodash
+#        ./bin/run shell
+#        ./bin/run tinker
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+COMPOSE="docker compose -f docker-compose.develop.yml"
+PANEL="nginx"
+
+run_in_panel() {
+  $COMPOSE exec -T -u "$PANEL" panel "$@"
+}
+
+case "${1:-help}" in
+  artisan)
+    shift
+    log "php artisan $*"
+    exec $COMPOSE exec -T -u "$PANEL" panel php artisan "$@"
+    ;;
+  composer)
+    shift
+    exec $COMPOSE exec -T -u "$PANEL" panel composer "$@"
+    ;;
+  pnpm|npm)
+    shift
+    exec $COMPOSE exec -T -u "$PANEL" panel pnpm "$@"
+    ;;
+  test)
+    shift
+    exec $COMPOSE exec -T -u "$PANEL" panel php vendor/bin/phpunit "$@"
+    ;;
+  shell)
+    exec $COMPOSE exec -u "$PANEL" panel /bin/bash
+    ;;
+  tinker)
+    exec $COMPOSE exec -u "$PANEL" panel php artisan tinker
+    ;;
+  help|--help|-h)
+    echo "Usage: ./bin/run <command> [args]"
+    echo ""
+    echo "Commands:"
+    echo "  artisan <args>     php artisan (e.g. ./bin/run artisan migrate)"
+    echo "  composer <args>    composer (e.g. ./bin/run composer require foo/bar)"
+    echo "  pnpm|npm <args>    pnpm (e.g. ./bin/run pnpm add lodash)"
+    echo "  test <args>        PHPUnit (e.g. ./bin/run test --filter=EggTest)"
+    echo "  shell              bash into panel container"
+    echo "  tinker             Laravel tinker"
+    ;;
+  *)
+    echo "Unknown command: $1"
+    echo "Usage: ./bin/run <artisan|composer|pnpm|test|shell|tinker> [args]"
+    exit 1
+    ;;
+esac

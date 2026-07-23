@@ -159,16 +159,18 @@ $(printf '\033[1;32m')✔ hydrodactyl dev stack is up$(printf '\033[0m')
   Elytra/Wings 8080 (sftp) / 2022 (websocket)
   Vite HMR    http://localhost:5173          (hot reload)
 
-Common commands (Makefile):
-  make dev        # this script (idempotent)
-  make logs       # tail panel logs
-  make shell      # shell into the panel container
-  make artisan CMD='migrate:status'
-  make tinker
-  make fe-build   # build frontend assets (resources/scripts -> public/build)
-  make fe-watch   # start Vite HMR on host (needs Node 22.13+)
-  make stop       # stop stack, keep data
-  make nuke       # stop stack + delete srv/ and vendor cache (full reset)
+Common commands:
+  make dev              # this script (idempotent)
+  make logs             # tail panel logs
+  make shell            # shell into the panel container
+  ./bin/run artisan migrate   # php artisan migrate
+  ./bin/run composer require foo/bar
+  ./bin/run test --filter=EggTest
+  make setup-terminal   # install `hydro` command (then: hydro artisan migrate)
+  make fe-build         # build frontend assets
+  make fe-watch         # start Vite HMR on host (needs Node 22.13+)
+  make stop             # stop stack, keep data
+  make nuke             # stop stack + delete srv/ and vendor cache
 
 On any branch: just run \`make dev\`. Volumes persist, code is bind-mounted,
 so \`git switch <branch>\` + \`make dev\` is enough.

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# bin/setup-terminal — add `hydro` shell function to .bashrc/.zshrc
+# Usage: make setup-terminal   (run once per machine)
+#
+# After sourcing, `hydro <cmd>` works from anywhere inside the project tree:
+#   hydro artisan migrate
+#   hydro test --filter=EggTest
+#   hydro composer require foo/bar
+# It walks parent dirs to find `bin/run`, so it works from any subdirectory.
+
+set -euo pipefail
+
+SHELL_FUNC='# hydrodactyl dev helper — find bin/run by walking up from CWD
+hydro() {
+  local _dir="$PWD"
+  while [ "$_dir" != "/" ]; do
+    if [ -f "$_dir/bin/run" ]; then
+      "$_dir/bin/run" "$@"
+      return $?
+    fi
+    _dir="$(dirname "$_dir")"
+  done
+  echo "hydro: not inside a hydrodactyl project tree (no bin/run found)" >&2
+  return 1
+}'
+
+install_to() {
+  local rc="$1"
+  if grep -qF 'hydro()' "$rc" 2>/dev/null; then
+    echo "[setup-terminal] hydro() already in $rc — skipping."
+    return 0
+  fi
+  # Insert BEFORE the interactive guard ([[ $- != *i* ]] && return)
+  # so the function is available in non-interactive shells too.
+  local tmpf
+  tmpf=$(mktemp)
+  # Find the interactive guard line
+  local guard_line
+  guard_line=$(grep -nE '^\s*\[\[ \$- != \*i\* \]\]' "$rc" | head -1 | cut -d: -f1)
+  if [ -n "$guard_line" ]; then
+    # Write lines before guard, then function, then rest
+    head -n "$((guard_line - 1))" "$rc" > "$tmpf"
+    printf '\n%s\n' "$SHELL_FUNC" >> "$tmpf"
+    tail -n "+${guard_line}" "$rc" >> "$tmpf"
+  else
+    cat "$rc" > "$tmpf"
+    printf '\n%s\n' "$SHELL_FUNC" >> "$tmpf"
+  fi
+  mv "$tmpf" "$rc"
+  echo "[setup-terminal] Added hydro() to $rc"
+  echo "  Run: source $rc"
+  echo "  Then: hydro artisan migrate"
+}
+
+case "${SHELL:-}" in
+  *zsh*)
+    install_to "$HOME/.zshrc"
+    ;;
+  *bash*)
+    install_to "$HOME/.bashrc"
+    ;;
+  *)
+    # fallback: install to whatever rc exists, prefer zsh
+    if [ -f "$HOME/.zshrc" ]; then
+      install_to "$HOME/.zshrc"
+    elif [ -f "$HOME/.bashrc" ]; then
+      install_to "$HOME/.bashrc"
+    else
+      echo "[setup-terminal] Unknown shell ($SHELL) and no .bashrc/.zshrc found."
+      echo "  Paste this into your shell rc file manually:"
+      echo ""
+      echo "$SHELL_FUNC"
+      exit 1
+    fi
+    ;;
+esac

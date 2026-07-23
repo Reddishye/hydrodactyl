@@ -29,6 +29,13 @@ class EggUpdateImporterService
 
         return $this->connection->transaction(function () use ($egg, $parsed) {
             $egg = $this->parser->fillFromParsed($egg, $parsed);
+            $egg->applied_update_hash = null;
+            $egg->last_update_hash = null;
+            $egg->last_etag = null;
+            $egg->last_modified = null;
+            $egg->last_update_error = null;
+            $egg->last_update_check_at = null;
+            $egg->last_update_applied_at = null;
             $egg->save();
 
             // Update existing variables or create new ones.

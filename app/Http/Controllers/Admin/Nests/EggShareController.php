@@ -3,7 +3,9 @@
 namespace Pterodactyl\Http\Controllers\Admin\Nests;
 
 use Pterodactyl\Models\Egg;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Pterodactyl\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,7 +74,7 @@ class EggShareController extends Controller
         try {
             $allowed_hosts = array_map(function ($item) {
                 return trim($item);
-            }, explode(',', env('ALLOWED_EGG_HOSTS', '')));
+            }, explode(',', config('app.allowed_egg_hosts', '')));
             $parsed_url = parse_url($request->input('import_file_url'));
 
             if (!is_array($parsed_url) || !isset($parsed_url['host']) || !in_array($parsed_url['host'], $allowed_hosts)) {
@@ -109,10 +111,24 @@ class EggShareController extends Controller
      * @throws \Pterodactyl\Exceptions\Service\Egg\BadJsonFormatException
      * @throws \Pterodactyl\Exceptions\Service\InvalidFileUploadException
      */
-    public function update(EggImportFormRequest $request, Egg $egg): RedirectResponse
+    public function update(EggImportFormRequest $request, Egg $egg): RedirectResponse|JsonResponse
     {
-        $this->updateImporterService->handle($egg, $request->file('import_file'));
-        $this->alert->success(trans('admin/nests.eggs.notices.updated_via_import'))->flash();
+        try {
+            $this->updateImporterService->handle($egg, $request->file('import_file'));
+            $msg = trans('admin/nests.eggs.notices.updated_via_import');
+
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'imported', 'message' => $msg]);
+            }
+
+            $this->alert->success($msg)->flash();
+        } catch (\Throwable $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);
+            }
+
+            $this->alert->danger($e->getMessage())->flash();
+        }
 
         return redirect()->route('admin.nests.egg.view', ['egg' => $egg]);
     }
@@ -120,33 +136,62 @@ class EggShareController extends Controller
     /**
      * Check an egg for updates from its update_url.
      */
-    public function checkUpdate(Egg $egg): RedirectResponse
+    public function checkUpdate(Request $request, Egg $egg): RedirectResponse|JsonResponse
     {
         $result = $this->updaterService->check($egg);
 
         if ($result['status'] === 'update_available') {
             $names = array_keys($result['diff']);
-            $this->alert->warning(trans('admin/nests.eggs.notices.update_available', [
+            $msg = trans('admin/nests.eggs.notices.update_available', [
                 'name' => $result['egg']->name,
                 'changes' => implode(', ', $names),
-            ]))->flash();
+            ]);
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'update_available',
+                    'message' => $msg,
+                    'egg_id' => $result['egg']->id,
+                    'diff' => $result['diff'],
+                ]);
+            }
+
+            $this->alert->warning($msg)->flash();
             return back()->with('update_diff', $result['diff'])->with('update_egg_id', $result['egg']->id);
         }
 
         if ($result['status'] === 'up_to_date') {
-            $this->alert->success(trans('admin/nests.eggs.notices.update_no_changes', [
+            $msg = trans('admin/nests.eggs.notices.update_no_changes', [
                 'name' => $result['egg']->name,
-            ]))->flash();
+            ]);
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'up_to_date',
+                    'message' => $msg,
+                    'egg_id' => $result['egg']->id,
+                ]);
+            }
+
+            $this->alert->success($msg)->flash();
             return back();
         }
 
-        $this->alert->danger(trans('admin/nests.eggs.notices.update_check_failed', [
+        $msg = trans('admin/nests.eggs.notices.update_check_failed', [
             'name' => $result['egg']->name,
             'error' => $result['error'] ?? 'Unknown error',
-        ]))->flash();
+        ]);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $msg,
+                'error' => $result['error'] ?? 'Unknown error',
+                'egg_id' => $result['egg']->id,
+            ], 422);
+        }
+
+        $this->alert->danger($msg)->flash();
         return back();
     }
 
@@ -155,19 +200,40 @@ class EggShareController extends Controller
      *
      * @throws \Throwable
      */
-    public function applyUpdate(Egg $egg): RedirectResponse
+    public function applyUpdate(Request $request, Egg $egg): RedirectResponse|JsonResponse
     {
         try {
             $this->updaterService->apply($egg);
-            $this->alert->success(trans('admin/nests.eggs.notices.update_applied', [
+            $msg = trans('admin/nests.eggs.notices.update_applied', [
                 'name' => $egg->name,
                 'url' => $egg->update_url,
-            ]))->flash();
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'applied',
+                    'message' => $msg,
+                    'egg_id' => $egg->id,
+                ]);
+            }
+
+            $this->alert->success($msg)->flash();
         } catch (\Throwable $e) {
-            $this->alert->danger(trans('admin/nests.eggs.notices.update_check_failed', [
+            $msg = trans('admin/nests.eggs.notices.update_check_failed', [
                 'name' => $egg->name,
                 'error' => $e->getMessage(),
-            ]))->flash();
+            ]);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $msg,
+                    'error' => $e->getMessage(),
+                    'egg_id' => $egg->id,
+                ], 422);
+            }
+
+            $this->alert->danger($msg)->flash();
         }
 
         return redirect()->route('admin.nests.egg.view', $egg->id);
